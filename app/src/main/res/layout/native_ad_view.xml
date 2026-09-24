@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.gms.ads.nativead.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/native_ad_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_16dp">
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardCornerRadius="@dimen/card_corner_radius"
+        app:strokeColor="?attr/colorPrimary"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16dp">
+
+            <!-- Top Row: Ad Badge & Advertiser -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_8dp">
+
+                <TextView
+                    style="@style/Widget.AptiRise.DemoBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="Ad" />
+
+                <TextView
+                    android:id="@+id/ad_advertiser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="12sp"
+                    tools:text="Sponsored" />
+            </RelativeLayout>
+
+            <!-- Main Content Row: Icon, Headline & Body -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ad_app_icon"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:contentDescription="@null"
+                    tools:src="@drawable/ic_sparkles" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/ad_headline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        tools:text="Test Native Advertisement" />
+
+                    <TextView
+                        android:id="@+id/ad_body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:maxLines="2"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12sp"
+                        tools:text="This is an official Google Mobile Ads test native ad sample." />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Media View (Optional) -->
+            <com.google.android.gms.ads.nativead.MediaView
+                android:id="@+id/ad_media"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginTop="@dimen/spacing_12dp"
+                android:visibility="gone" />
+
+            <!-- Call To Action Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ad_call_to_action"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/spacing_12dp"
+                android:text="Install / Learn More"
+                app:cornerRadius="@dimen/button_corner_radius" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</com.google.android.gms.ads.nativead.NativeAdView>

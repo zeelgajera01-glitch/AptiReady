@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_12dp"
+        android:paddingTop="@dimen/spacing_12dp"
+        android:paddingEnd="@dimen/spacing_12dp"
+        android:paddingBottom="@dimen/spacing_8dp">
+
+        <ImageButton
+            android:id="@+id/btn_exit_session"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Exit practice session"
+            android:src="@drawable/ic_back"
+            app:tint="?attr/colorOnSurface" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_session_topic_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:text="Percentages" />
+
+            <TextView
+                android:id="@+id/tv_session_difficulty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="MEDIUM DIFFICULTY" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_bookmark_toggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Bookmark question"
+            android:src="@drawable/ic_star"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <!-- Progress Indicator & Counter -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_20dp"
+        android:paddingEnd="@dimen/spacing_20dp"
+        android:paddingBottom="@dimen/spacing_8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/tv_question_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Question 3 of 10" />
+
+            <TextView
+                android:id="@+id/tv_submitted_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="ANSWER SUBMITTED" />
+        </RelativeLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/session_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="30"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackCornerRadius="4dp" />
+    </LinearLayout>
+
+    <!-- Question Content Scroll Container -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/spacing_20dp"
+        android:paddingTop="@dimen/spacing_8dp"
+        android:paddingEnd="@dimen/spacing_20dp"
+        android:paddingBottom="@dimen/spacing_24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Question Card -->
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewElevatedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_16dp"
+                app:cardCornerRadius="@dimen/card_corner_radius">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16dp">
+
+                    <TextView
+                        android:id="@+id/tv_question_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="If a shirt's price is increased by 20% and then decreased by 20%, what is the net percentage change in its price?" />
+
+                    <!-- Hint Button & Container -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_toggle_hint"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_8dp"
+                        android:text="Use Free Hint (1 total)"
+                        app:icon="@drawable/ic_sparkles" />
+
+                    <TextView
+                        android:id="@+id/tv_free_hint_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_8dp"
+                        android:layout_marginBottom="@dimen/spacing_4dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        tools:text="You have used your one free hint across all tests." />
+
+                    <LinearLayout
+                        android:id="@+id/layout_hint_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="?attr/colorSecondaryContainer"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_hint_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:textSize="13sp"
+                            tools:text="Remember that a percentage decrease applies to the new, increased price." />
+                    </LinearLayout>
+
+                    <!-- Optional Rewarded Extra Hint Controls -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_unlock_extra_hint"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_8dp"
+                        android:text="Watch Ad to Unlock Extra Hint"
+                        android:visibility="gone"
+                        app:icon="@drawable/ic_sparkles" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_extra_hint_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="?attr/colorPrimaryContainer"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_extra_hint_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:textSize="13sp"
+                            tools:text="Extra Shortcut Hint: Use Net Change = x + y + (xy / 100)." />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Options Container -->
+            <LinearLayout
+                android:id="@+id/container_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Option A -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_option_a"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_badge_a"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="A"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_option_a_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="No change (0%)" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Option B -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_option_b"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_badge_b"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="B"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_option_b_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="2% increase" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Option C -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_option_c"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_badge_c"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="C"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_option_c_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="4% decrease" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Option D -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_option_d"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_badge_d"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="D"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_option_d_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="4% increase" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Explanation Card (Shown after submission) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_explanation"
+                style="?attr/materialCardViewOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_12dp"
+                android:layout_marginBottom="@dimen/spacing_16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/card_corner_radius">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Step-by-Step Explanation"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_explanation_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_8dp"
+                        android:background="?attr/colorPrimaryContainer"
+                        android:padding="@dimen/spacing_12dp"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:textSize="13sp"
+                        tools:text="1. After 20% increase: 100 -> 120.\n2. After 20% decrease: 120 - 24 = 96.\n3. Net change = 96 - 100 = -4 (4% decrease)." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_16dp"
+        android:paddingTop="@dimen/spacing_12dp"
+        android:paddingEnd="@dimen/spacing_16dp"
+        android:paddingBottom="@dimen/spacing_12dp">
+
+        <ImageButton
+            android:id="@+id/btn_prev_question"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Previous question"
+            android:src="@drawable/ic_back"
+            app:tint="?attr/colorOnSurface" />
+
+        <ImageButton
+            android:id="@+id/btn_open_navigator"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Question Navigator Grid"
+            android:src="@drawable/ic_tests"
+            app:tint="?attr/colorPrimary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit_answer"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_12dp"
+            android:layout_marginEnd="@dimen/spacing_12dp"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="Submit Answer"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+        <ImageButton
+            android:id="@+id/btn_next_question"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Next question"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+</LinearLayout>

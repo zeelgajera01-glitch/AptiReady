@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base Application Theme -->
+    <style name="Base.Theme.AptiReady" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary Brand Color -->
+        <item name="colorPrimary">@color/indigo_600</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/indigo_50</item>
+        <item name="colorOnPrimaryContainer">@color/indigo_900</item>
+
+        <!-- Accent Secondary Color -->
+        <item name="colorSecondary">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/teal_100</item>
+        <item name="colorOnSecondaryContainer">@color/teal_800</item>
+
+        <!-- Background & Surface -->
+        <item name="android:colorBackground">@color/bg_light</item>
+        <item name="colorSurface">@color/surface_light</item>
+        <item name="colorOnSurface">@color/text_primary_light</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary_light</item>
+
+        <!-- Window Adjustments -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.AptiReady" parent="Base.Theme.AptiReady" />
+
+    <!-- Badge Style -->
+    <style name="Widget.AptiRise.DemoBadge" parent="">
+        <item name="android:background">@color/indigo_50</item>
+        <item name="android:textColor">@color/indigo_800</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+</resources>

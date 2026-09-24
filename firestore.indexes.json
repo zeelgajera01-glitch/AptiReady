@@ -1,0 +1,14 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "practiceQuestions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "topicId", "order": "ASCENDING" },
+        { "fieldPath": "published", "order": "ASCENDING" },
+        { "fieldPath": "difficulty", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

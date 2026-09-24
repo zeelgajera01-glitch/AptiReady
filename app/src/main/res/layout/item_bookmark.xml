@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_bookmark_item"
+    style="?attr/materialCardViewOutlinedStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_16dp"
+    app:cardCornerRadius="@dimen/card_corner_radius">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_bookmark_topic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="PERCENTAGES" />
+
+            <ImageButton
+                android:id="@+id/btn_remove_bookmark"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Remove bookmark"
+                android:src="@drawable/ic_star"
+                app:tint="?attr/colorPrimary" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_bookmark_question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="If a shirt's price is increased by 20% and then decreased by 20%, what is the net percentage change?" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_reveal_solution"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12dp"
+            android:text="Reveal Solution &amp; Explanation"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+        <LinearLayout
+            android:id="@+id/layout_solution_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_correct_option_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/difficulty_easy"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Correct Answer: Option C (4% decrease)" />
+
+            <TextView
+                android:id="@+id/tv_bookmark_explanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="?attr/colorPrimaryContainer"
+                android:padding="@dimen/spacing_12dp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="13sp"
+                tools:text="Explanation: Net % change = -(x²/100)% = -(20²/100)% = -4%." />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_24dp"
+        android:paddingTop="@dimen/spacing_24dp"
+        android:paddingEnd="@dimen/spacing_24dp"
+        android:paddingBottom="@dimen/spacing_32dp">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_back_button"
+            android:src="@drawable/ic_back"
+            app:tint="?attr/colorOnSurface" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12dp"
+            android:text="Delete Account &amp; Cloud Data"
+            android:textColor="@color/difficulty_hard"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <!-- Warning Impact Card -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewElevatedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            app:cardCornerRadius="@dimen/card_corner_radius">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimaryContainer"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Permanent Account &amp; Data Erasure"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="• Your profile, cloud attempts, bookmarks, and saved notes will be permanently erased.\n• This device's local outbox and account records will be wiped.\n• Other offline devices cannot be wiped until they reconnect.\n• Public learning content and guest records remain unaffected.\n• Once confirmed by the server, this action CANNOT be undone."
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Re-authentication Password Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_reauth_password"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24dp"
+            android:hint="Re-enter your Password to confirm"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_reauth_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textSize="15sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+
+        <!-- Confirm Deletion Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_confirm_deletion"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:backgroundTint="@color/difficulty_hard"
+            android:text="Permanently Delete My Account"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel_deletion"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_12dp"
+            android:text="Cancel &amp; Go Back"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

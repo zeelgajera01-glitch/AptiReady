@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_24dp"
+        android:paddingTop="@dimen/spacing_32dp"
+        android:paddingEnd="@dimen/spacing_24dp"
+        android:paddingBottom="@dimen/spacing_32dp">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_info"
+            app:tint="?attr/colorPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:text="Verify Your Email"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:gravity="center"
+            android:text="We sent a verification link to your email address. Please open your inbox and click the link to activate your cloud profile."
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp" />
+
+        <!-- Email Display Card -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_20dp"
+            app:cardCornerRadius="@dimen/card_corner_radius">
+
+            <TextView
+                android:id="@+id/tv_user_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/spacing_16dp"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="user@example.com" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+
+        <!-- Actions -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_i_have_verified"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:text="I Have Verified"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_resend_email"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_12dp"
+            android:text="Resend Verification Email"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+        <TextView
+            android:id="@+id/tv_cooldown_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="Resend available in 54s" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/spacing_24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_sign_out"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="Change Account / Sign Out"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

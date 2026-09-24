@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_test"
+    style="?attr/materialCardViewOutlinedStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_12dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/card_corner_radius">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_test_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="QUANTITATIVE APTITUDE" />
+
+            <TextView
+                android:id="@+id/tv_test_difficulty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/difficulty_medium"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="MEDIUM" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_test_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="Quant Speed &amp; Accuracy Sprint 01" />
+
+        <TextView
+            android:id="@+id/tv_test_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="13sp"
+            tools:text="20 questions covering Percentages, Ratios, Averages, and Profit &amp; Loss with timed scoring." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_test_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="6dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="12sp"
+                app:drawableStartCompat="@drawable/ic_timer"
+                tools:text="15 Mins" />
+
+            <TextView
+                android:id="@+id/tv_test_qs_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_16dp"
+                android:layout_weight="1"
+                android:drawablePadding="6dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="12sp"
+                app:drawableStartCompat="@drawable/ic_book"
+                tools:text="20 Questions" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

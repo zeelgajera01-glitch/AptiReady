@@ -1,0 +1,23 @@
+[
+  {
+    "id": "quant",
+    "title": "Quantitative Aptitude",
+    "description": "Numerical ability, arithmetic, percentages & algebra",
+    "sortOrder": 1,
+    "published": true
+  },
+  {
+    "id": "logical",
+    "title": "Logical Reasoning",
+    "description": "Patterns, series, blood relations & syllogisms",
+    "sortOrder": 2,
+    "published": true
+  },
+  {
+    "id": "verbal",
+    "title": "Verbal Ability",
+    "description": "Vocabulary, grammar, reading comprehension & synonyms",
+    "sortOrder": 3,
+    "published": true
+  }
+]

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Branding -->
+    <string name="app_name">AptiRise</string>
+    <string name="app_tagline">Build confidence, one question at a time.</string>
+    <string name="demo_mode_badge">DEMO MODE</string>
+    <string name="sample_data_note">Sample Data Preview</string>
+    <string name="sample_data_disclaimer">This preview uses sample offline data. Real progress sync will be connected in Stage 2.</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Home</string>
+    <string name="nav_practice">Practice</string>
+    <string name="nav_tests">Tests</string>
+    <string name="nav_progress">Progress</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home Screen -->
+    <string name="home_greeting">Hello, Aptitude Aspirant!</string>
+    <string name="daily_challenge_title">Daily Quantitative Challenge</string>
+    <string name="daily_challenge_desc">Master Percentages &amp; Ratios with 5 quick questions today.</string>
+    <string name="btn_start_daily_challenge">Start Daily Challenge</string>
+    <string name="categories_header">Explore Categories</string>
+    <string name="quick_practice_header">Quick Practice</string>
+    <string name="btn_quick_5min_quiz">Start 5-Min Quick Quiz</string>
+    <string name="continue_learning_header">Continue Learning</string>
+    <string name="btn_continue">Continue</string>
+    <string name="demo_summary_header">Sample Learning Snapshot</string>
+
+    <!-- Categories -->
+    <string name="category_quant">Quantitative Aptitude</string>
+    <string name="category_quant_desc">Numerical ability, arithmetic, percentages &amp; algebra</string>
+    <string name="category_logical">Logical Reasoning</string>
+    <string name="category_logical_desc">Patterns, series, blood relations &amp; syllogisms</string>
+    <string name="category_verbal">Verbal Ability</string>
+    <string name="category_verbal_desc">Vocabulary, grammar, reading comprehension &amp; synonyms</string>
+
+    <!-- Practice Screen -->
+    <string name="search_hint">Search topics, concepts or formulas…</string>
+    <string name="filter_all">All Categories</string>
+    <string name="empty_search_title">No matching topics found</string>
+    <string name="empty_search_desc">Try searching for different keywords or select a different category filter.</string>
+    <string name="questions_count_format">%1$d sample questions</string>
+
+    <!-- Topic Details Screen -->
+    <string name="difficulty_label">Select Difficulty:</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="length_label">Practice Session Length:</string>
+    <string name="length_5_qs">5 Qs (Quick)</string>
+    <string name="length_10_qs">10 Qs (Standard)</string>
+    <string name="length_15_qs">15 Qs (Deep)</string>
+    <string name="length_20_qs">20 Qs (Marathon)</string>
+    <string name="concept_preview_header">Formula &amp; Concept Summary</string>
+    <string name="btn_start_practice">Start Practice Session</string>
+
+    <!-- Tests Screen -->
+    <string name="tests_header">Mock Test Series</string>
+    <string name="tests_subheader">Simulate actual placement &amp; exam time constraints.</string>
+    <string name="duration_format">%1$d mins</string>
+    <string name="test_details_title">Test Rules &amp; Structure</string>
+    <string name="btn_start_mock_test">Start Full Mock Test</string>
+
+    <!-- Progress Screen -->
+    <string name="progress_title">Your Growth Analytics</string>
+    <string name="zero_data_title">No Practice Records Yet</string>
+    <string name="zero_data_desc">Start practicing topics or take a mock test to record your speed, accuracy, and topic mastery.</string>
+    <string name="toggle_sample_data">Show Sample Data Preview</string>
+    <string name="accuracy_label">Overall Accuracy</string>
+    <string name="streak_label">Day Streak</string>
+    <string name="topics_completed_label">Topics Mastered</string>
+    <string name="category_mastery_header">Category Mastery Breakdown</string>
+
+    <!-- Profile Screen -->
+    <string name="theme_section_title">App Appearance</string>
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light Theme</string>
+    <string name="theme_dark">Dark Theme</string>
+    <string name="account_connection_title">Account &amp; Cloud Sync</string>
+    <string name="account_connection_desc">Account registration, Google Sign-In, and Cloud Firestore backup will be activated in Stage 2.</string>
+    <string name="app_info_title">App Information</string>
+    <string name="version_format">AptiRise v1.0.0 (Stage 1 Architecture)</string>
+
+    <!-- Upcoming Feature Placeholder -->
+    <string name="upcoming_title">Practice Engine Coming Soon</string>
+    <string name="upcoming_desc">The interactive quiz engine with timer, step-by-step solutions, and instant explanation popups will be implemented in Stage 2.</string>
+    <string name="btn_back_to_home">Return to Home</string>
+
+    <!-- Content Descriptions for Accessibility -->
+    <string name="cd_back_button">Navigate Back</string>
+    <string name="cd_search_icon">Search icon</string>
+    <string name="cd_category_icon">Category icon</string>
+    <string name="cd_app_logo">AptiRise Logo</string>
+</resources>

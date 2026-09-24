@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "4544407399",
+    "project_id": "aptiready",
+    "storage_bucket": "aptiready.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4544407399:android:34a0c34d915f009f49b1c2",
+        "android_client_info": {
+          "package_name": "com.aptirise.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE5-HFEId62Nt1aBFqJSehqalMgmY1xSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4544407399:android:69bf0eaa7650a29b49b1c2",
+        "android_client_info": {
+          "package_name": "com.example.aptiready"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE5-HFEId62Nt1aBFqJSehqalMgmY1xSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

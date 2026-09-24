@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <!-- Auth Destinations -->
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.aptiready.ui.auth.WelcomeFragment"
+        android:label="Welcome"
+        tools:layout="@layout/fragment_welcome">
+        <action
+            android:id="@+id/action_welcome_to_login"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_welcome_to_register"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_welcome_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.aptiready.ui.auth.LoginFragment"
+        android:label="Sign In"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_login_to_forgotPassword"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_login_to_verifyEmail"
+            app:destination="@id/verifyEmailFragment" />
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.aptiready.ui.auth.RegisterFragment"
+        android:label="Create Account"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_register_to_verifyEmail"
+            app:destination="@id/verifyEmailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyEmailFragment"
+        android:name="com.example.aptiready.ui.auth.VerifyEmailFragment"
+        android:label="Verify Email"
+        tools:layout="@layout/fragment_verify_email">
+        <action
+            android:id="@+id/action_verifyEmail_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_verifyEmail_to_welcome"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.aptiready.ui.auth.ForgotPasswordFragment"
+        android:label="Reset Password"
+        tools:layout="@layout/fragment_forgot_password" />
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.aptiready.ui.profile.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <!-- Main Navigation Destinations -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.aptiready.ui.home.HomeFragment"
+        android:label="@string/nav_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_topicDetail"
+            app:destination="@id/topicDetailFragment" />
+        <action
+            android:id="@+id/action_home_to_practice"
+            app:destination="@id/practiceFragment" />
+        <action
+            android:id="@+id/action_home_to_practiceSession"
+            app:destination="@id/practiceSessionFragment" />
+        <action
+            android:id="@+id/action_home_to_upcomingFeature"
+            app:destination="@id/upcomingFeatureFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/practiceFragment"
+        android:name="com.example.aptiready.ui.practice.PracticeFragment"
+        android:label="@string/nav_practice"
+        tools:layout="@layout/fragment_practice">
+        <action
+            android:id="@+id/action_practice_to_topicDetail"
+            app:destination="@id/topicDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/topicDetailFragment"
+        android:name="com.example.aptiready.ui.topic.TopicDetailFragment"
+        android:label="Topic Details"
+        tools:layout="@layout/fragment_topic_detail">
+        <argument
+            android:name="topicId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_topicDetail_to_practiceSession"
+            app:destination="@id/practiceSessionFragment" />
+        <action
+            android:id="@+id/action_topicDetail_to_upcomingFeature"
+            app:destination="@id/upcomingFeatureFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/practiceSessionFragment"
+        android:name="com.example.aptiready.ui.practice.PracticeSessionFragment"
+        android:label="Practice Session"
+        tools:layout="@layout/fragment_practice_session">
+        <argument
+            android:name="sessionId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_practiceSession_to_practiceResult"
+            app:destination="@id/practiceResultFragment"
+            app:popUpTo="@id/practiceSessionFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/practiceResultFragment"
+        android:name="com.example.aptiready.ui.practice.PracticeResultFragment"
+        android:label="Practice Results"
+        tools:layout="@layout/fragment_practice_result">
+        <argument
+            android:name="sessionId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_practiceResult_to_practiceReview"
+            app:destination="@id/practiceReviewFragment" />
+        <action
+            android:id="@+id/action_practiceResult_to_practiceSession"
+            app:destination="@id/practiceSessionFragment"
+            app:popUpTo="@id/practiceResultFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/practiceReviewFragment"
+        android:name="com.example.aptiready.ui.practice.PracticeReviewFragment"
+        android:label="Review Answers"
+        tools:layout="@layout/fragment_practice_review">
+        <argument
+            android:name="sessionId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bookmarksFragment"
+        android:name="com.example.aptiready.ui.practice.BookmarksFragment"
+        android:label="Bookmarks"
+        tools:layout="@layout/fragment_bookmarks" />
+
+    <fragment
+        android:id="@+id/testCatalogFragment"
+        android:name="com.example.aptiready.ui.tests.TestCatalogFragment"
+        android:label="@string/nav_tests"
+        tools:layout="@layout/fragment_test_catalog">
+        <action
+            android:id="@+id/action_testCatalog_to_testDetail"
+            app:destination="@id/testDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/testDetailFragment"
+        android:name="com.example.aptiready.ui.tests.TestDetailFragment"
+        android:label="Test Details"
+        tools:layout="@layout/fragment_test_detail">
+        <argument
+            android:name="testId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_testDetail_to_mockTest"
+            app:destination="@id/mockTestFragment" />
+        <action
+            android:id="@+id/action_testDetail_to_upcomingFeature"
+            app:destination="@id/upcomingFeatureFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mockTestFragment"
+        android:name="com.example.aptiready.ui.tests.MockTestFragment"
+        android:label="Mock Test"
+        tools:layout="@layout/fragment_mock_test">
+        <argument
+            android:name="attemptId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_mockTest_to_mockTestResult"
+            app:destination="@id/mockTestResultFragment"
+            app:popUpTo="@id/mockTestFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mockTestResultFragment"
+        android:name="com.example.aptiready.ui.tests.MockTestResultFragment"
+        android:label="Mock Test Results"
+        tools:layout="@layout/fragment_mock_test_result">
+        <argument
+            android:name="attemptId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_mockTestResult_to_practiceReview"
+            app:destination="@id/practiceReviewFragment" />
+        <action
+            android:id="@+id/action_mockTestResult_to_mockTest"
+            app:destination="@id/mockTestFragment"
+            app:popUpTo="@id/mockTestResultFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/attemptHistoryFragment"
+        android:name="com.example.aptiready.ui.tests.AttemptHistoryFragment"
+        android:label="Attempt History"
+        tools:layout="@layout/fragment_attempt_history">
+        <action
+            android:id="@+id/action_attemptHistory_to_practiceResult"
+            app:destination="@id/practiceResultFragment" />
+        <action
+            android:id="@+id/action_attemptHistory_to_mockTestResult"
+            app:destination="@id/mockTestResultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.example.aptiready.ui.progress.ProgressFragment"
+        android:label="@string/nav_progress"
+        tools:layout="@layout/fragment_progress">
+        <action
+            android:id="@+id/action_progress_to_attemptHistory"
+            app:destination="@id/attemptHistoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.aptiready.ui.profile.ProfileFragment"
+        android:label="@string/nav_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_editProfile"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profile_to_bookmarks"
+            app:destination="@id/bookmarksFragment" />
+        <action
+            android:id="@+id/action_profile_to_adDiagnostics"
+            app:destination="@id/adDiagnosticsFragment" />
+        <action
+            android:id="@+id/action_profile_to_accountDeletion"
+            app:destination="@id/accountDeletionFragment" />
+        <action
+            android:id="@+id/action_profile_to_welcome"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountDeletionFragment"
+        android:name="com.example.aptiready.ui.profile.AccountDeletionFragment"
+        android:label="Delete Account"
+        tools:layout="@layout/fragment_account_deletion">
+        <action
+            android:id="@+id/action_accountDeletion_to_welcome"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/adDiagnosticsFragment"
+        android:name="com.example.aptiready.ui.ads.AdDiagnosticsFragment"
+        android:label="Ad Diagnostics"
+        tools:layout="@layout/fragment_ad_diagnostics" />
+
+    <fragment
+        android:id="@+id/upcomingFeatureFragment"
+        android:name="com.example.aptiready.ui.common.UpcomingFeatureFragment"
+        android:label="Upcoming Feature"
+        tools:layout="@layout/fragment_upcoming_feature">
+        <argument
+            android:name="featureTitle"
+            android:defaultValue="Coming Soon"
+            app:argType="string" />
+        <argument
+            android:name="featureDescription"
+            android:defaultValue="This feature will be available in Stage 4."
+            app:argType="string" />
+    </fragment>
+
+</navigation>

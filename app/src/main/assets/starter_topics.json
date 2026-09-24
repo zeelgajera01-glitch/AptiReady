@@ -1,0 +1,122 @@
+[
+  {
+    "id": "percentages",
+    "categoryId": "quant",
+    "categoryName": "Quantitative Aptitude",
+    "title": "Percentages & Applications",
+    "description": "Fraction conversions, population growth, profit percentage & successive changes.",
+    "difficulty": "medium",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Percentage = (Value / Total) × 100%\n• Percentage Increase = [(New - Original) / Original] × 100%\n• Fraction Equivalents: 1/2 = 50%, 1/3 = 33.33%, 1/4 = 25%, 1/5 = 20%",
+    "sortOrder": 1,
+    "published": true
+  },
+  {
+    "id": "ratios",
+    "categoryId": "quant",
+    "categoryName": "Quantitative Aptitude",
+    "title": "Ratios & Proportions",
+    "description": "Direct and inverse proportions, mixture problems, partnership share calculations.",
+    "difficulty": "easy",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Ratio a:b = a/b\n• Proportion: If a:b = c:d, then a × d = b × c\n• Compounded Ratio of (a:b) and (c:d) = (ac : bd)",
+    "sortOrder": 2,
+    "published": true
+  },
+  {
+    "id": "averages",
+    "categoryId": "quant",
+    "categoryName": "Quantitative Aptitude",
+    "title": "Averages & Weighted Means",
+    "description": "Arithmetic mean, weighted average formulas, speed averages across distance segments.",
+    "difficulty": "easy",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Average = (Sum of All Observations) / (Total Number of Observations)\n• Average Speed = (Total Distance) / (Total Time Taken)\n• Weighted Average = (w1x1 + w2x2) / (w1 + w2)",
+    "sortOrder": 3,
+    "published": true
+  },
+  {
+    "id": "profit_loss",
+    "categoryId": "quant",
+    "categoryName": "Quantitative Aptitude",
+    "title": "Profit and Loss",
+    "description": "Cost price, selling price, marked price, trade discount and margin percentage calculations.",
+    "difficulty": "medium",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Profit = SP - CP | Loss = CP - SP\n• Profit % = (Profit / CP) × 100%\n• SP = [(100 + Profit%) / 100] × CP",
+    "sortOrder": 4,
+    "published": true
+  },
+  {
+    "id": "time_work",
+    "categoryId": "quant",
+    "categoryName": "Quantitative Aptitude",
+    "title": "Time and Work",
+    "description": "Individual work efficiency, pipe and cistern rates, man-hours efficiency equivalence.",
+    "difficulty": "hard",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• If A completes a work in 'n' days, A's 1 day work = 1/n\n• Work Done = Rate × Time\n• (M1 × D1 × H1) / W1 = (M2 × D2 × H2) / W2",
+    "sortOrder": 5,
+    "published": true
+  },
+  {
+    "id": "number_series",
+    "categoryId": "logical",
+    "categoryName": "Logical Reasoning",
+    "title": "Number Series & Pattern Analysis",
+    "description": "Missing term identification, Fibonacci sequences, alternate difference and prime patterns.",
+    "difficulty": "medium",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Common Types: Arithmetic (+d), Geometric (×r), Square/Cube differences (n² ± k).\n• Tip: Calculate differences between consecutive terms twice to detect sub-patterns.",
+    "sortOrder": 6,
+    "published": true
+  },
+  {
+    "id": "directions",
+    "categoryId": "logical",
+    "categoryName": "Logical Reasoning",
+    "title": "Direction Sense Test",
+    "description": "Compass direction navigation, pythagorean displacement, shadow orientation relative to sun.",
+    "difficulty": "easy",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Shortest Distance = √(x² + y²) [Pythagoras Theorem]\n• Sunrise: Shadow falls towards West.\n• Sunset: Shadow falls towards East.",
+    "sortOrder": 7,
+    "published": true
+  },
+  {
+    "id": "syllogisms",
+    "categoryId": "logical",
+    "categoryName": "Logical Reasoning",
+    "title": "Syllogisms & Deductive Logic",
+    "description": "Venn diagram deductive logic, universal positive/negative statements, conditional inferences.",
+    "difficulty": "hard",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• All A are B (Inclusion)\n• No A is B (Exclusive)\n• Some A are B (Intersection)\n• Rule: A conclusion is valid ONLY if it follows logically in ALL possible Venn configurations.",
+    "sortOrder": 8,
+    "published": true
+  },
+  {
+    "id": "grammar_vocab",
+    "categoryId": "verbal",
+    "categoryName": "Verbal Ability",
+    "title": "Grammar & Vocabulary",
+    "description": "Subject-verb agreement, common idioms, sentence corrections, synonyms and antonyms.",
+    "difficulty": "easy",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Subject-Verb Agreement: Singular subject requires singular verb.\n• Active vs Passive Voice: Focus on agent vs patient of action.\n• Contextual Clues: Pay attention to contrast words like 'however', 'despite', 'nonetheless'.",
+    "sortOrder": 9,
+    "published": true
+  },
+  {
+    "id": "reading_comp",
+    "categoryId": "verbal",
+    "categoryName": "Verbal Ability",
+    "title": "Reading Comprehension & Analysis",
+    "description": "Paragraph tone analysis, central thesis identification, logical inferences & weaken arguments.",
+    "difficulty": "medium",
+    "sampleQuestionCount": 6,
+    "formulaPreview": "• Main Idea: Identify topic sentence in intro/conclusion.\n• Tone Analysis: Pay attention to adjectives (e.g. alarmist, neutral, optimistic).\n• Inferences: Must follow strictly from passage evidence.",
+    "sortOrder": 10,
+    "published": true
+  }
+]

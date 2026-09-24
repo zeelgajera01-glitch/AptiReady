@@ -1,0 +1,78 @@
+[
+  {
+    "id": "quant_sprint_01",
+    "title": "Quantitative Speed Sprint 01",
+    "description": "10 timed questions covering Percentages, Ratios, Averages, Profit & Loss, and Time & Work.",
+    "questionIds": [
+      "q_percentages_01",
+      "q_percentages_03",
+      "q_ratios_01",
+      "q_ratios_04",
+      "q_averages_01",
+      "q_averages_03",
+      "q_profit_loss_01",
+      "q_profit_loss_04",
+      "q_time_work_01",
+      "q_time_work_03"
+    ],
+    "durationSeconds": 900,
+    "marksPerCorrect": 1,
+    "published": true,
+    "version": 1,
+    "updatedAt": "2026-09-19T12:00:00Z"
+  },
+  {
+    "id": "reasoning_verbal_01",
+    "title": "Reasoning & Verbal Ability Test 01",
+    "description": "10 timed questions covering Number Series, Directions, Syllogisms, Grammar, and Reading Comprehension.",
+    "questionIds": [
+      "q_number_series_01",
+      "q_number_series_03",
+      "q_directions_01",
+      "q_directions_03",
+      "q_syllogisms_01",
+      "q_syllogisms_03",
+      "q_grammar_vocab_01",
+      "q_grammar_vocab_03",
+      "q_reading_comp_01",
+      "q_reading_comp_03"
+    ],
+    "durationSeconds": 720,
+    "marksPerCorrect": 1,
+    "published": true,
+    "version": 1,
+    "updatedAt": "2026-09-19T12:00:00Z"
+  },
+  {
+    "id": "full_aptitude_mock_01",
+    "title": "Comprehensive Full Aptitude Mock 01",
+    "description": "Full mock test with 20 questions (2 from each topic) simulating placement exam conditions.",
+    "questionIds": [
+      "q_percentages_02",
+      "q_percentages_05",
+      "q_ratios_02",
+      "q_ratios_05",
+      "q_averages_02",
+      "q_averages_05",
+      "q_profit_loss_02",
+      "q_profit_loss_05",
+      "q_time_work_02",
+      "q_time_work_05",
+      "q_number_series_02",
+      "q_number_series_05",
+      "q_directions_02",
+      "q_directions_05",
+      "q_syllogisms_02",
+      "q_syllogisms_05",
+      "q_grammar_vocab_02",
+      "q_grammar_vocab_05",
+      "q_reading_comp_02",
+      "q_reading_comp_05"
+    ],
+    "durationSeconds": 1500,
+    "marksPerCorrect": 1,
+    "published": true,
+    "version": 1,
+    "updatedAt": "2026-09-19T12:00:00Z"
+  }
+]

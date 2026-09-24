@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all unmatched paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User Profile Rules for users/{uid}
+    match /users/{uid} {
+
+      // Helper functions
+      function isAuthenticatedAndVerified() {
+        return request.auth != null && request.auth.token.email_verified == true;
+      }
+
+      function isOwner(userId) {
+        return isAuthenticatedAndVerified() && request.auth.uid == userId;
+      }
+
+      function isValidProfileSchema(data) {
+        return data.keys().hasOnly(['displayName', 'dailyGoal', 'createdAt', 'updatedAt']) &&
+               data.displayName is string &&
+               data.displayName.size() >= 1 &&
+               data.displayName.size() <= 50 &&
+               data.dailyGoal is int &&
+               data.dailyGoal >= 5 &&
+               data.dailyGoal <= 100;
+      }
+
+      // Owner single document read ONLY (Denies listing users collection)
+      allow get: if isOwner(uid);
+      allow list: if false;
+
+      // Idempotent creation with strict type, bounds & server timestamp validation
+      allow create: if isOwner(uid) &&
+                       isValidProfileSchema(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
+
+      // Update allows changing displayName, dailyGoal & updatedAt only; preserves createdAt
+      allow update: if isOwner(uid) &&
+                       isValidProfileSchema(request.resource.data) &&
+                       request.resource.data.createdAt == resource.data.createdAt &&
+                       request.resource.data.updatedAt == request.time;
+
+      // Explicitly deny profile deletion
+      allow delete: if false;
+
+      // Subcollection: Practice Attempts
+      match /practiceAttempts/{attemptId} {
+        function isValidPracticeAttempt(data) {
+          return data.ownerId == uid &&
+                 data.attemptId == attemptId &&
+                 data.attemptType == 'PRACTICE' &&
+                 data.completionTime is int &&
+                 data.answeredCount is int && data.answeredCount >= 0 &&
+                 data.correctCount is int && data.correctCount >= 0 &&
+                 data.correctCount <= data.answeredCount;
+        }
+
+        allow get, list: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidPracticeAttempt(request.resource.data);
+        allow delete: if false;
+      }
+
+      // Subcollection: Mock Test Attempts
+      match /mockAttempts/{attemptId} {
+        function isValidMockAttempt(data) {
+          return data.ownerId == uid &&
+                 data.attemptId == attemptId &&
+                 data.attemptType == 'MOCK_TEST' &&
+                 data.completionTime is int &&
+                 data.earnedMarks is int && data.earnedMarks >= 0 &&
+                 data.maxMarks is int && data.maxMarks > 0;
+        }
+
+        allow get, list: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidMockAttempt(request.resource.data);
+        allow delete: if false;
+      }
+
+      // Subcollection: Question Bookmarks
+      match /questionBookmarks/{questionId} {
+        allow get, list: if isOwner(uid);
+        allow create, update: if isOwner(uid) && request.resource.data.questionId == questionId;
+        allow delete: if false;
+      }
+
+      // Subcollection: Lifetime Free Hint Entitlement
+      match /hintEntitlements/lifetimeFreeHint {
+        function isValidFreeHintClaim(data) {
+          return data.keys().hasOnly(['sessionId', 'questionId', 'claimedAt']) &&
+                 data.sessionId is string &&
+                 data.sessionId.size() >= 1 &&
+                 data.sessionId.size() <= 100 &&
+                 data.questionId is string &&
+                 data.questionId.size() >= 1 &&
+                 data.questionId.size() <= 100;
+        }
+
+        allow get: if isOwner(uid);
+        allow list: if false;
+        allow create: if isOwner(uid) &&
+                         isValidFreeHintClaim(request.resource.data) &&
+                         request.resource.data.claimedAt == request.time;
+        allow update: if false;
+        allow delete: if false;
+      }
+    }
+
+    // Public Read-Only Learning Content Rules
+    match /categories/{categoryId} {
+      allow read: if resource.data.published == true;
+      allow write: if false;
+    }
+
+    match /topics/{topicId} {
+      allow read: if resource.data.published == true;
+      allow write: if false;
+    }
+
+    match /practiceQuestions/{questionId} {
+      allow read: if resource.data.published == true;
+      allow write: if false;
+    }
+
+    match /mockTests/{testId} {
+      allow read: if resource.data.published == true;
+      allow write: if false;
+    }
+  }
+}

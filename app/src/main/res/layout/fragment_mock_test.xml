@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Top Bar with Timer & Exit -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_12dp"
+        android:paddingTop="@dimen/spacing_12dp"
+        android:paddingEnd="@dimen/spacing_12dp"
+        android:paddingBottom="@dimen/spacing_8dp">
+
+        <ImageButton
+            android:id="@+id/btn_exit_mock"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Exit mock test"
+            android:src="@drawable/ic_back"
+            app:tint="?attr/colorOnSurface" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_mock_test_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:text="Quant Speed Sprint 01" />
+
+            <TextView
+                android:id="@+id/tv_mock_test_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="12sp"
+                tools:text="Official Timed Mock Environment" />
+        </LinearLayout>
+
+        <!-- Timer Display Pill -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewElevatedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimaryContainer"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_timer"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tv_mock_timer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="14:52" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageButton
+            android:id="@+id/btn_mock_mark_review"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Mark for review"
+            android:src="@drawable/ic_star"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <!-- Progress Indicator & Counter -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_20dp"
+        android:paddingEnd="@dimen/spacing_20dp"
+        android:paddingBottom="@dimen/spacing_8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/tv_mock_question_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Question 3 of 10" />
+
+            <TextView
+                android:id="@+id/tv_mock_review_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="MARKED FOR REVIEW" />
+        </RelativeLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/mock_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="30"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackCornerRadius="4dp" />
+    </LinearLayout>
+
+    <!-- Question Content Scroll Container -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/spacing_20dp"
+        android:paddingTop="@dimen/spacing_8dp"
+        android:paddingEnd="@dimen/spacing_20dp"
+        android:paddingBottom="@dimen/spacing_24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Question Card -->
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewElevatedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_16dp"
+                app:cardCornerRadius="@dimen/card_corner_radius">
+
+                <TextView
+                    android:id="@+id/tv_mock_question_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="@dimen/spacing_16dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="If a shirt's price is increased by 20% and then decreased by 20%, what is the net percentage change in its price?" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Option Cards -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Option A -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_mock_option_a"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_mock_badge_a"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="A"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_mock_option_a_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="No change (0%)" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Option B -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_mock_option_b"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_mock_badge_b"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="B"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_mock_option_b_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="2% increase" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Option C -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_mock_option_c"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_mock_badge_c"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="C"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_mock_option_c_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="4% decrease" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Option D -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_mock_option_d"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/card_corner_radius">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_16dp">
+
+                        <TextView
+                            android:id="@+id/tv_mock_badge_d"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="D"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_mock_option_d_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_12dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15sp"
+                            tools:text="4% increase" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_selection"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="Clear Selection" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Bar Navigation -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_16dp"
+        android:paddingTop="@dimen/spacing_12dp"
+        android:paddingEnd="@dimen/spacing_16dp"
+        android:paddingBottom="@dimen/spacing_12dp">
+
+        <ImageButton
+            android:id="@+id/btn_prev_mock"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Previous question"
+            android:src="@drawable/ic_back"
+            app:tint="?attr/colorOnSurface" />
+
+        <ImageButton
+            android:id="@+id/btn_mock_navigator"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Question Navigator"
+            android:src="@drawable/ic_tests"
+            app:tint="?attr/colorPrimary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit_mock_test"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_12dp"
+            android:layout_marginEnd="@dimen/spacing_12dp"
+            android:layout_weight="1"
+            android:text="Submit Test"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+        <ImageButton
+            android:id="@+id/btn_next_mock"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Next question"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+</LinearLayout>

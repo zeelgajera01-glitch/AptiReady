@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_review_item"
+    style="?attr/materialCardViewOutlinedStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_16dp"
+    app:cardCornerRadius="@dimen/card_corner_radius">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_review_status_badge"
+                style="@style/Widget.AptiRise.DemoBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                tools:text="CORRECT" />
+
+            <ImageButton
+                android:id="@+id/btn_review_bookmark"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Bookmark question"
+                android:src="@drawable/ic_star"
+                app:tint="?attr/colorOnSurfaceVariant" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_review_question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="1. If a shirt's price is increased by 20% and then decreased by 20%, what is the net percentage change in its price?" />
+
+        <TextView
+            android:id="@+id/tv_user_selected_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="13sp"
+            tools:text="Your Answer: Option C (4% decrease)" />
+
+        <TextView
+            android:id="@+id/tv_correct_answer_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/difficulty_easy"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Correct Answer: Option C (4% decrease)" />
+
+        <TextView
+            android:id="@+id/tv_review_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:background="?attr/colorPrimaryContainer"
+            android:padding="@dimen/spacing_12dp"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textSize="12sp"
+            tools:text="Explanation: Net % change = -(x²/100)% = -(20²/100)% = -4%." />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

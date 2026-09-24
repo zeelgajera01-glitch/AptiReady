@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Primary Indigo -->
+    <color name="indigo_50">#EEF2FF</color>
+    <color name="indigo_100">#E0E7FF</color>
+    <color name="indigo_200">#C7D2FE</color>
+    <color name="indigo_500">#6366F1</color>
+    <color name="indigo_600">#4F46E5</color>
+    <color name="indigo_700">#4338CA</color>
+    <color name="indigo_800">#3730A3</color>
+    <color name="indigo_900">#312E81</color>
+
+    <!-- Brand Teal Accent -->
+    <color name="teal_50">#F0FDFA</color>
+    <color name="teal_100">#CCFBF1</color>
+    <color name="teal_400">#2DD4BF</color>
+    <color name="teal_500">#14B8A6</color>
+    <color name="teal_700">#0F766E</color>
+    <color name="teal_800">#115E59</color>
+
+    <!-- Neutral Light Theme -->
+    <color name="slate_50">#F8FAFC</color>
+    <color name="slate_100">#F1F5F9</color>
+    <color name="slate_200">#E2E8F0</color>
+    <color name="slate_300">#CBD5E1</color>
+    <color name="slate_400">#94A3B8</color>
+    <color name="slate_600">#475569</color>
+    <color name="slate_800">#1E293B</color>
+    <color name="slate_900">#0F172A</color>
+
+    <!-- Semantic Light -->
+    <color name="primary">#4F46E5</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#EEF2FF</color>
+    <color name="on_primary_container">#312E81</color>
+
+    <color name="secondary">#0F766E</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#CCFBF1</color>
+    <color name="on_secondary_container">#115E59</color>
+
+    <color name="bg_light">#F8FAFC</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="card_stroke_light">#E2E8F0</color>
+    <color name="text_primary_light">#0F172A</color>
+    <color name="text_secondary_light">#475569</color>
+
+    <!-- Semantic Dark -->
+    <color name="primary_dark">#818CF8</color>
+    <color name="on_primary_dark">#0F172A</color>
+    <color name="primary_container_dark">#312E81</color>
+    <color name="on_primary_container_dark">#C7D2FE</color>
+
+    <color name="secondary_dark">#14B8A6</color>
+    <color name="on_secondary_dark">#0F172A</color>
+    <color name="secondary_container_dark">#115E59</color>
+    <color name="on_secondary_container_dark">#CCFBF1</color>
+
+    <color name="bg_dark">#0F172A</color>
+    <color name="surface_dark">#1E293B</color>
+    <color name="card_stroke_dark">#334155</color>
+    <color name="text_primary_dark">#F8FAFC</color>
+    <color name="text_secondary_dark">#94A3B8</color>
+
+    <!-- Generic Helpers -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="difficulty_easy">#16A34A</color>
+    <color name="difficulty_medium">#D97706</color>
+    <color name="difficulty_hard">#DC2626</color>
+</resources>
