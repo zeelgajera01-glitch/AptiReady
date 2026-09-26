@@ -18,6 +18,9 @@
             android:id="@+id/action_welcome_to_register"
             app:destination="@id/registerFragment" />
         <action
+            android:id="@+id/action_welcome_to_verifyEmail"
+            app:destination="@id/verifyEmailFragment" />
+        <action
             android:id="@+id/action_welcome_to_home"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/welcomeFragment"

@@ -45,7 +45,7 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Clearly visible Demo Mode Badge -->
+            <!-- Demo Mode Badge Hidden -->
             <TextView
                 android:id="@+id/tv_demo_badge"
                 style="@style/Widget.AptiRise.DemoBadge"
@@ -53,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="@string/demo_mode_badge" />
+                android:text="@string/demo_mode_badge"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- Resume Active Session Card (Visible when in-progress session exists) -->
@@ -483,11 +484,12 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Demo Progress Summary (Sample Data) -->
+        <!-- Demo Progress Summary (Hidden) -->
         <com.google.android.material.card.MaterialCardView
             style="?attr/materialCardViewOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/card_corner_radius">
 
             <LinearLayout

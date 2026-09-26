@@ -219,11 +219,28 @@ class PracticeSessionViewModel(
     fun selectOption(optionId: String) {
         val list = _snapshots.value
         val pos = _currentPosition.value
-        if (pos in list.indices && !list[pos].isSubmitted) {
-            _selectedOptionId.value = optionId
-            viewModelScope.launch {
-                practiceRepository.saveAnswerSelection(sessionId, pos, optionId)
-            }
+
+        if (pos !in list.indices || list[pos].isSubmitted) {
+            return
+        }
+
+        // Update the in-memory snapshot immediately so the UI
+        // always reflects the currently selected question.
+        val updatedList = list.toMutableList()
+        updatedList[pos] = updatedList[pos].copy(
+            selectedOptionId = optionId
+        )
+
+        _snapshots.value = updatedList
+        _selectedOptionId.value = optionId
+
+        // Persist the answer asynchronously.
+        viewModelScope.launch {
+            practiceRepository.saveAnswerSelection(
+                sessionId = sessionId,
+                position = pos,
+                selectedOptionId = optionId
+            )
         }
     }
 
@@ -239,17 +256,33 @@ class PracticeSessionViewModel(
 
     fun navigateToPosition(position: Int) {
         val list = _snapshots.value
-        if (position in list.indices) {
-            _currentPosition.value = position
-            _selectedOptionId.value = list[position].selectedOptionId
-            viewModelScope.launch {
-                practiceRepository.updateCurrentPosition(sessionId, position)
-            }
-            val newQId = list[position].questionId
-            val activeContext = "$currentOwnerId|$sessionId|$newQId"
-            if (currentLookupContext != activeContext) {
-                refreshFreeHintStatus(newQId, force = true)
-            }
+
+        if (position !in list.indices) {
+            return
+        }
+
+        // IMPORTANT:
+        // Set the selected answer for the destination question
+        // BEFORE changing the current position so the UI cannot
+        // render the new question using the previous answer.
+        _selectedOptionId.value = list[position].selectedOptionId
+        _currentPosition.value = position
+
+        viewModelScope.launch {
+            practiceRepository.updateCurrentPosition(
+                sessionId,
+                position
+            )
+        }
+
+        val newQId = list[position].questionId
+        val activeContext = "$currentOwnerId|$sessionId|$newQId"
+
+        if (currentLookupContext != activeContext) {
+            refreshFreeHintStatus(
+                newQId,
+                force = true
+            )
         }
     }
 

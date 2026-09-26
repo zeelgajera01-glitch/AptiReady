@@ -13,7 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.aptiready.AptiRiseApplication
 import com.example.aptiready.R
-import com.example.aptiready.data.remote.FirebaseConfigManager
 import com.example.aptiready.databinding.FragmentRegisterBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -65,14 +64,8 @@ class RegisterFragment : Fragment() {
     }
 
     private fun checkFirebaseConfig() {
-        if (!viewModel.isFirebaseConfigured) {
-            binding.cardFirebaseWarning.visibility = View.VISIBLE
-            binding.tvConfigWarningMsg.text = FirebaseConfigManager.getConfigurationMessage()
-            binding.btnRegister.isEnabled = false
-        } else {
-            binding.cardFirebaseWarning.visibility = View.GONE
-            binding.btnRegister.isEnabled = true
-        }
+        binding.cardFirebaseWarning.visibility = View.GONE
+        binding.btnRegister.isEnabled = true
     }
 
     private fun observeViewModel() {

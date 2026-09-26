@@ -289,7 +289,7 @@ class PracticeSessionFragment : Fragment() {
         binding.tvOptionDText.text = opts.find { it.id == "d" }?.text ?: ""
 
         val isSubmitted = snapshot.isSubmitted
-        val selected = viewModel.selectedOptionId.value ?: snapshot.selectedOptionId
+        val selected = snapshot.selectedOptionId
 
         if (isSubmitted) {
             binding.tvSubmittedStatus.visibility = View.VISIBLE
@@ -302,19 +302,19 @@ class PracticeSessionFragment : Fragment() {
             binding.cardExplanation.visibility = View.VISIBLE
             binding.tvExplanationText.text = snapshot.explanation
 
-            highlightSubmittedOption(binding.cardOptionA, binding.tvBadgeA, "a", snapshot.correctOptionId, selected)
-            highlightSubmittedOption(binding.cardOptionB, binding.tvBadgeB, "b", snapshot.correctOptionId, selected)
-            highlightSubmittedOption(binding.cardOptionC, binding.tvBadgeC, "c", snapshot.correctOptionId, selected)
-            highlightSubmittedOption(binding.cardOptionD, binding.tvBadgeD, "d", snapshot.correctOptionId, selected)
+            highlightSubmittedOption(binding.cardOptionA, binding.tvBadgeA, binding.tvOptionAText, "a", snapshot.correctOptionId, selected)
+            highlightSubmittedOption(binding.cardOptionB, binding.tvBadgeB, binding.tvOptionBText, "b", snapshot.correctOptionId, selected)
+            highlightSubmittedOption(binding.cardOptionC, binding.tvBadgeC, binding.tvOptionCText, "c", snapshot.correctOptionId, selected)
+            highlightSubmittedOption(binding.cardOptionD, binding.tvBadgeD, binding.tvOptionDText, "d", snapshot.correctOptionId, selected)
         } else {
             binding.tvSubmittedStatus.visibility = View.GONE
             binding.cardExplanation.visibility = View.GONE
             binding.btnSubmitAnswer.isEnabled = selected != null
 
-            highlightUnsubmittedOption(binding.cardOptionA, binding.tvBadgeA, "a", selected)
-            highlightUnsubmittedOption(binding.cardOptionB, binding.tvBadgeB, "b", selected)
-            highlightUnsubmittedOption(binding.cardOptionC, binding.tvBadgeC, "c", selected)
-            highlightUnsubmittedOption(binding.cardOptionD, binding.tvBadgeD, "d", selected)
+            highlightUnsubmittedOption(binding.cardOptionA, binding.tvBadgeA, binding.tvOptionAText, "a", selected)
+            highlightUnsubmittedOption(binding.cardOptionB, binding.tvBadgeB, binding.tvOptionBText, "b", selected)
+            highlightUnsubmittedOption(binding.cardOptionC, binding.tvBadgeC, binding.tvOptionCText, "c", selected)
+            highlightUnsubmittedOption(binding.cardOptionD, binding.tvBadgeD, binding.tvOptionDText, "d", selected)
         }
 
         binding.btnPrevQuestion.isEnabled = position > 0
@@ -528,36 +528,46 @@ class PracticeSessionFragment : Fragment() {
     private fun highlightUnsubmittedOption(
         card: com.google.android.material.card.MaterialCardView,
         badge: android.widget.TextView,
+        optionTextView: android.widget.TextView,
         optionId: String,
         selectedId: String?
     ) {
-        val context = requireContext()
         val isSelected = optionId == selectedId
 
         card.isSelected = isSelected
         badge.background = null
 
         if (isSelected) {
-            card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.indigo_50))
-            card.strokeColor = ContextCompat.getColor(context, R.color.primary)
+            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimaryContainer)
+            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimary)
+            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnPrimaryContainer)
+
+            card.setCardBackgroundColor(bg)
+            card.strokeColor = stroke
             card.strokeWidth = 4
-            badge.setTextColor(ContextCompat.getColor(context, R.color.primary))
+            badge.setTextColor(textColor)
+            optionTextView.setTextColor(textColor)
         } else {
-            card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.surface_light))
-            card.strokeColor = ContextCompat.getColor(context, R.color.card_stroke_light)
+            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface)
+            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorOutline, ContextCompat.getColor(requireContext(), R.color.card_stroke_light))
+            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSurface)
+
+            card.setCardBackgroundColor(bg)
+            card.strokeColor = stroke
             card.strokeWidth = 1
-            badge.setTextColor(com.google.android.material.color.MaterialColors.getColor(badge, com.google.android.material.R.attr.colorOnSurface))
+            badge.setTextColor(textColor)
+            optionTextView.setTextColor(textColor)
         }
     }
 
     private fun highlightSubmittedOption(
         card: com.google.android.material.card.MaterialCardView,
         badge: android.widget.TextView,
+        optionTextView: android.widget.TextView,
         optionId: String,
         correctId: String,
         selectedId: String?
     ) {
-        val context = requireContext()
         val isCorrect = optionId == correctId
         val isUserSelection = optionId == selectedId
 
@@ -566,22 +576,37 @@ class PracticeSessionFragment : Fragment() {
 
         when {
             isCorrect -> {
-                card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.teal_100))
-                card.strokeColor = ContextCompat.getColor(context, R.color.teal_700)
+                val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSecondaryContainer)
+                val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSecondary)
+                val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSecondaryContainer)
+
+                card.setCardBackgroundColor(bg)
+                card.strokeColor = stroke
                 card.strokeWidth = 4
-                badge.setTextColor(ContextCompat.getColor(context, R.color.teal_800))
+                badge.setTextColor(textColor)
+                optionTextView.setTextColor(textColor)
             }
             isUserSelection && !isCorrect -> {
-                card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.indigo_50))
-                card.strokeColor = ContextCompat.getColor(context, R.color.difficulty_hard)
+                val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorErrorContainer)
+                val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorError)
+                val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnErrorContainer)
+
+                card.setCardBackgroundColor(bg)
+                card.strokeColor = stroke
                 card.strokeWidth = 4
-                badge.setTextColor(ContextCompat.getColor(context, R.color.difficulty_hard))
+                badge.setTextColor(textColor)
+                optionTextView.setTextColor(textColor)
             }
             else -> {
-                card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.surface_light))
-                card.strokeColor = ContextCompat.getColor(context, R.color.card_stroke_light)
+                val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface)
+                val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorOutline, ContextCompat.getColor(requireContext(), R.color.card_stroke_light))
+                val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSurface)
+
+                card.setCardBackgroundColor(bg)
+                card.strokeColor = stroke
                 card.strokeWidth = 1
-                badge.setTextColor(com.google.android.material.color.MaterialColors.getColor(badge, com.google.android.material.R.attr.colorOnSurface))
+                badge.setTextColor(textColor)
+                optionTextView.setTextColor(textColor)
             }
         }
     }

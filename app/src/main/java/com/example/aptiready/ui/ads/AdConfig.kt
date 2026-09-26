@@ -61,11 +61,11 @@ object AdConfig {
 
     // Shared Frequency Policy Thresholds
     object FrequencyPolicy {
-        const val FIRST_SESSION_INTERSTITIAL_ALLOWED = false
-        const val MIN_FOREGROUND_USAGE_MS = 120_000L // 2 minutes
-        const val MIN_INTERSTITIAL_COOLDOWN_MS = 180_000L // 3 minutes
-        const val MAX_INTERSTITIALS_PER_SESSION = 2
-        const val MAX_INTERSTITIALS_PER_DAY = 4
+        const val FIRST_SESSION_INTERSTITIAL_ALLOWED = true
+        const val MIN_FOREGROUND_USAGE_MS = 0L // 0s minimum usage
+        const val MIN_INTERSTITIAL_COOLDOWN_MS = 15_000L // 15 seconds
+        const val MAX_INTERSTITIALS_PER_SESSION = 5
+        const val MAX_INTERSTITIALS_PER_DAY = 10
         const val SESSION_TIMEOUT_MS = 1_800_000L // 30 minutes in background resets session
         const val AD_EXPIRE_DURATION_MS = 3_600_000L // 1-hour ad caching limit
     }
@@ -73,8 +73,7 @@ object AdConfig {
     // Audience & Policy Configuration
     object Audience {
         // Tag for users under the age of consent (TFUA).
-        // Conservative development setting; never assume an adult audience.
-        const val TAG_FOR_UNDER_AGE_OF_CONSENT = true
+        const val TAG_FOR_UNDER_AGE_OF_CONSENT = false
     }
 
     // List Insertion Thresholds

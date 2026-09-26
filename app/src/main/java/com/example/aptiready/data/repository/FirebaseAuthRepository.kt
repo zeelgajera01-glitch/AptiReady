@@ -117,33 +117,54 @@ class FirebaseAuthRepository(
         }
     }
 
-    override suspend fun loginWithEmail(email: String, password: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun loginWithEmail(
+        email: String,
+        password: String
+    ): Result<Boolean> = withContext(Dispatchers.IO) {
+
         if (!isFirebaseConfigured) {
-            return@withContext Result.failure(IllegalStateException(FirebaseConfigManager.getConfigurationMessage()))
+            return@withContext Result.failure(
+                IllegalStateException(
+                    FirebaseConfigManager.getConfigurationMessage()
+                )
+            )
         }
+
         val cleanEmail = email.trim()
 
         try {
-            val authResult = firebaseAuth!!.signInWithEmailAndPassword(cleanEmail, password).await()
-            val user = authResult.user ?: throw IllegalStateException("Sign in failed.")
-            
+            val authResult = firebaseAuth!!
+                .signInWithEmailAndPassword(cleanEmail, password)
+                .await()
+
+            val user = authResult.user
+                ?: throw IllegalStateException("Sign in failed.")
+
+            // Refresh Firebase user data so email verification status is current.
             user.reload().await()
-            var verifiedClaim = false
-            if (user.isEmailVerified) {
-                try {
-                    val tokenResult = user.getIdToken(true).await()
-                    verifiedClaim = (tokenResult.claims["email_verified"] as? Boolean) == true
-                } catch (e: Exception) {
-                    Log.w("FirebaseAuthRepo", "Failed to fetch ID token on login: ${e.message}")
-                }
+
+            val verified = user.isEmailVerified
+            val userEmail = user.email ?: cleanEmail
+
+            Log.d(
+                "FirebaseAuthRepo",
+                "Login UID=${user.uid}, email=$userEmail, emailVerified=$verified"
+            )
+
+            if (verified) {
+                _authState.value = AuthState.SignedInVerified(
+                    user.uid,
+                    userEmail
+                )
+            } else {
+                _authState.value = AuthState.SignedInUnverified(
+                    userEmail
+                )
             }
 
-            if (user.isEmailVerified && verifiedClaim) {
-                _authState.value = AuthState.SignedInVerified(user.uid, user.email ?: "")
-            } else {
-                _authState.value = AuthState.SignedInUnverified(user.email ?: "")
-            }
-            Result.success(Unit)
+            // Return the verification result to LoginViewModel.
+            Result.success(verified)
+
         } catch (e: Exception) {
             Result.failure(mapAuthException(e))
         }

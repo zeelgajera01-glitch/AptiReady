@@ -17,10 +17,13 @@ class BannerAdWrapper(context: Context, private val canRequestAds: () -> Boolean
     fun loadAnchoredAdaptiveBanner(placement: AdPlacement, container: ViewGroup,
         onAdStateChanged: (Boolean) -> Unit) {
         if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement)) { destroy(); return }
-        if (android.os.SystemClock.elapsedRealtime() < nextRetryAt) return
-        if (host === container) return // Retain the current request across STOP/START.
-        destroy()
-        host = container
+        if (host !== container) {
+            nextRetryAt = 0L
+            destroy()
+            host = container
+        } else if (android.os.SystemClock.elapsedRealtime() < nextRetryAt) {
+            return
+        }
         val token = generation
         val configToken = AdConfig.revision.value
         fun valid() = token == generation && canRequestAds() &&
@@ -36,7 +39,7 @@ class BannerAdWrapper(context: Context, private val canRequestAds: () -> Boolean
             adView = ad
             ad.adUnitId = AdConfig.getAdUnitIdForPlacement(placement)
             ad.setAdSize(
-                AdSize.getLargeAnchoredAdaptiveBannerAdSize(
+                AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
                     appContext,
                     width
                 )
@@ -53,7 +56,7 @@ class BannerAdWrapper(context: Context, private val canRequestAds: () -> Boolean
                     if (!valid() || adView !== ad) return
 
                     nextRetryAt =
-                        android.os.SystemClock.elapsedRealtime() + 30_000L
+                        android.os.SystemClock.elapsedRealtime() + 5_000L
 
                     this@BannerAdWrapper.destroy()
                     onAdStateChanged(false)

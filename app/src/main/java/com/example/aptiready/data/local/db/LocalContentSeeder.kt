@@ -33,9 +33,9 @@ object LocalContentSeeder {
         contentDao.insertCategories(defaultCategories)
         contentDao.insertTopics(defaultTopics)
 
-        // Seed or update all 1200 starter questions from starter_questions.json if total count < 1200
+        // Seed or update all 24000 starter questions from starter_questions.json if total count < 24000
         val currentQuestionCount = contentDao.getTotalQuestionCount()
-        if (currentQuestionCount < 1200) {
+        if (currentQuestionCount < 24000) {
             val jsonString = context.assets.open("starter_questions.json").bufferedReader().use { it.readText() }
             val jsonArray = JSONArray(jsonString)
             val questionEntities = mutableListOf<QuestionEntity>()

@@ -13,20 +13,30 @@ class LoginViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    val isFirebaseConfigured: Boolean = authRepository.isFirebaseConfigured
+    val isFirebaseConfigured: Boolean =
+        authRepository.isFirebaseConfigured
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    val isLoading: StateFlow<Boolean> =
+        _isLoading.asStateFlow()
 
     private val _loginError = MutableStateFlow<String?>(null)
-    val loginError: StateFlow<String?> = _loginError.asStateFlow()
+    val loginError: StateFlow<String?> =
+        _loginError.asStateFlow()
 
-    fun login(email: String, password: String, onSuccess: () -> Unit) {
+    fun login(
+        email: String,
+        password: String,
+        onVerified: () -> Unit,
+        onNeedsVerification: () -> Unit
+    ) {
         val cleanEmail = email.trim()
+
         if (cleanEmail.isEmpty()) {
             _loginError.value = "Please enter your email address."
             return
         }
+
         if (password.isEmpty()) {
             _loginError.value = "Please enter your password."
             return
@@ -36,21 +46,40 @@ class LoginViewModel(
         _loginError.value = null
 
         viewModelScope.launch {
-            val result = authRepository.loginWithEmail(cleanEmail, password)
+
+            val result = authRepository.loginWithEmail(
+                cleanEmail,
+                password
+            )
+
             _isLoading.value = false
-            result.onSuccess {
-                onSuccess()
-            }.onFailure { exception ->
-                _loginError.value = exception.localizedMessage ?: "Sign in failed."
-            }
+
+            result
+                .onSuccess { isVerified ->
+
+                    if (isVerified) {
+                        onVerified()
+                    } else {
+                        onNeedsVerification()
+                    }
+
+                }
+                .onFailure { exception ->
+                    _loginError.value =
+                        exception.localizedMessage
+                            ?: "Sign in failed."
+                }
         }
     }
 
     class Factory(
         private val authRepository: AuthRepository
     ) : ViewModelProvider.Factory {
+
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(
+            modelClass: Class<T>
+        ): T {
             return LoginViewModel(authRepository) as T
         }
     }

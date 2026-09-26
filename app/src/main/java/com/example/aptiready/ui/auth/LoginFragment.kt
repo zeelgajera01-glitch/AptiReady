@@ -50,9 +50,20 @@ class LoginFragment : Fragment() {
             val email = binding.etEmail.text?.toString() ?: ""
             val password = binding.etPassword.text?.toString() ?: ""
 
-            viewModel.login(email, password) {
-                findNavController().navigate(R.id.action_login_to_home)
-            }
+            viewModel.login(
+                email = email,
+                password = password,
+                onVerified = {
+                    findNavController().navigate(
+                        R.id.action_login_to_home
+                    )
+                },
+                onNeedsVerification = {
+                    findNavController().navigate(
+                        R.id.action_login_to_verifyEmail
+                    )
+                }
+            )
         }
 
         binding.btnForgotPassword.setOnClickListener {
@@ -67,14 +78,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun checkFirebaseConfig() {
-        if (!viewModel.isFirebaseConfigured) {
-            binding.cardFirebaseWarning.visibility = View.VISIBLE
-            binding.tvConfigWarningMsg.text = FirebaseConfigManager.getConfigurationMessage()
-            binding.btnLogin.isEnabled = false
-        } else {
-            binding.cardFirebaseWarning.visibility = View.GONE
-            binding.btnLogin.isEnabled = true
-        }
+        binding.cardFirebaseWarning.visibility = View.GONE
+        binding.btnLogin.isEnabled = true
     }
 
     private fun observeViewModel() {

@@ -15,12 +15,20 @@ class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean)
     private var nextRetry = 0L
     fun loadAndBindNativeAd(placement: AdPlacement, binding: NativeAdViewBinding,
         onAdStateChanged: (Boolean) -> Unit) {
-        loadNativeAdOnly(placement) { ad ->
+        loadFreshNativeAd(placement) { ad ->
             if (ad != null) populateNativeAdView(ad, binding)
             binding.root.visibility = if (ad == null) View.GONE else View.VISIBLE
             onAdStateChanged(ad != null)
         }
     }
+
+    fun loadFreshNativeAd(placement: AdPlacement, onAdLoaded: (NativeAd?) -> Unit) {
+        if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement)) return
+        if (loading) return
+        destroy() // Clear old ad & retry timestamps to fetch a new ad
+        loadNativeAdOnly(placement, onAdLoaded)
+    }
+
     fun loadNativeAdOnly(placement: AdPlacement, onAdLoaded: (NativeAd?) -> Unit) {
         if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement)) return
         currentNativeAd?.let { onAdLoaded(it); return }
@@ -41,7 +49,7 @@ class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean)
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     if (!valid()) return
                     loading = false
-                    nextRetry = SystemClock.elapsedRealtime() + 30_000L
+                    nextRetry = SystemClock.elapsedRealtime() + 5_000L
                     onAdLoaded(null)
                 }
             }).build().loadAd(AdRequest.Builder().build())

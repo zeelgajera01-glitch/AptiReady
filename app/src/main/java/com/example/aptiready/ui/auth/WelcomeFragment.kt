@@ -54,12 +54,7 @@ class WelcomeFragment : Fragment() {
     }
 
     private fun checkFirebaseConfig() {
-        if (!viewModel.isFirebaseConfigured) {
-            binding.cardFirebaseWarning.visibility = View.VISIBLE
-            binding.tvConfigWarningMsg.text = FirebaseConfigManager.getConfigurationMessage()
-        } else {
-            binding.cardFirebaseWarning.visibility = View.GONE
-        }
+        binding.cardFirebaseWarning.visibility = View.GONE
     }
 
     private fun observeAuthState() {
@@ -67,10 +62,14 @@ class WelcomeFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.authState.collectLatest { state ->
                     when (state) {
-                        is AuthState.SignedInVerified,
-                        is AuthState.SignedInUnverified -> {
+                        is AuthState.SignedInVerified -> {
                             if (findNavController().currentDestination?.id == R.id.welcomeFragment) {
                                 findNavController().navigate(R.id.action_welcome_to_home)
+                            }
+                        }
+                        is AuthState.SignedInUnverified -> {
+                            if (findNavController().currentDestination?.id == R.id.welcomeFragment) {
+                                findNavController().navigate(R.id.action_welcome_to_verifyEmail)
                             }
                         }
                         else -> {}

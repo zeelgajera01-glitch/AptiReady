@@ -239,10 +239,10 @@ class MockTestFragment : Fragment() {
         binding.tvMockOptionDText.text = opts.find { it.id == "d" }?.text ?: ""
 
         val selected = snapshot.selectedOptionId
-        highlightOptionCard(binding.cardMockOptionA, binding.tvMockBadgeA, "a", selected)
-        highlightOptionCard(binding.cardMockOptionB, binding.tvMockBadgeB, "b", selected)
-        highlightOptionCard(binding.cardMockOptionC, binding.tvMockBadgeC, "c", selected)
-        highlightOptionCard(binding.cardMockOptionD, binding.tvMockBadgeD, "d", selected)
+        highlightOptionCard(binding.cardMockOptionA, binding.tvMockBadgeA, binding.tvMockOptionAText, "a", selected)
+        highlightOptionCard(binding.cardMockOptionB, binding.tvMockBadgeB, binding.tvMockOptionBText, "b", selected)
+        highlightOptionCard(binding.cardMockOptionC, binding.tvMockBadgeC, binding.tvMockOptionCText, "c", selected)
+        highlightOptionCard(binding.cardMockOptionD, binding.tvMockBadgeD, binding.tvMockOptionDText, "d", selected)
 
         binding.btnPrevMock.isEnabled = position > 0
     }
@@ -250,25 +250,35 @@ class MockTestFragment : Fragment() {
     private fun highlightOptionCard(
         card: com.google.android.material.card.MaterialCardView,
         badge: android.widget.TextView,
+        optionTextView: android.widget.TextView,
         optionId: String,
         selectedId: String?
     ) {
-        val context = requireContext()
         val isSelected = optionId == selectedId
 
         card.isSelected = isSelected
         badge.background = null
 
         if (isSelected) {
-            card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.indigo_50))
-            card.strokeColor = ContextCompat.getColor(context, R.color.primary)
+            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimaryContainer)
+            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimary)
+            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnPrimaryContainer)
+
+            card.setCardBackgroundColor(bg)
+            card.strokeColor = stroke
             card.strokeWidth = 4
-            badge.setTextColor(ContextCompat.getColor(context, R.color.primary))
+            badge.setTextColor(textColor)
+            optionTextView.setTextColor(textColor)
         } else {
-            card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.surface_light))
-            card.strokeColor = ContextCompat.getColor(context, R.color.card_stroke_light)
+            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface)
+            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorOutline, ContextCompat.getColor(requireContext(), R.color.card_stroke_light))
+            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSurface)
+
+            card.setCardBackgroundColor(bg)
+            card.strokeColor = stroke
             card.strokeWidth = 1
-            badge.setTextColor(com.google.android.material.color.MaterialColors.getColor(badge, com.google.android.material.R.attr.colorOnSurface))
+            badge.setTextColor(textColor)
+            optionTextView.setTextColor(textColor)
         }
     }
 

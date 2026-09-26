@@ -9,7 +9,6 @@ import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import kotlinx.coroutines.*
-import com.google.android.gms.ads.AgeRestrictedTreatment
 import kotlinx.coroutines.flow.*
 
 data class AdRuntimeState(val ready: Boolean = false, val generation: Long = 0)
@@ -101,11 +100,11 @@ class ConsentManager(context: Context) {
 
         val requestConfiguration = MobileAds.getRequestConfiguration()
             .toBuilder()
-            .setAgeRestrictedTreatment(
-                AgeRestrictedTreatment.CHILD
-            )
-            .setMaxAdContentRating(
-                RequestConfiguration.MAX_AD_CONTENT_RATING_G
+            .setTagForUnderAgeOfConsent(
+                if (AdConfig.Audience.TAG_FOR_UNDER_AGE_OF_CONSENT)
+                    RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE
+                else
+                    RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_FALSE
             )
             .build()
 

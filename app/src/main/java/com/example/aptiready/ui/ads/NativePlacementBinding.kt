@@ -19,6 +19,8 @@ class NativePlacementBinding(
     private var epoch = -1L
     private var eligibleCount = false
     private var closed = false
+    private var lastLifecycleState = Lifecycle.State.INITIALIZED
+
     init {
         owner.lifecycle.addObserver(this)
         owner.lifecycleScope.launch {
@@ -32,11 +34,23 @@ class NativePlacementBinding(
                     loader.destroy()
                     epoch = state.generation
                 }
+
+                val isReentering = lastLifecycleState < Lifecycle.State.STARTED && lifecycle.isAtLeast(Lifecycle.State.STARTED)
+                lastLifecycleState = lifecycle
+
                 if (eligibleCount && consent.canLoad(placement) && lifecycle.isAtLeast(Lifecycle.State.STARTED)) {
-                    loader.loadNativeAdOnly(placement) { ad ->
-                        if (!closed && eligibleCount && consent.canLoad(placement) &&
-                            epoch == consent.adState.value.generation &&
-                            owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) render(ad)
+                    if (isReentering) {
+                        loader.loadFreshNativeAd(placement) { ad ->
+                            if (!closed && eligibleCount && consent.canLoad(placement) &&
+                                epoch == consent.adState.value.generation &&
+                                owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) render(ad)
+                        }
+                    } else {
+                        loader.loadNativeAdOnly(placement) { ad ->
+                            if (!closed && eligibleCount && consent.canLoad(placement) &&
+                                epoch == consent.adState.value.generation &&
+                                owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) render(ad)
+                        }
                     }
                 }
             }
