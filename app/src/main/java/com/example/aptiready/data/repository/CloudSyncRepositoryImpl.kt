@@ -93,8 +93,6 @@ class CloudSyncRepositoryImpl(
             authRepository.authState.collectLatest { authState ->
                 val accountUid = when (authState) {
                     is AuthState.SignedInVerified -> authState.uid
-                    is AuthState.SignedInUnverified ->
-                        authRepository.currentUserId
                     else -> null
                 }
 
@@ -180,15 +178,9 @@ class CloudSyncRepositoryImpl(
         }
 
         if (auth !is AuthState.SignedInVerified) {
-            val status = if (auth is AuthState.SignedInUnverified) {
-                SyncStatus.WAITING_FOR_VERIFICATION
-            } else {
-                SyncStatus.OFF
-            }
-
             withContext(Dispatchers.Main.immediate) {
                 if (activeSessionToken == token) {
-                    _syncStatus.value = status
+                    _syncStatus.value = SyncStatus.OFF
                 }
             }
             return

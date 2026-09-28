@@ -28,6 +28,13 @@
 
     <style name="Theme.AptiReady" parent="Base.Theme.AptiReady" />
 
+    <!-- Splash Screen Theme -->
+    <style name="Theme.AptiReady.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/bg_light</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.AptiReady</item>
+    </style>
+
     <!-- Badge Style -->
     <style name="Widget.AptiRise.DemoBadge" parent="">
         <item name="android:background">@color/indigo_50</item>

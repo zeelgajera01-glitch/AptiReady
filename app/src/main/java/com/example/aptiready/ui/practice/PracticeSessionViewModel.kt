@@ -70,10 +70,6 @@ class PracticeSessionViewModel(
                             refreshFreeHintStatus(activeQId, force = true)
                         }
                     }
-                    is AuthState.SignedInUnverified -> {
-                        currentLookupContext = null
-                        _freeHintStatus.value = FreeHintStatus.Unverified("Email verification required to use free hint.")
-                    }
                     else -> {
                         currentLookupContext = null
                         _freeHintStatus.value = FreeHintStatus.Unverified("Verified account required to use free hint.")

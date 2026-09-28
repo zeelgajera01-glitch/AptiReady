@@ -14,8 +14,8 @@ android {
         applicationId = "com.aptirise.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 10
+        versionName = "1.0.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,6 +65,7 @@ android {
             keyPassword = keyPasswordValue
         }
     }
+
     buildTypes {
         debug {
             buildConfigField("boolean", "ADS_ENABLED", "true")
@@ -146,6 +147,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
+    implementation(libs.facebook.shimmer)
 
     // Jetpack Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -165,9 +167,12 @@ dependencies {
 
     // Firebase (BoM)
     implementation(platform(libs.firebase.bom))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-config")
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.functions)
+    implementation(libs.google.play.services.auth)
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)

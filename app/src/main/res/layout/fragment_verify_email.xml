@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_8dp"
             android:gravity="center"
-            android:text="We sent a verification link to your email address. Please open your inbox and click the link to activate your cloud profile."
+            android:text="We sent a 6-digit verification code to your email address. Please enter the code below to activate your profile."
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
@@ -46,7 +46,7 @@
             style="?attr/materialCardViewOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_20dp"
+            android:layout_marginTop="@dimen/spacing_16dp"
             app:cardCornerRadius="@dimen/card_corner_radius">
 
             <TextView
@@ -54,12 +54,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="@dimen/spacing_16dp"
+                android:padding="@dimen/spacing_12dp"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 tools:text="user@example.com" />
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- OTP Input Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_otp_code"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:hint="Enter 6-Digit Code"
+            app:boxCornerRadiusBottomEnd="@dimen/card_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/card_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/card_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/card_corner_radius">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_otp_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:inputType="number"
+                android:letterSpacing="0.2"
+                android:maxLength="6"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress_indicator"
@@ -75,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="@dimen/spacing_16dp"
-            android:text="I Have Verified"
+            android:text="Verify Code"
             app:cornerRadius="@dimen/button_corner_radius" />
 
         <com.google.android.material.button.MaterialButton
@@ -84,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="@dimen/spacing_12dp"
-            android:text="Resend Verification Email"
+            android:text="Resend Verification Code"
             app:cornerRadius="@dimen/button_corner_radius" />
 
         <TextView

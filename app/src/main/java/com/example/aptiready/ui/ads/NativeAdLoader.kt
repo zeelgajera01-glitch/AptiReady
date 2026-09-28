@@ -13,11 +13,29 @@ class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean)
     private var generation = 0
     private var loading = false
     private var nextRetry = 0L
+    fun showShimmer(binding: NativeAdViewBinding, show: Boolean) {
+        val shimmerView = binding.shimmerContainer as? com.facebook.shimmer.ShimmerFrameLayout
+        if (show) {
+            shimmerView?.startShimmer()
+            shimmerView?.visibility = View.VISIBLE
+            binding.cardNativeAd.visibility = View.GONE
+        } else {
+            shimmerView?.stopShimmer()
+            shimmerView?.visibility = View.GONE
+        }
+    }
+
     fun loadAndBindNativeAd(placement: AdPlacement, binding: NativeAdViewBinding,
         onAdStateChanged: (Boolean) -> Unit) {
+        showShimmer(binding, true)
+        binding.root.visibility = View.VISIBLE
         loadFreshNativeAd(placement) { ad ->
-            if (ad != null) populateNativeAdView(ad, binding)
-            binding.root.visibility = if (ad == null) View.GONE else View.VISIBLE
+            if (ad != null) {
+                populateNativeAdView(ad, binding)
+            } else {
+                showShimmer(binding, false)
+                binding.root.visibility = View.GONE
+            }
             onAdStateChanged(ad != null)
         }
     }
@@ -54,7 +72,11 @@ class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean)
                 }
             }).build().loadAd(AdRequest.Builder().build())
     }
+
     fun populateNativeAdView(nativeAd: NativeAd, binding: NativeAdViewBinding) {
+        showShimmer(binding, false)
+        binding.cardNativeAd.visibility = View.VISIBLE
+
         val nativeAdView = binding.nativeAdView
 
         // 1. Headline (Required)

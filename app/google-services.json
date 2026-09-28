@@ -12,7 +12,52 @@
           "package_name": "com.aptirise.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "4544407399-1thjbraknf9gb8bgv9s1kc6dp8bssfqj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aptirise.app",
+            "certificate_hash": "ad6054d73336964d33eb13b5df4b5c275110a8aa"
+          }
+        },
+        {
+          "client_id": "4544407399-5gbo4g0dk0cga766v9nv38o3q1oga12q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aptirise.app",
+            "certificate_hash": "e170bb5d8181f04f549527399d1940a325fa864c"
+          }
+        },
+        {
+          "client_id": "4544407399-8lnbe582mbbjnls2b4gjq52bscvbkckt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aptirise.app",
+            "certificate_hash": "91c49d61d27178ff5a5d85228d6c5abbd92e6198"
+          }
+        },
+        {
+          "client_id": "4544407399-eh9ibtdbqa5vg9cftup7u7ugfqeq2e29.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aptirise.app",
+            "certificate_hash": "7747e11de9b5f945aed86f7cb0d800adcbc97edf"
+          }
+        },
+        {
+          "client_id": "4544407399-pfq2tfirp3lvv3n9kekef8ailo2cn3hl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aptirise.app",
+            "certificate_hash": "480a920e93aa721c23cc0a179416694702212032"
+          }
+        },
+        {
+          "client_id": "4544407399-rp3h25eqb8tfpp3s205lob9ipv93r939.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBE5-HFEId62Nt1aBFqJSehqalMgmY1xSs"
@@ -20,7 +65,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "4544407399-rp3h25eqb8tfpp3s205lob9ipv93r939.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -31,7 +81,12 @@
           "package_name": "com.example.aptiready"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "4544407399-rp3h25eqb8tfpp3s205lob9ipv93r939.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBE5-HFEId62Nt1aBFqJSehqalMgmY1xSs"
@@ -39,7 +94,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "4544407399-rp3h25eqb8tfpp3s205lob9ipv93r939.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
