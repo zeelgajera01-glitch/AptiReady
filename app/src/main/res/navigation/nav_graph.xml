@@ -5,21 +5,19 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/welcomeFragment">
 
+    <!-- Global Actions -->
+    <action
+        android:id="@+id/action_global_to_welcome"
+        app:destination="@id/welcomeFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
     <!-- Auth Destinations -->
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.example.aptiready.ui.auth.WelcomeFragment"
         android:label="Welcome"
         tools:layout="@layout/fragment_welcome">
-        <action
-            android:id="@+id/action_welcome_to_login"
-            app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_welcome_to_register"
-            app:destination="@id/registerFragment" />
-        <action
-            android:id="@+id/action_welcome_to_verifyEmail"
-            app:destination="@id/verifyEmailFragment" />
         <action
             android:id="@+id/action_welcome_to_home"
             app:destination="@id/homeFragment"
@@ -102,6 +100,9 @@
         <action
             android:id="@+id/action_home_to_practice"
             app:destination="@id/practiceFragment" />
+        <action
+            android:id="@+id/action_home_to_testCatalog"
+            app:destination="@id/testCatalogFragment" />
         <action
             android:id="@+id/action_home_to_practiceSession"
             app:destination="@id/practiceSessionFragment" />
@@ -285,6 +286,9 @@
             android:id="@+id/action_profile_to_accountDeletion"
             app:destination="@id/accountDeletionFragment" />
         <action
+            android:id="@+id/action_profile_to_privacyPolicy"
+            app:destination="@id/privacyPolicyFragment" />
+        <action
             android:id="@+id/action_profile_to_welcome"
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/nav_graph"
@@ -302,6 +306,12 @@
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.example.aptiready.ui.profile.PrivacyPolicyFragment"
+        android:label="Privacy Policy"
+        tools:layout="@layout/fragment_privacy_policy" />
 
     <fragment
         android:id="@+id/adDiagnosticsFragment"

@@ -96,20 +96,28 @@
 
         <!-- Buttons -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_create_account"
+            android:id="@+id/btn_google_sign_in"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="@dimen/spacing_12dp"
-            android:text="Create Account"
-            app:cornerRadius="@dimen/button_corner_radius" />
+            android:text="Continue with Google"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="@dimen/button_corner_radius"
+            app:icon="@drawable/ic_sparkles"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="?attr/colorPrimary" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_sign_in"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_indicator"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:text="Sign In"
-            app:cornerRadius="@dimen/button_corner_radius" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

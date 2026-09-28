@@ -85,11 +85,26 @@ class HomeFragment : Fragment() {
             navigateToPracticeCategory("verbal")
         }
 
+        binding.cardQuickQuiz.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("topicId", "percentages")
+            }
+            findNavController().navigate(R.id.action_home_to_topicDetail, bundle)
+        }
+
         binding.btnQuickQuiz.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("topicId", "percentages")
             }
             findNavController().navigate(R.id.action_home_to_topicDetail, bundle)
+        }
+
+        binding.cardMockTests.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_testCatalog)
+        }
+
+        binding.btnMockCatalog.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_testCatalog)
         }
 
         binding.btnContinueTopic.setOnClickListener {
@@ -129,15 +144,7 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                launch {
-                    viewModel.demoProgress.collectLatest { progress ->
-                        progress?.let {
-                            binding.tvDemoAccuracy.text = "${it.accuracyPercentage}%"
-                            binding.tvDemoStreak.text = "${it.streakDays} Days"
-                            binding.tvDemoTopics.text = "${it.topicsCompleted}"
-                        }
-                    }
-                }
+
 
                 launch {
                     viewModel.recentTopic.collectLatest { topic ->

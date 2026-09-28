@@ -35,6 +35,14 @@ class BannerAdWrapper(context: Context, private val canRequestAds: () -> Boolean
             if (width <= 0 || width == widthDp) return
             widthDp = width
             adView?.let { (it.parent as? ViewGroup)?.removeView(it); it.destroy() }
+
+            // Show Facebook Shimmer while loading banner
+            val shimmerView = android.view.LayoutInflater.from(container.context)
+                .inflate(com.example.aptiready.R.layout.layout_banner_ad_shimmer, container, false)
+            container.removeAllViews()
+            container.addView(shimmerView)
+            container.visibility = View.VISIBLE
+
             val ad = AdView(appContext)
             adView = ad
             ad.adUnitId = AdConfig.getAdUnitIdForPlacement(placement)

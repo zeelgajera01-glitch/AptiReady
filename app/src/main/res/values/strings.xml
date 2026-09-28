@@ -3,6 +3,7 @@
     <!-- App Branding -->
     <string name="app_name">AptiRise</string>
     <string name="app_tagline">Build confidence, one question at a time.</string>
+    <string name="default_web_client_id">4544407399-rp3h25eqb8tfpp3s205lob9ipv93r939.apps.googleusercontent.com</string>
     <string name="demo_mode_badge">DEMO MODE</string>
     <string name="sample_data_note">Sample Data Preview</string>
     <string name="sample_data_disclaimer">This preview uses sample offline data. Real progress sync will be connected in Stage 2.</string>

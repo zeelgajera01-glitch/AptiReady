@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.aptiready.AptiRiseApplication
-import com.example.aptiready.BuildConfig
 import com.example.aptiready.R
 import com.example.aptiready.data.model.AuthState
 import com.example.aptiready.data.model.ProfileState
@@ -75,11 +74,6 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profile_to_bookmarks)
         }
 
-        binding.btnOpenAdDiagnostics.visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
-        binding.btnOpenAdDiagnostics.setOnClickListener {
-            findNavController().navigate(R.id.action_profile_to_adDiagnostics)
-        }
-
         binding.switchCloudBackup.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setBackupEnabled(isChecked)
         }
@@ -92,6 +86,10 @@ class ProfileFragment : Fragment() {
                 viewModel.triggerSyncNow()
                 Toast.makeText(requireContext(), "Cloud sync triggered...", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.cardPrivacyPolicy.setOnClickListener {
+            findNavController().navigate(R.id.action_profile_to_privacyPolicy)
         }
 
         binding.cardPrivacyOptions.setOnClickListener {
@@ -107,7 +105,6 @@ class ProfileFragment : Fragment() {
 
         binding.btnSignOut.setOnClickListener {
             viewModel.signOut()
-            findNavController().navigate(R.id.action_profile_to_welcome)
         }
     }
 
@@ -133,15 +130,8 @@ class ProfileFragment : Fragment() {
                                 binding.cardCloudSync.visibility = View.VISIBLE
                                 binding.btnSignOut.visibility = View.VISIBLE
                                 binding.tvAuthEmail.text = authState.email
-                                binding.tvVerifiedBadge.text = "VERIFIED"
+                                binding.tvVerifiedBadge.text = "GOOGLE ACCOUNT"
                                 viewModel.loadProfile()
-                            }
-                            is AuthState.SignedInUnverified -> {
-                                binding.cardAuthProfile.visibility = View.VISIBLE
-                                binding.cardCloudSync.visibility = View.VISIBLE
-                                binding.btnSignOut.visibility = View.VISIBLE
-                                binding.tvAuthEmail.text = authState.email
-                                binding.tvVerifiedBadge.text = "UNVERIFIED"
                             }
                             else -> {
                                 binding.cardAuthProfile.visibility = View.GONE

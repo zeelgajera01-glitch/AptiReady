@@ -299,54 +299,51 @@
             android:visibility="gone"
             app:cornerRadius="@dimen/button_corner_radius" />
 
-        <!-- App Info Card -->
+        <!-- Privacy Policy Card -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_privacy_policy"
             style="?attr/materialCardViewOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_20dp"
+            android:clickable="true"
+            android:focusable="true"
             app:cardCornerRadius="@dimen/card_corner_radius">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/spacing_16dp">
 
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_info"
+                    app:tint="?attr/colorPrimary" />
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_info_title"
+                    android:layout_marginStart="@dimen/spacing_12dp"
+                    android:layout_weight="1"
+                    android:text="Privacy Policy"
                     android:textColor="?attr/colorOnSurface"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="AptiRise v2.0.0 (Stage 2 Auth &amp; Profiles)"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Firebase Auth • Cloud Firestore • DataStore • Navigation Component"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_open_ad_diagnostics"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_8dp"
-                    android:text="Ad Placement Diagnostics (Debug)" />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Privacy Options Card (Visible when UMP requires) -->
+        <!-- Privacy Choices Card (Visible when UMP requires) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_privacy_options"
             style="?attr/materialCardViewOutlinedStyle"

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.aptiready.data.repository.AuthRepository
 import com.example.aptiready.data.repository.CloudSyncRepository
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.functions.FirebaseFunctions
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,44 +24,27 @@ class AccountDeletionViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    fun deleteAccount(password: String, onSuccess: () -> Unit) {
-        val cleanPassword = password.trim()
-        if (cleanPassword.isEmpty()) {
-            _error.value = "Please re-enter your password to confirm."
-            return
-        }
-
+    fun deleteAccount(onSuccess: () -> Unit) {
         _isDeleting.value = true
         _error.value = null
 
         viewModelScope.launch {
             val uid = authRepository.currentUserId
-            val email = authRepository.currentUserEmail
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
 
-            if (uid == null || email == null) {
+            if (uid == null || firebaseUser == null) {
                 _isDeleting.value = false
                 _error.value = "No active user session."
                 return@launch
             }
 
             try {
-                // Re-authenticate user with password
-                val credential = EmailAuthProvider.getCredential(email, cleanPassword)
-                val firebaseUser = FirebaseAuth.getInstance().currentUser
-                if (firebaseUser == null) {
-                    _isDeleting.value = false
-                    _error.value = "Authentication session expired."
-                    return@launch
-                }
-
-                firebaseUser.reauthenticate(credential).await()
-
                 // Call Cloud Function requestAccountDeletion or delete user
                 try {
                     val functions = FirebaseFunctions.getInstance()
                     functions.getHttpsCallable("requestAccountDeletion").call().await()
-                } catch (e: Exception) {
-                    // Fallback to direct Auth user deletion if function is offline
+                } catch (_: Exception) {
+                    // Direct Auth user deletion if function is offline
                     firebaseUser.delete().await()
                 }
 

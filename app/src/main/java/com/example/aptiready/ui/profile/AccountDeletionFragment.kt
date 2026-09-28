@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.aptiready.AptiRiseApplication
-import com.example.aptiready.R
 import com.example.aptiready.databinding.FragmentAccountDeletionBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -51,10 +50,8 @@ class AccountDeletionFragment : Fragment() {
         }
 
         binding.btnConfirmDeletion.setOnClickListener {
-            val pwd = binding.etReauthPassword.text?.toString() ?: ""
-            viewModel.deleteAccount(pwd) {
+            viewModel.deleteAccount {
                 Toast.makeText(requireContext(), "Account and cloud data deleted successfully.", Toast.LENGTH_LONG).show()
-                findNavController().navigate(R.id.action_accountDeletion_to_welcome)
             }
         }
 
@@ -66,7 +63,6 @@ class AccountDeletionFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.isDeleting.collectLatest { isDeleting ->
-                        binding.progressIndicator.visibility = if (isDeleting) View.VISIBLE else View.INVISIBLE
                         binding.btnConfirmDeletion.isEnabled = !isDeleting
                     }
                 }

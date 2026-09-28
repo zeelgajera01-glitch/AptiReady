@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shimmer_native_ad"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_16dp"
+    app:shimmer_auto_start="true">
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardCornerRadius="@dimen/card_corner_radius"
+        app:strokeColor="?attr/colorOutline"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16dp">
+
+            <!-- Top Row Placeholder -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_12dp">
+
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:background="?attr/colorOnSurfaceVariant"
+                    android:alpha="0.2" />
+
+                <View
+                    android:layout_width="70dp"
+                    android:layout_height="14dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/colorOnSurfaceVariant"
+                    android:alpha="0.2" />
+            </RelativeLayout>
+
+            <!-- Icon & Text Placeholder -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="?attr/colorOnSurfaceVariant"
+                    android:alpha="0.2" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="160dp"
+                        android:layout_height="16dp"
+                        android:background="?attr/colorOnSurfaceVariant"
+                        android:alpha="0.2" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="8dp"
+                        android:background="?attr/colorOnSurfaceVariant"
+                        android:alpha="0.2" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Button Placeholder -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/spacing_16dp"
+                android:background="?attr/colorOnSurfaceVariant"
+                android:alpha="0.2" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</com.facebook.shimmer.ShimmerFrameLayout>
