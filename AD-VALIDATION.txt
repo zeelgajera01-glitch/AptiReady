@@ -1,0 +1,7 @@
+PASS: release uses production IDs with ads enabled; demo override removed; personal test-device override removed; consent gating retained; version 1.1.2 (13).
+PASS: all app resource XML and manifest parse.
+PASS: 48,000 questions remain unique by ID with valid topic/option/answer and mock-test links.
+PASS: question asset, Firebase configuration and original signing inputs are byte-for-byte preserved.
+PASS: independent formats are not globally disabled on policy-storage errors; visible native/result screens have retry triggers.
+PASS: AdRetryPolicy.java separately compiled/executed; 13 monotonic scheduling, backoff, retry-budget and invalid-request checks passed.
+NOT RUN: Android compilation, JUnit/Room instrumentation and device execution. Gradle wrapper download failed with Network is unreachable; no Android SDK is installed here.

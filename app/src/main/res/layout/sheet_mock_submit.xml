@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="wrap_content">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp" android:background="?attr/colorSurface">
+    <View android:layout_width="44dp" android:layout_height="5dp" android:layout_gravity="center_horizontal" android:background="@drawable/atelier_drag_handle"/>
+    <Space android:layout_width="1dp" android:layout_height="22dp" android:importantForAccessibility="no"/>
+    <ImageView android:layout_width="64dp" android:layout_height="64dp" android:padding="16dp" android:background="@drawable/aptirise_logo_halo" android:src="@drawable/ic_atelier_check" app:tint="?attr/colorSecondary" android:layout_gravity="center"/>
+    <Space android:layout_width="1dp" android:layout_height="16dp" android:importantForAccessibility="no"/>
+    <TextView android:text="Submit Mock Test?" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:gravity="center"/>
+    <Space android:layout_width="1dp" android:layout_height="10dp" android:importantForAccessibility="no"/>
+    <TextView android:text="Once submitted, your answers cannot be changed." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center"/>
+    <Space android:layout_width="1dp" android:layout_height="22dp" android:importantForAccessibility="no"/>
+    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="@color/atelier_soft" app:strokeColor="@color/atelier_border">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+        <TextView android:text="TIME REMAINING" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+        <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
+        <TextView android:id="@+id/tv_submit_time" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:fontFeatureSettings="tnum" tools:text="14:18"/>
+        <Space android:layout_width="1dp" android:layout_height="16dp" android:importantForAccessibility="no"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+          <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_weight="1" app:strokeColor="@color/atelier_border">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+              <TextView android:id="@+id/tv_submit_answered" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="?attr/colorPrimary" tools:text="7"/>
+              <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
+              <TextView android:text="ANSWERED" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+            </LinearLayout>
+          </com.google.android.material.card.MaterialCardView>
+          <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_weight="1" app:strokeColor="@color/atelier_border">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+              <TextView android:id="@+id/tv_submit_unanswered" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="?attr/colorOnSurfaceVariant" tools:text="7"/>
+              <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
+              <TextView android:text="UNANSWERED" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+            </LinearLayout>
+          </com.google.android.material.card.MaterialCardView>
+          <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_weight="1" app:strokeColor="@color/atelier_border">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+              <TextView android:id="@+id/tv_submit_review" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="@color/difficulty_medium" tools:text="7"/>
+              <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
+              <TextView android:text="REVIEW" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+            </LinearLayout>
+          </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+        <Space android:layout_width="1dp" android:layout_height="12dp" android:importantForAccessibility="no"/>
+        <TextView android:id="@+id/tv_submit_progress" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="13sp" tools:text="14 of 20 answered"/>
+        <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+        <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/submit_progress" android:layout_width="match_parent" android:layout_height="wrap_content" app:trackThickness="6dp" app:trackCornerRadius="3dp" app:indicatorColor="?attr/colorPrimary" app:trackColor="@color/atelier_track" android:indeterminate="false" android:max="100"/>
+      </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+    <TextView android:text="SCORING NOTICE" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:textColor="@color/difficulty_medium"/>
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+    <TextView android:text="Questions with an answer are graded, including those marked for review. Unanswered questions receive no marks." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="14sp"/>
+    <Space android:layout_width="1dp" android:layout_height="20dp" android:importantForAccessibility="no"/>
+    <com.google.android.material.button.MaterialButton android:text="Confirm Submission" android:id="@+id/btn_confirm_submit" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Primary" app:cornerRadius="16dp"/>
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+    <com.google.android.material.button.MaterialButton android:text="Keep Working" android:id="@+id/btn_keep_working" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Text" app:cornerRadius="16dp"/>
+  </LinearLayout>
+</androidx.core.widget.NestedScrollView>
