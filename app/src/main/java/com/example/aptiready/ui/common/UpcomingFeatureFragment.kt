@@ -1,5 +1,7 @@
 package com.example.aptiready.ui.common
 
+import com.example.aptiready.ui.common.navigateUpSafely
+import com.example.aptiready.ui.common.popBackStackSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +35,11 @@ class UpcomingFeatureFragment : Fragment() {
         binding.tvUpcomingDesc.text = description
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.btnReturnHome.setOnClickListener {
-            findNavController().popBackStack(R.id.homeFragment, false)
+            popBackStackSafely(R.id.homeFragment, false)
         }
     }
 

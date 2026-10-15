@@ -33,10 +33,10 @@ class TopicDetailViewModel(
     private val _selectedLength = MutableStateFlow(10)
     val selectedLength: StateFlow<Int> = _selectedLength.asStateFlow()
 
-    private val _availableCount = MutableStateFlow(60)
+    private val _availableCount = MutableStateFlow(0)
     val availableCount: StateFlow<Int> = _availableCount.asStateFlow()
 
-    private val _unseenCount = MutableStateFlow(60)
+    private val _unseenCount = MutableStateFlow(0)
     val unseenCount: StateFlow<Int> = _unseenCount.asStateFlow()
 
     init {
@@ -61,19 +61,31 @@ class TopicDetailViewModel(
         _selectedLength.value = length
     }
 
+    private var countJob: kotlinx.coroutines.Job? = null
     fun updateAvailableCount() {
-        viewModelScope.launch {
-            val total = practiceRepository.getAvailableQuestionCount(topicId, _selectedDifficulty.value)
-            val unseen = practiceRepository.getUnseenQuestionCount(currentOwnerId, topicId, _selectedDifficulty.value)
-            _availableCount.value = total
-            _unseenCount.value = unseen
+        countJob?.cancel()
+        countJob = viewModelScope.launch {
+            try {
+                val counts = practiceRepository.getTopicQuestionCounts(currentOwnerId, topicId, _selectedDifficulty.value)
+                _availableCount.value = counts.available
+                _unseenCount.value = counts.unseen
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                creationActions.reportError("Could not load question counts. Please go back and try again.")
+            }
         }
     }
 
+    private val creationActions = com.example.aptiready.ui.common.SessionActions(viewModelScope)
+    val creationBusy = creationActions.busy
+    val creationError = creationActions.error
+    fun allowNewCreation() = creationActions.reopen()
+
     fun startPracticeSession(countToRequest: Int, onSessionCreated: (PracticeSession) -> Unit) {
-        viewModelScope.launch {
+        creationActions.submit(terminal = true) {
             val actualCount = minOf(countToRequest, _availableCount.value)
-            if (actualCount <= 0) return@launch
+            check(actualCount > 0) { "Questions are still loading" }
             val session = practiceRepository.createPracticeSession(
                 ownerId = currentOwnerId,
                 topicId = topicId,

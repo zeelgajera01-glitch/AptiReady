@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.home
 
+import com.example.aptiready.ui.common.navigateSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +50,32 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val container = (requireActivity().application as AptiRiseApplication).appContainer
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                container.authRepository.authState.collectLatest {
+                    val name = if (container.authRepository.isFirebaseConfigured) {
+                        try { com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.displayName }
+                        catch (_: Exception) { null }
+                    } else null
+                    binding.tvHomeGreeting.text = name?.trim()?.takeIf { it.isNotBlank() }
+                        ?.let { "Ready to rise, ${it.substringBefore(' ')}?" } ?: "Ready to rise?"
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                container.questionRepository.getTopics().collectLatest { topics ->
+                    fun summary(categoryId: String): String {
+                        val entries = topics.filter { it.categoryId == categoryId }
+                        return "${entries.size} topics · ${entries.sumOf { it.sampleQuestionCount }} questions"
+                    }
+                    binding.tvQuantCatalogCount.text = summary("quant")
+                    binding.tvLogicalCatalogCount.text = summary("logical")
+                    binding.tvVerbalCatalogCount.text = summary("verbal")
+                }
+            }
+        }
         setupClickListeners()
         observeViewModel()
         setupNativeAd()
@@ -70,7 +97,7 @@ class HomeFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("topicId", "percentages")
             }
-            findNavController().navigate(R.id.action_home_to_topicDetail, bundle)
+            navigateSafely(R.id.action_home_to_topicDetail, bundle)
         }
 
         binding.cardCategoryQuant.setOnClickListener {
@@ -89,22 +116,22 @@ class HomeFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("topicId", "percentages")
             }
-            findNavController().navigate(R.id.action_home_to_topicDetail, bundle)
+            navigateSafely(R.id.action_home_to_topicDetail, bundle)
         }
 
         binding.btnQuickQuiz.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("topicId", "percentages")
             }
-            findNavController().navigate(R.id.action_home_to_topicDetail, bundle)
+            navigateSafely(R.id.action_home_to_topicDetail, bundle)
         }
 
         binding.cardMockTests.setOnClickListener {
-            findNavController().navigate(R.id.action_home_to_testCatalog)
+            navigateSafely(R.id.action_home_to_testCatalog)
         }
 
         binding.btnMockCatalog.setOnClickListener {
-            findNavController().navigate(R.id.action_home_to_testCatalog)
+            navigateSafely(R.id.action_home_to_testCatalog)
         }
 
         binding.btnContinueTopic.setOnClickListener {
@@ -112,12 +139,14 @@ class HomeFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("topicId", topicId)
             }
-            findNavController().navigate(R.id.action_home_to_topicDetail, bundle)
+            navigateSafely(R.id.action_home_to_topicDetail, bundle)
         }
     }
 
     private fun navigateToPracticeCategory(categoryId: String) {
-        findNavController().navigate(R.id.action_home_to_practice)
+        navigateSafely(R.id.action_home_to_practice, Bundle().apply {
+            putString("categoryId", categoryId)
+        })
     }
 
     private fun observeViewModel() {
@@ -130,13 +159,14 @@ class HomeFragment : Fragment() {
                             binding.tvResumeTopicTitle.text = session.topicTitle
                             val pos = session.currentQuestionIndex + 1
                             val total = session.requestedQuestionCount
-                            binding.tvResumeProgressText.text = "Q$pos of $total"
+                            binding.tvResumeProgressText.text = "Question $pos of $total"
+                            binding.resumeProgress.progress = if (total > 0) ((pos.toFloat() / total) * 100).toInt() else 0
 
                             binding.btnResumeSession.setOnClickListener {
                                 val bundle = Bundle().apply {
                                     putString("sessionId", session.id)
                                 }
-                                findNavController().navigate(R.id.action_home_to_practiceSession, bundle)
+                                navigateSafely(R.id.action_home_to_practiceSession, bundle)
                             }
                         } else {
                             binding.cardResumePractice.visibility = View.GONE
@@ -151,7 +181,7 @@ class HomeFragment : Fragment() {
                         if (topic != null) {
                             binding.layoutContinueLearning.visibility = View.VISIBLE
                             binding.tvRecentTopicTitle.text = topic.title
-                            binding.tvRecentTopicSub.text = "${topic.categoryName} • ${topic.sampleQuestionCount} sample questions"
+                            binding.tvRecentTopicSub.text = "${topic.categoryName} • ${topic.sampleQuestionCount} questions"
                         } else {
                             binding.layoutContinueLearning.visibility = View.GONE
                         }

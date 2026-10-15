@@ -1,5 +1,9 @@
 package com.example.aptiready.ui.practice
 
+import com.example.aptiready.ui.common.observeActionError
+import com.example.aptiready.ui.common.showOnce
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.popBackStackSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.aptiready.AptiRiseApplication
 import com.example.aptiready.R
+import com.example.aptiready.data.model.QuestionText
 import com.example.aptiready.data.model.AdPlacement
 import com.example.aptiready.data.model.FreeHintStatus
 import com.example.aptiready.data.model.SessionSnapshot
@@ -34,7 +39,7 @@ class PracticeSessionFragment : Fragment() {
         arguments?.getString("sessionId") ?: ""
     }
 
-    private val viewModel: PracticeSessionViewModel by viewModels {
+    internal val viewModel: PracticeSessionViewModel by viewModels {
         val app = requireActivity().application as AptiRiseApplication
         PracticeSessionViewModel.Factory(
             sessionId,
@@ -56,6 +61,12 @@ class PracticeSessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        childFragmentManager.setFragmentResultListener("QuestionGridResult", viewLifecycleOwner) { _, result ->
+            if (result.getBoolean("finish")) handleFinishRequest()
+            else viewModel.navigateToPosition(result.getInt("position", -1))
+        }
+
+        observeActionError(viewModel.actionError)
         setupBackHandling()
         setupClickListeners()
         observeViewModel()
@@ -81,15 +92,15 @@ class PracticeSessionFragment : Fragment() {
             .setTitle("Exit Practice Session?")
             .setMessage("What would you like to do with your current practice progress?")
             .setPositiveButton("Save & Exit") { _, _ ->
-                findNavController().popBackStack(R.id.homeFragment, false)
+                viewModel.saveAndExit { popBackStackSafely(R.id.homeFragment, false) }
             }
             .setNegativeButton("Discard Session") { _, _ ->
                 viewModel.discardSession {
-                    findNavController().popBackStack(R.id.homeFragment, false)
+                    popBackStackSafely(R.id.homeFragment, false)
                 }
             }
             .setNeutralButton("Continue", null)
-            .show()
+            .showOnce(this)
     }
 
     private fun setupClickListeners() {
@@ -104,7 +115,7 @@ class PracticeSessionFragment : Fragment() {
                     .setTitle("Verified Account Required")
                     .setMessage(status.reason)
                     .setPositiveButton("OK", null)
-                    .show()
+                    .showOnce(this)
             } else {
                 viewModel.handleFreeHintClick()
             }
@@ -139,21 +150,14 @@ class PracticeSessionFragment : Fragment() {
         binding.btnOpenNavigator.setOnClickListener {
             val snapshots = viewModel.snapshots.value
             val currentPos = viewModel.currentPosition.value
-            val dialog = QuestionGridDialogFragment(
-                snapshots = snapshots,
-                currentPosition = currentPos,
-                onSelectPosition = { selectedPos ->
-                    viewModel.navigateToPosition(selectedPos)
-                },
-                onFinishClick = {
-                    handleFinishRequest()
-                }
-            )
-            dialog.show(childFragmentManager, "QuestionGrid")
+            if (snapshots.isEmpty() || childFragmentManager.isStateSaved ||
+                childFragmentManager.findFragmentByTag("QuestionGrid") != null) return@setOnClickListener
+            QuestionGridDialogFragment().showNow(childFragmentManager, "QuestionGrid")
         }
     }
 
     private fun handleFinishRequest() {
+        if (viewModel.isFinishing.value || viewModel.snapshots.value.isEmpty()) return
         val snapshots = viewModel.snapshots.value
         val unanswered = snapshots.count { !it.isSubmitted || it.selectedOptionId == null }
 
@@ -166,17 +170,17 @@ class PracticeSessionFragment : Fragment() {
                         val bundle = Bundle().apply {
                             putString("sessionId", finalizedSession.id)
                         }
-                        findNavController().navigate(R.id.action_practiceSession_to_practiceResult, bundle)
+                        navigateSafely(R.id.action_practiceSession_to_practiceResult, bundle)
                     }
                 }
                 .setNegativeButton("Keep Practicing", null)
-                .show()
+                .showOnce(this)
         } else {
             viewModel.finalizeSession { finalizedSession ->
                 val bundle = Bundle().apply {
                     putString("sessionId", finalizedSession.id)
                 }
-                findNavController().navigate(R.id.action_practiceSession_to_practiceResult, bundle)
+                navigateSafely(R.id.action_practiceSession_to_practiceResult, bundle)
             }
         }
     }
@@ -226,6 +230,11 @@ class PracticeSessionFragment : Fragment() {
                 launch {
                     viewModel.session.collectLatest { session ->
                         session?.let {
+                            if (it.status == "COMPLETED") {
+                                navigateSafely(R.id.action_practiceSession_to_practiceResult,
+                                    Bundle().apply { putString("sessionId", it.id) })
+                                return@collectLatest
+                            }
                             binding.tvSessionTopicTitle.text = it.topicTitle
                             binding.tvSessionDifficulty.text = "${it.difficultyFilter.uppercase()} DIFFICULTY"
                         }
@@ -271,10 +280,10 @@ class PracticeSessionFragment : Fragment() {
     private fun displaySnapshot(snapshot: SessionSnapshot, totalQuestions: Int, position: Int) {
         val context = requireContext()
 
-        binding.tvQuestionCounter.text = "Question ${position + 1} of $totalQuestions"
+        binding.tvQuestionCounter.visibility = View.GONE
         binding.sessionProgressBar.progress = (((position + 1).toFloat() / totalQuestions.toFloat()) * 100).toInt()
 
-        binding.tvQuestionText.text = snapshot.questionText
+        binding.tvQuestionText.text = QuestionText.displayText(snapshot.questionText)
 
         renderFreeHintUI(viewModel.freeHintStatus.value, viewModel.isClaimingFreeHint.value, snapshot)
         renderExtraHint(snapshot, position)
@@ -317,6 +326,7 @@ class PracticeSessionFragment : Fragment() {
             highlightUnsubmittedOption(binding.cardOptionD, binding.tvBadgeD, binding.tvOptionDText, "d", selected)
         }
 
+        binding.btnNextQuestion.text = if (position == totalQuestions - 1) "Finish" else "Next"
         binding.btnPrevQuestion.isEnabled = position > 0
     }
 
@@ -532,32 +542,9 @@ class PracticeSessionFragment : Fragment() {
         optionId: String,
         selectedId: String?
     ) {
-        val isSelected = optionId == selectedId
-
-        card.isSelected = isSelected
-        badge.background = null
-
-        if (isSelected) {
-            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimaryContainer)
-            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimary)
-            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnPrimaryContainer)
-
-            card.setCardBackgroundColor(bg)
-            card.strokeColor = stroke
-            card.strokeWidth = 4
-            badge.setTextColor(textColor)
-            optionTextView.setTextColor(textColor)
-        } else {
-            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface)
-            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorOutline, ContextCompat.getColor(requireContext(), R.color.card_stroke_light))
-            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSurface)
-
-            card.setCardBackgroundColor(bg)
-            card.strokeColor = stroke
-            card.strokeWidth = 1
-            badge.setTextColor(textColor)
-            optionTextView.setTextColor(textColor)
-        }
+        com.example.aptiready.ui.common.AtelierUi.option(
+            card, badge, optionTextView, optionId, optionId == selectedId
+        )
     }
 
     private fun highlightSubmittedOption(
@@ -568,47 +555,10 @@ class PracticeSessionFragment : Fragment() {
         correctId: String,
         selectedId: String?
     ) {
-        val isCorrect = optionId == correctId
-        val isUserSelection = optionId == selectedId
-
-        card.isSelected = isUserSelection || isCorrect
-        badge.background = null
-
-        when {
-            isCorrect -> {
-                val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSecondaryContainer)
-                val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSecondary)
-                val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSecondaryContainer)
-
-                card.setCardBackgroundColor(bg)
-                card.strokeColor = stroke
-                card.strokeWidth = 4
-                badge.setTextColor(textColor)
-                optionTextView.setTextColor(textColor)
-            }
-            isUserSelection && !isCorrect -> {
-                val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorErrorContainer)
-                val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorError)
-                val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnErrorContainer)
-
-                card.setCardBackgroundColor(bg)
-                card.strokeColor = stroke
-                card.strokeWidth = 4
-                badge.setTextColor(textColor)
-                optionTextView.setTextColor(textColor)
-            }
-            else -> {
-                val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface)
-                val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorOutline, ContextCompat.getColor(requireContext(), R.color.card_stroke_light))
-                val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSurface)
-
-                card.setCardBackgroundColor(bg)
-                card.strokeColor = stroke
-                card.strokeWidth = 1
-                badge.setTextColor(textColor)
-                optionTextView.setTextColor(textColor)
-            }
-        }
+        com.example.aptiready.ui.common.AtelierUi.option(
+            card, badge, optionTextView, optionId, optionId == selectedId,
+            submitted = true, correct = optionId == correctId
+        )
     }
 
     override fun onDestroyView() {

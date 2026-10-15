@@ -13,6 +13,13 @@ class AdSessionManager(
     val timeProvider: TimeProvider = SystemTimeProvider()
 ) {
     var isLoaded = false; private set
+    private var storageHealthy = true
+    val isPolicyUsable: Boolean get() = isLoaded && storageHealthy
+
+    fun onStorageFailure(failure: Throwable) {
+        storageHealthy = false
+        AdLogger.w("AdSessionManager", "Automatic full-screen ads blocked: policy storage failed: ${failure.message}")
+    }
     var isFirstSession = true; private set
     var sessionInterstitialCount = 0; private set
     var dailyInterstitialCount = 0; private set
@@ -31,7 +38,7 @@ class AdSessionManager(
     private var cooldownUntilMono = 0L
 
     fun init() {
-        if (isLoaded) return
+        if (isLoaded || !storageHealthy) return
         val now = timeProvider.elapsedRealtimeMs()
         val parts = preferencesRepository.readState()?.split('|')
         if (parts != null && parts.size == 14) {

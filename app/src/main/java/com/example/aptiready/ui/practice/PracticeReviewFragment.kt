@@ -1,5 +1,7 @@
 package com.example.aptiready.ui.practice
 
+import com.example.aptiready.ui.common.navigateUpSafely
+import com.example.aptiready.ui.common.observeActionError
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +33,8 @@ class PracticeReviewFragment : Fragment() {
         PracticeReviewViewModel.Factory(
             sessionId,
             app.appContainer.practiceRepository,
-            app.appContainer.authRepository
+            app.appContainer.authRepository,
+            app.appContainer.mockTestRepository
         )
     }
 
@@ -50,11 +53,27 @@ class PracticeReviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
+        observeActionError(viewModel.actionError)
         setupRecyclerView()
         setupFilterChips()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.reviewTitle.collectLatest { binding.tvReviewContext.text = it }
+                }
+                launch {
+                    viewModel.allSnapshots.collectLatest { list ->
+                        binding.chipFilterAll.text = "All ${list.size}"
+                        binding.chipFilterCorrect.text = "Correct ${list.count { it.isCorrect() }}"
+                        binding.chipFilterIncorrect.text = "Incorrect ${list.count { it.isIncorrect() }}"
+                        binding.chipFilterSkipped.text = "Skipped ${list.count { !it.isSubmitted || it.selectedOptionId == null }}"
+                    }
+                }
+            }
+        }
         observeViewModel()
     }
 
@@ -87,6 +106,7 @@ class PracticeReviewFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.filteredSnapshots.collectLatest { snapshots ->
                     reviewAdapter.submitList(snapshots)
+                    binding.tvEmptyReview.visibility = if (snapshots.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
         }

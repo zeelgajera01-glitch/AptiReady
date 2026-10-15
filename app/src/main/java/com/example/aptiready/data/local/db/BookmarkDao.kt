@@ -18,6 +18,9 @@ interface BookmarkDao {
     @Query("SELECT EXISTS(SELECT 1 FROM bookmarks WHERE ownerId = :ownerId AND questionId = :questionId)")
     suspend fun isBookmarked(ownerId: String, questionId: String): Boolean
 
+    @Query("SELECT questionId FROM bookmarks WHERE ownerId = :ownerId AND questionId IN (:questionIds)")
+    suspend fun getBookmarkedQuestionIds(ownerId: String, questionIds: List<String>): List<String>
+
     @Query("SELECT * FROM bookmarks WHERE ownerId = :ownerId ORDER BY createdAt DESC")
     fun getBookmarksForOwner(ownerId: String): Flow<List<BookmarkEntity>>
 }

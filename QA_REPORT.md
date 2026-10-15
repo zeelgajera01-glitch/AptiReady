@@ -1,3 +1,5 @@
+Current handoff: see START-HERE.txt and AD-VALIDATION.txt for version 1.1.2 (13). The material below predates this handoff.
+
 # AptiRise Comprehensive QA Report & Verification (Stage 8 & Parts 1-5 Ad Integration)
 
 ## 1. Environment & Build Configuration

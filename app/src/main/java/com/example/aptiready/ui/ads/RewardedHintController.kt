@@ -23,11 +23,10 @@ class RewardedHintController(
     private val canRequestAds: () -> Boolean,
     private val coordinator: FullScreenAdCoordinator? = null
 ) {
-    private var rewardedAd: RewardedAd? = null
+    private val slot = AdLoadSlot<RewardedAd>(SystemClock::elapsedRealtime)
+    private fun key() = "${AdConfig.getAdUnitIdForPlacement(placement)}:${AdConfig.revision.value}"
     private var generation = 0
-    private var loadedAt = 0L
-    private var nextRetry = 0L
-    private var loading = false
+
     private val mutableState = MutableStateFlow(RewardedState.IDLE)
     val state: StateFlow<RewardedState> = mutableState.asStateFlow()
     private val placement = AdPlacement.OPTIONAL_HINT_REWARDED
@@ -35,52 +34,42 @@ class RewardedHintController(
     private fun hostSafe(a: Activity) = !a.isFinishing && !a.isDestroyed &&
         (a as? LifecycleOwner)?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == true
     fun preloadRewardedAd(context: Context) {
-        if (!allowed() || loading || coordinator?.isFullScreenAdActive == true) return
-        if (isAdLoadedAndReady()) return
-        if (SystemClock.elapsedRealtime() < nextRetry) return
-        loading = true
+        if (!allowed() || coordinator?.isFullScreenAdActive == true) return
+        val token = slot.begin(key()) ?: return
         mutableState.value = RewardedState.LOADING
-        val token = ++generation
         val config = AdConfig.revision.value
-        RewardedAd.load(context.applicationContext, AdConfig.getAdUnitIdForPlacement(placement),
-            AdRequest.Builder().build(), object : RewardedAdLoadCallback() {
-                override fun onAdLoaded(ad: RewardedAd) {
-                    if (token != generation) return
-
-                    loading = false
-
-                    if (!allowed() || config != AdConfig.revision.value) {
-                        rewardedAd = null
-                        loadedAt = 0L
-                        mutableState.value = RewardedState.IDLE
-                        return
+        val unitId = AdConfig.getAdUnitIdForPlacement(placement)
+        AdLogger.d("RewardedHintController", "Requesting rewarded: unitId=$unitId")
+        try {
+            RewardedAd.load(context.applicationContext, unitId, AdRequest.Builder().build(),
+                object : RewardedAdLoadCallback() {
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        if (!allowed() || config != AdConfig.revision.value) {
+                            if (slot.fail(token, true)) mutableState.value = RewardedState.IDLE
+                            return
+                        }
+                        if (slot.accept(token, ad)) {
+                            mutableState.value = RewardedState.READY
+                            AdLogger.d("RewardedHintController", "Rewarded loaded: response=${ad.responseInfo}")
+                        }
                     }
-
-                    rewardedAd = ad
-                    loadedAt = SystemClock.elapsedRealtime()
-                    nextRetry = 0L
-                    mutableState.value = RewardedState.READY
-                }
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    if (token != generation) return
-                    loading = false
-                    rewardedAd = null
-                    nextRetry = SystemClock.elapsedRealtime() + 30_000L
-                    mutableState.value = RewardedState.UNAVAILABLE
-                }
-            })
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        if (slot.fail(token, error.code != AdRequest.ERROR_CODE_INVALID_REQUEST))
+                            mutableState.value = RewardedState.UNAVAILABLE
+                        AdLogger.w("RewardedHintController", "Rewarded failed: unitId=$unitId, $error")
+                    }
+                })
+        } catch (failure: Exception) {
+            if (slot.fail(token, true)) mutableState.value = RewardedState.UNAVAILABLE
+            AdLogger.w("RewardedHintController", "Rewarded request failed: ${failure.message}")
+        }
     }
     fun invalidateAd() {
         generation++
-        rewardedAd = null
-        loading = false
+        slot.clear()
         if (coordinator?.isFullScreenAdActive != true) mutableState.value = RewardedState.IDLE
     }
-    fun isAdLoadedAndReady(): Boolean {
-        if (!allowed() || SystemClock.elapsedRealtime() - loadedAt >= AdConfig.FrequencyPolicy.AD_EXPIRE_DURATION_MS)
-            rewardedAd = null
-        return rewardedAd != null
-    }
+    fun isAdLoadedAndReady() = allowed() && slot.cached(key()) != null
     fun requestRewardedHint(activity: Activity, rewardContext: RewardContext, questionTitle: String,
         onRewardEarned: (RewardContext) -> Unit) {
         if (!allowed() || !hostSafe(activity) || coordinator?.isFullScreenAdActive == true) return
@@ -132,8 +121,7 @@ class RewardedHintController(
         context: RewardContext,
         earned: (RewardContext) -> Unit
     ) {
-        val ad = rewardedAd
-        rewardedAd = null
+        val ad = slot.take(key())
 
         if (ad == null || !allowed() || !hostSafe(activity)) {
             coordinator?.isFullScreenAdActive = false
@@ -163,7 +151,7 @@ class RewardedHintController(
                 runCatching {
                     coordinator?.recordRewardedShow()
                 }.onFailure {
-                    AdConfig.isAdsEnabled = false
+                    coordinator?.sessionManager?.onStorageFailure(it)
                 }
             }
 
@@ -173,6 +161,7 @@ class RewardedHintController(
             }
 
             override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                AdLogger.w("RewardedHintController", "Rewarded show failed: $error")
                 finish()
             }
         }

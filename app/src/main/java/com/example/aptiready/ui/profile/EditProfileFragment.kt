@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.profile
 
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,11 +44,11 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.btnCancel.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.tvProfileEmail.text = viewModel.currentUserEmail
@@ -57,8 +58,9 @@ class EditProfileFragment : Fragment() {
             val name = binding.etDisplayName.text?.toString() ?: ""
             val goal = binding.etDailyGoal.text?.toString() ?: "10"
             viewModel.saveProfile(name, goal) {
+                if (!isAdded || _binding == null) return@saveProfile
                 Toast.makeText(requireContext(), "Profile updated successfully!", Toast.LENGTH_SHORT).show()
-                findNavController().navigateUp()
+                navigateUpSafely()
             }
         }
 

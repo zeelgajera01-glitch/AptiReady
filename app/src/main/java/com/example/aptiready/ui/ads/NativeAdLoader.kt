@@ -9,10 +9,8 @@ import com.google.android.gms.ads.nativead.NativeAd
 
 class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean) {
     private val appContext = context.applicationContext
-    private var currentNativeAd: NativeAd? = null
-    private var generation = 0
-    private var loading = false
-    private var nextRetry = 0L
+    private val slot = AdLoadSlot<NativeAd>(SystemClock::elapsedRealtime) { it.destroy() }
+    private var callback: ((NativeAd?) -> Unit)? = null
     fun showShimmer(binding: NativeAdViewBinding, show: Boolean) {
         val shimmerView = binding.shimmerContainer as? com.facebook.shimmer.ShimmerFrameLayout
         if (show) {
@@ -41,38 +39,41 @@ class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean)
     }
 
     fun loadFreshNativeAd(placement: AdPlacement, onAdLoaded: (NativeAd?) -> Unit) {
-        if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement)) return
-        if (loading) return
-        destroy() // Clear old ad & retry timestamps to fetch a new ad
+        // Returning to a screen reuses a valid ad and preserves failed-request backoff.
         loadNativeAdOnly(placement, onAdLoaded)
     }
 
     fun loadNativeAdOnly(placement: AdPlacement, onAdLoaded: (NativeAd?) -> Unit) {
-        if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement)) return
-        currentNativeAd?.let { onAdLoaded(it); return }
-        if (loading || SystemClock.elapsedRealtime() < nextRetry) return
-        loading = true
-        val token = ++generation
-        val configToken = AdConfig.revision.value
-        fun valid() = token == generation && configToken == AdConfig.revision.value &&
-            canRequestAds() && AdConfig.isPlacementEnabled(placement)
-        AdLoader.Builder(appContext, AdConfig.getAdUnitIdForPlacement(placement))
-            .forNativeAd { ad ->
-                if (!valid()) { ad.destroy(); return@forNativeAd }
-                loading = false
-                currentNativeAd = ad
-                onAdLoaded(ad)
-            }
-            .withAdListener(object : AdListener() {
+        if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement)) {
+            onAdLoaded(null)
+            return
+        }
+        val unitId = AdConfig.getAdUnitIdForPlacement(placement)
+        val key = "$unitId:${AdConfig.revision.value}"
+        slot.cached(key)?.let { onAdLoaded(it); return }
+        callback = onAdLoaded
+        val token = slot.begin(key) ?: run { onAdLoaded(null); return }
+        val config = AdConfig.revision.value
+        fun allowed() = canRequestAds() && AdConfig.isPlacementEnabled(placement) && config == AdConfig.revision.value
+        AdLogger.d("NativeAdLoader", "Requesting native: placement=$placement, unitId=$unitId")
+        try {
+            AdLoader.Builder(appContext, unitId).forNativeAd { ad ->
+                if (!allowed()) { ad.destroy(); slot.fail(token, true); return@forNativeAd }
+                if (slot.accept(token, ad)) {
+                    AdLogger.d("NativeAdLoader", "Native loaded: placement=$placement, response=${ad.responseInfo}")
+                    callback?.invoke(ad)
+                }
+            }.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                    if (!valid()) return
-                    loading = false
-                    nextRetry = SystemClock.elapsedRealtime() + 5_000L
-                    onAdLoaded(null)
+                    AdLogger.w("NativeAdLoader", "Native failed: placement=$placement, unitId=$unitId, $error")
+                    if (slot.fail(token, error.code != AdRequest.ERROR_CODE_INVALID_REQUEST)) callback?.invoke(null)
                 }
             }).build().loadAd(AdRequest.Builder().build())
+        } catch (failure: Exception) {
+            if (slot.fail(token, true)) callback?.invoke(null)
+            AdLogger.w("NativeAdLoader", "Native request failed: ${failure.message}")
+        }
     }
-
     fun populateNativeAdView(nativeAd: NativeAd, binding: NativeAdViewBinding) {
         showShimmer(binding, false)
         binding.cardNativeAd.visibility = View.VISIBLE
@@ -136,12 +137,8 @@ class NativeAdLoader(context: Context, private val canRequestAds: () -> Boolean)
         nativeAdView.setNativeAd(nativeAd)
     }
 
-
     fun destroy() {
-        generation++
-        loading = false
-        nextRetry = 0
-        currentNativeAd?.destroy()
-        currentNativeAd = null
+        callback = null
+        slot.clear()
     }
 }

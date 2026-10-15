@@ -4,52 +4,55 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.aptiready.data.model.SessionSnapshot
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.aptiready.databinding.DialogQuestionGridBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
-class QuestionGridDialogFragment(
-    private val snapshots: List<SessionSnapshot>,
-    private val currentPosition: Int,
-    private val onSelectPosition: (Int) -> Unit,
-    private val onFinishClick: () -> Unit
-) : BottomSheetDialogFragment() {
-
+/** No constructor data or callbacks: Android can restore this dialog after process death. */
+class QuestionGridDialogFragment : BottomSheetDialogFragment() {
     private var _binding: DialogQuestionGridBinding? = null
-    private val binding get() = _binding!!
+    private var resultSent = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogQuestionGridBinding.inflate(inflater, container, false)
-        return binding.root
+        return requireNotNull(_binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.btnCloseGrid.setOnClickListener {
-            dismiss()
-        }
-
-        val adapter = QuestionGridAdapter(currentPosition) { selectedPos ->
-            onSelectPosition(selectedPos)
-            dismiss()
-        }
-
-        binding.rvQuestionGrid.adapter = adapter
-        adapter.submitList(snapshots)
-
-        binding.btnFinishPractice.setOnClickListener {
-            dismiss()
-            onFinishClick()
+        val binding = requireNotNull(_binding)
+        val model = (parentFragment as? PracticeSessionFragment)?.viewModel ?: return
+        binding.btnCloseGrid.setOnClickListener { dismiss() }
+        binding.btnFinishPractice.setOnClickListener { sendResult(Bundle().apply { putBoolean("finish", true) }) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(model.snapshots, model.currentPosition) { rows, position -> rows to position }
+                    .collect { (rows, position) ->
+                        val adapter = QuestionGridAdapter(position) { selected ->
+                            sendResult(Bundle().apply { putInt("position", selected) })
+                        }
+                        binding.rvQuestionGrid.adapter = adapter
+                        adapter.submitList(rows)
+                    }
+            }
         }
     }
 
+    private fun sendResult(result: Bundle) {
+        if (resultSent || parentFragmentManager.isStateSaved) return
+        resultSent = true
+        // Dismiss first so a finish confirmation cannot stack above the grid.
+        dismiss()
+        parentFragmentManager.setFragmentResult("QuestionGridResult", result)
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.rvQuestionGrid?.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

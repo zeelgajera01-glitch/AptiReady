@@ -6,9 +6,12 @@ import com.example.aptiready.data.model.PracticeSession
 import com.example.aptiready.data.model.SessionSnapshot
 import kotlinx.coroutines.flow.Flow
 
+data class TopicQuestionCounts(val available: Int, val unseen: Int)
+
 interface PracticeRepository {
     suspend fun getAvailableQuestionCount(topicId: String, difficulty: Difficulty?): Int
     suspend fun getUnseenQuestionCount(ownerId: String, topicId: String, difficulty: Difficulty?): Int
+    suspend fun getTopicQuestionCounts(ownerId: String, topicId: String, difficulty: Difficulty?): TopicQuestionCounts
     suspend fun createPracticeSession(ownerId: String, topicId: String, difficulty: Difficulty?, requestedCount: Int): PracticeSession
     suspend fun createRetrySession(ownerId: String, originalSessionId: String): PracticeSession?
     suspend fun getInProgressSession(ownerId: String): PracticeSession?

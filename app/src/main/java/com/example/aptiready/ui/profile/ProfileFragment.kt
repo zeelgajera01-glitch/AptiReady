@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.profile
 
+import com.example.aptiready.ui.common.navigateSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,11 +68,11 @@ class ProfileFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnEditProfile.setOnClickListener {
-            findNavController().navigate(R.id.action_profile_to_editProfile)
+            navigateSafely(R.id.action_profile_to_editProfile)
         }
 
         binding.cardBookmarksShortcut.setOnClickListener {
-            findNavController().navigate(R.id.action_profile_to_bookmarks)
+            navigateSafely(R.id.action_profile_to_bookmarks)
         }
 
         binding.switchCloudBackup.setOnCheckedChangeListener { _, isChecked ->
@@ -89,18 +90,19 @@ class ProfileFragment : Fragment() {
         }
 
         binding.cardPrivacyPolicy.setOnClickListener {
-            findNavController().navigate(R.id.action_profile_to_privacyPolicy)
+            navigateSafely(R.id.action_profile_to_privacyPolicy)
         }
 
         binding.cardPrivacyOptions.setOnClickListener {
             val app = requireActivity().application as AptiRiseApplication
             app.appContainer.adProvider.showPrivacyOptionsForm(requireActivity()) {
+                if (!isAdded || _binding == null) return@showPrivacyOptionsForm
                 Toast.makeText(requireContext(), "Privacy choices updated", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.btnDeleteAccount.setOnClickListener {
-            findNavController().navigate(R.id.action_profile_to_accountDeletion)
+            navigateSafely(R.id.action_profile_to_accountDeletion)
         }
 
         binding.btnSignOut.setOnClickListener {

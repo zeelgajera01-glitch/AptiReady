@@ -27,10 +27,14 @@ class AdDiagnosticsViewModel(
         sessionManager.init()
         val fgSecs = sessionManager.getAccumulatedForegroundUsageMs() / 1000
         val cdSecs = sessionManager.getTimeSinceLastAdMs().let { if (it == Long.MAX_VALUE) -1 else it / 1000 }
-        val cdText = if (cdSecs < 0) "None (Ready)" else "${cdSecs}s / 180s"
+        val cdText = if (cdSecs < 0) "None (Ready)" else "${cdSecs}s / ${AdConfig.FrequencyPolicy.MIN_INTERSTITIAL_COOLDOWN_MS / 1000}s"
 
         return """
-            App ID: ${AdConfig.TEST_APP_ID}
+            App ID: ${BuildConfig.ADMOB_APP_ID}
+            Native Unit: ${BuildConfig.NATIVE_AD_UNIT_ID}
+            Banner Unit: ${BuildConfig.BANNER_AD_UNIT_ID}
+            Interstitial Unit: ${BuildConfig.INTERSTITIAL_AD_UNIT_ID}
+            Rewarded Unit: ${BuildConfig.REWARDED_AD_UNIT_ID}
             Debug Build (Test Mode): $isDebugBuild
             Global Ads Enabled: ${AdConfig.isAdsEnabled}
             UMP Consent Eligible: ${canRequestAds.value}
@@ -41,7 +45,7 @@ class AdDiagnosticsViewModel(
             Session Interstitials: ${sessionManager.sessionInterstitialCount} / ${AdConfig.FrequencyPolicy.MAX_INTERSTITIALS_PER_SESSION}
             Daily Interstitials: ${sessionManager.dailyInterstitialCount} / ${AdConfig.FrequencyPolicy.MAX_INTERSTITIALS_PER_DAY}
             Calendar Date Key: '${sessionManager.currentDateKey}'
-            Foreground Usage: ${fgSecs}s / 120s
+            Foreground Usage: ${fgSecs}s / ${AdConfig.FrequencyPolicy.MIN_FOREGROUND_USAGE_MS / 1000}s
             Active Cooldown: $cdText
         """.trimIndent()
     }

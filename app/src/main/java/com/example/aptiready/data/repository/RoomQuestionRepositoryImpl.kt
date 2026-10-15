@@ -1,12 +1,16 @@
 package com.example.aptiready.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import com.example.aptiready.data.local.db.AppDatabase
 import com.example.aptiready.data.model.Category
 import com.example.aptiready.data.model.Difficulty
 import com.example.aptiready.data.model.TestSummary
 import com.example.aptiready.data.model.Topic
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import org.json.JSONArray
 
 class RoomQuestionRepositoryImpl(
@@ -27,11 +31,12 @@ class RoomQuestionRepositoryImpl(
                     topicCount = if (entity.id == "quant") 5 else if (entity.id == "logical") 3 else 2
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override fun getTopics(categoryId: String?, searchQuery: String?): Flow<List<Topic>> {
-        return contentDao.getTopics().map { list ->
+        return combine(contentDao.getTopics(), contentDao.observeQuestionCounts()) { list, counts ->
+            val countByTopic = counts.associate { it.topicId to it.questionCount }
             val query = searchQuery?.trim()
             list.filter { entity ->
                 val matchesCategory = categoryId.isNullOrEmpty() || categoryId == "all" || entity.categoryId.equals(categoryId, ignoreCase = true)
@@ -48,15 +53,16 @@ class RoomQuestionRepositoryImpl(
                     title = entity.title,
                     description = entity.description,
                     difficulty = parseDifficulty(entity.difficulty),
-                    sampleQuestionCount = 60,
+                    sampleQuestionCount = countByTopic[entity.id] ?: 0,
                     formulaPreview = entity.formulaPreview
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override fun getTopicById(topicId: String): Flow<Topic?> {
-        return contentDao.getTopics().map { list ->
+        return combine(contentDao.getTopics(), contentDao.observeQuestionCounts()) { list, counts ->
+            val countByTopic = counts.associate { it.topicId to it.questionCount }
             val match = list.find { it.id == topicId } ?: list.firstOrNull()
             match?.let { entity ->
                 Topic(
@@ -66,11 +72,11 @@ class RoomQuestionRepositoryImpl(
                     title = entity.title,
                     description = entity.description,
                     difficulty = parseDifficulty(entity.difficulty),
-                    sampleQuestionCount = 60,
+                    sampleQuestionCount = countByTopic[entity.id] ?: 0,
                     formulaPreview = entity.formulaPreview
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override fun getTestCatalog(): Flow<List<TestSummary>> {
@@ -87,7 +93,7 @@ class RoomQuestionRepositoryImpl(
                     difficulty = Difficulty.MEDIUM
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override fun getTestById(testId: String): Flow<TestSummary?> {
@@ -105,7 +111,7 @@ class RoomQuestionRepositoryImpl(
                     difficulty = Difficulty.MEDIUM
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     private fun parseDifficulty(diff: String): Difficulty {

@@ -93,7 +93,7 @@ object AdConfig {
      * RELEASE:
      * - Must use AptiRise's production ad unit IDs.
      *
-     * ADS_ENABLED remains controlled by the existing Gradle property.
+     * Release builds use production IDs; debug builds use Google demo IDs.
      */
     fun validateAdMobConfiguration() {
         val isDebug = BuildConfig.DEBUG

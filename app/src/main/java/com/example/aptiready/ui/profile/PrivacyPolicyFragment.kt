@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.profile
 
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +27,7 @@ class PrivacyPolicyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
     }
 

@@ -46,6 +46,10 @@ class PracticeSessionViewModel(
     private val _isClaimingFreeHint = MutableStateFlow(false)
     val isClaimingFreeHint: StateFlow<Boolean> = _isClaimingFreeHint.asStateFlow()
 
+    private val actions = com.example.aptiready.ui.common.SessionActions(viewModelScope)
+    val actionError = actions.error
+    val isFinishing = actions.busy
+
     private var hintLookupJob: Job? = null
     private var claimJob: Job? = null
     private var currentLookupContext: String? = null
@@ -81,14 +85,16 @@ class PracticeSessionViewModel(
 
     private fun loadSession() {
         viewModelScope.launch {
-            val s = practiceRepository.getSessionById(sessionId)
-            _session.value = s
-            s?.let {
-                _currentPosition.value = it.currentQuestionIndex
+            val s = try {
+                requireNotNull(practiceRepository.getSessionById(sessionId))
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                actions.reportError("Could not load this practice session. Please go back and try again.")
+                return@launch
             }
-        }
-
-        viewModelScope.launch {
+            _session.value = s
+            _currentPosition.value = s.currentQuestionIndex.coerceIn(0, (s.snapshots.size - 1).coerceAtLeast(0))
             practiceRepository.getSessionSnapshotsFlow(sessionId).collectLatest { list ->
                 _snapshots.value = list
                 if (list.isNotEmpty()) {
@@ -125,7 +131,9 @@ class PracticeSessionViewModel(
         _freeHintStatus.value = FreeHintStatus.Loading
 
         hintLookupJob = viewModelScope.launch {
-            val status = freeHintRepository.getFreeHintStatus(currentOwnerId, sessionId, qId)
+            val status = kotlinx.coroutines.withTimeoutOrNull(12_000L) {
+                freeHintRepository.getFreeHintStatus(currentOwnerId, sessionId, qId)
+            } ?: FreeHintStatus.Error("Hint check timed out. Please try again.")
 
             if (_isClaimingFreeHint.value) return@launch
             if (currentLookupContext != activeContext) return@launch
@@ -172,7 +180,9 @@ class PracticeSessionViewModel(
 
                 claimJob = viewModelScope.launch {
                     try {
-                        val claimResult = freeHintRepository.claimFreeHint(currentOwnerId, sessionId, qId)
+                        val claimResult = kotlinx.coroutines.withTimeoutOrNull(15_000L) {
+                            freeHintRepository.claimFreeHint(currentOwnerId, sessionId, qId)
+                        } ?: FreeHintClaimResult.NetworkError("Hint request timed out. Tap again to check the result.")
 
                         val activeSnap = _snapshots.value.getOrNull(_currentPosition.value)
                         if (activeSnap?.questionId != qId) return@launch
@@ -202,9 +212,9 @@ class PracticeSessionViewModel(
                             }
                         }
                     } finally {
-                        if (currentLookupContext == claimContext || currentLookupContext == null) {
-                            _isClaimingFreeHint.value = false
-                        }
+                        _isClaimingFreeHint.value = false
+                        val active = _snapshots.value.getOrNull(_currentPosition.value)
+                        if (active != null && active.questionId != qId) refreshFreeHintStatus(active.questionId, force = true)
                     }
                 }
             }
@@ -216,22 +226,13 @@ class PracticeSessionViewModel(
         val list = _snapshots.value
         val pos = _currentPosition.value
 
+        if (optionId !in list.getOrNull(pos)?.options.orEmpty().map { it.id }) return
         if (pos !in list.indices || list[pos].isSubmitted) {
             return
         }
 
-        // Update the in-memory snapshot immediately so the UI
-        // always reflects the currently selected question.
-        val updatedList = list.toMutableList()
-        updatedList[pos] = updatedList[pos].copy(
-            selectedOptionId = optionId
-        )
-
-        _snapshots.value = updatedList
-        _selectedOptionId.value = optionId
-
         // Persist the answer asynchronously.
-        viewModelScope.launch {
+        actions.submit {
             practiceRepository.saveAnswerSelection(
                 sessionId = sessionId,
                 position = pos,
@@ -244,7 +245,7 @@ class PracticeSessionViewModel(
         val list = _snapshots.value
         val pos = _currentPosition.value
         if (pos in list.indices && !list[pos].isSubmitted && _selectedOptionId.value != null) {
-            viewModelScope.launch {
+            actions.submit(key = "submit:$pos") {
                 practiceRepository.submitQuestionAnswer(sessionId, pos)
             }
         }
@@ -264,7 +265,7 @@ class PracticeSessionViewModel(
         _selectedOptionId.value = list[position].selectedOptionId
         _currentPosition.value = position
 
-        viewModelScope.launch {
+        actions.submit {
             practiceRepository.updateCurrentPosition(
                 sessionId,
                 position
@@ -288,23 +289,29 @@ class PracticeSessionViewModel(
         val s = _session.value
         if (pos in list.indices && s != null) {
             val snapshot = list[pos]
-            viewModelScope.launch {
+            actions.submit(key = "bookmark:$pos") {
                 practiceRepository.toggleBookmark(currentOwnerId, snapshot, s.topicTitle)
             }
         }
     }
 
     fun finalizeSession(onFinalized: (PracticeSession) -> Unit) {
-        viewModelScope.launch {
+        actions.submit(terminal = true) {
             val finalized = practiceRepository.finalizeSession(sessionId, currentOwnerId)
+            checkNotNull(finalized) { "Session is unavailable" }
             if (finalized != null) {
+                _session.value = finalized
                 onFinalized(finalized)
             }
         }
     }
 
+    fun saveAndExit(onSaved: () -> Unit) {
+        actions.submit(terminal = true) { onSaved() }
+    }
+
     fun discardSession(onDiscarded: () -> Unit) {
-        viewModelScope.launch {
+        actions.submit(terminal = true) {
             practiceRepository.discardSession(sessionId)
             onDiscarded()
         }

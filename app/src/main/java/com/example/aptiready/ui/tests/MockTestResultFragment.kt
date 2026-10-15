@@ -1,5 +1,8 @@
 package com.example.aptiready.ui.tests
 
+import com.example.aptiready.ui.common.observeActionError
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.popBackStackSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.collect
 import com.example.aptiready.ui.ads.ResultExitState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 
 class MockTestResultFragment : Fragment() {
 
@@ -56,12 +60,19 @@ class MockTestResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeActionError(viewModel.creationError)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.creationBusy.collectLatest { busy ->
+                binding.btnRetakeTest.isEnabled = !busy
+                binding.btnRetakeTest.text = if (busy) "Loading…" else "Retake Test"
+            }
+        }
 
         binding.btnReviewMockAnswers.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("sessionId", attemptId)
             }
-            findNavController().navigate(R.id.action_mockTestResult_to_practiceReview, bundle)
+            navigateSafely(R.id.action_mockTestResult_to_practiceReview, bundle)
         }
 
         binding.btnRetakeTest.setOnClickListener {
@@ -69,7 +80,7 @@ class MockTestResultFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("attemptId", newAttempt.id)
                 }
-                findNavController().navigate(R.id.action_mockTestResult_to_mockTest, bundle)
+                navigateSafely(R.id.action_mockTestResult_to_mockTest, bundle)
             }
         }
 
@@ -93,7 +104,7 @@ class MockTestResultFragment : Fragment() {
                     if (state == "READY" && findNavController().currentBackStackEntry === entry &&
                         !parentFragmentManager.isStateSaved) {
                         exitState.consumed()
-                        findNavController().popBackStack(R.id.testCatalogFragment, false)
+                        popBackStackSafely(R.id.testCatalogFragment, false)
                     }
                 }
             }
@@ -102,8 +113,13 @@ class MockTestResultFragment : Fragment() {
             combine(app.appContainer.consentManager.adState, viewModel.attempt,
                 viewLifecycleOwner.lifecycle.currentStateFlow) { state, record, lifecycle ->
                 state.ready && record?.status == "COMPLETED" && lifecycle.isAtLeast(Lifecycle.State.STARTED)
-            }.collect { eligible ->
-                if (eligible) app.appContainer.adProvider.prepareExitAd(AdPlacement.MOCK_EXIT_INTERSTITIAL)
+            }.collectLatest { eligible ->
+                if (eligible) {
+                    while (kotlinx.coroutines.currentCoroutineContext().isActive) {
+                        app.appContainer.adProvider.prepareExitAd(AdPlacement.MOCK_EXIT_INTERSTITIAL)
+                        kotlinx.coroutines.delay(60_000L)
+                    }
+                }
             }
         }
 
@@ -151,6 +167,7 @@ class MockTestResultFragment : Fragment() {
                         binding.tvEarnedMarksSummary.text = "${a.earnedMarks} / ${a.maxMarks}"
                         binding.tvMockAccuracy.text = if (a.answeredCount() > 0) "${a.accuracyPercentage.toInt()}%" else "—"
 
+                        binding.mockAccuracyBar.progress = a.accuracyPercentage.toInt().coerceIn(0, 100)
                         binding.tvMockCorrectCount.text = a.correctCount().toString()
                         binding.tvMockIncorrectCount.text = a.incorrectCount().toString()
                         binding.tvMockUnansweredCount.text = a.unansweredCount().toString()
@@ -158,6 +175,11 @@ class MockTestResultFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.allowNewCreation()
     }
 
     override fun onDestroyView() {

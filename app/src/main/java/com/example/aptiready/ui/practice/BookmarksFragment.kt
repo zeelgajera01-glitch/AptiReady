@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.practice
 
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,8 @@ class BookmarksFragment : Fragment() {
     }
 
     private lateinit var bookmarkAdapter: BookmarkAdapter
+    private var allBookmarks: List<com.example.aptiready.data.model.BookmarkItem> = emptyList()
+    private var searchQuery = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,10 +51,19 @@ class BookmarksFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         setupRecyclerView()
+        binding.etBookmarkSearch.setText(searchQuery)
+        binding.etBookmarkSearch.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s?.toString()?.trim().orEmpty()
+                renderBookmarks()
+            }
+        })
         observeViewModel()
         setupNativeAd()
     }
@@ -78,17 +90,28 @@ class BookmarksFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bookmarks.collectLatest { list ->
-                    bookmarkAdapter.submitBookmarkList(list)
-                    if (list.isEmpty()) {
-                        binding.rvBookmarks.visibility = View.GONE
-                        binding.layoutEmptyBookmarks.visibility = View.VISIBLE
-                    } else {
-                        binding.rvBookmarks.visibility = View.VISIBLE
-                        binding.layoutEmptyBookmarks.visibility = View.GONE
-                    }
+                    allBookmarks = list
+                    renderBookmarks()
                 }
             }
         }
+    }
+
+    private fun renderBookmarks() {
+        val visible = allBookmarks.filter { item ->
+            searchQuery.isBlank() || item.questionText.contains(searchQuery, ignoreCase = true) ||
+                item.topicTitle.contains(searchQuery, ignoreCase = true) ||
+                item.explanation.contains(searchQuery, ignoreCase = true)
+        }
+        binding.tvBookmarkCount.text = if (searchQuery.isBlank()) "${allBookmarks.size} saved"
+            else "${visible.size} shown of ${allBookmarks.size} saved"
+        bookmarkAdapter.submitBookmarkList(visible)
+        binding.rvBookmarks.visibility = if (visible.isEmpty()) View.GONE else View.VISIBLE
+        binding.layoutEmptyBookmarks.visibility = if (visible.isEmpty()) View.VISIBLE else View.GONE
+        binding.tvBookmarkEmptyTitle.text = if (allBookmarks.isEmpty()) "Your study codex starts here" else "No matching bookmarks"
+        binding.tvBookmarkEmptyDescription.text = if (allBookmarks.isEmpty())
+            "Tap the bookmark icon during practice or answer review to save a question."
+            else "Try another topic or keyword."
     }
 
     override fun onDestroyView() {

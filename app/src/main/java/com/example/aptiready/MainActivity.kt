@@ -32,13 +32,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val appContainer = (application as AptiRiseApplication).appContainer
+        val app = application as AptiRiseApplication
+        binding.btnRetryContent.setOnClickListener { app.prepareContent() }
+        lifecycleScope.launch {
+            app.contentState.collectLatest { state ->
+                binding.contentLoadingOverlay.visibility = if (state == "READY") View.GONE else View.VISIBLE
+                binding.contentLoadingProgress.visibility = if (state == "LOADING") View.VISIBLE else View.GONE
+                binding.btnRetryContent.visibility = if (state == "ERROR") View.VISIBLE else View.GONE
+                binding.contentLoadingMessage.text = if (state == "ERROR")
+                    "Could not prepare your questions. Check available storage and try again."
+                else "Preparing your questions… This may take a little longer after an update."
+            }
+        }
         val adProvider = appContainer.adProvider
         adProvider.initialize(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.bottomNavigation.setPadding(0, 0, 0, systemBars.bottom)
-            binding.mainRoot.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            val bottom = if (binding.bottomNavigation.visibility == View.GONE) systemBars.bottom else 0
+            binding.mainRoot.setPadding(systemBars.left, systemBars.top, systemBars.right, bottom)
             insets
         }
 
@@ -58,7 +71,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         navGraph.setStartDestination(initialStartDestination)
-        navController.graph = navGraph
+        if (savedInstanceState == null || runCatching { navController.graph }.isFailure) {
+            navController.graph = navGraph
+        }
         isKeepOnScreen = false
 
         binding.bottomNavigation.setupWithNavController(navController)
@@ -84,25 +99,12 @@ class MainActivity : AppCompatActivity() {
 
         // Hide bottom navigation on detail/auth/practice session screens
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.topicDetailFragment,
-                R.id.testDetailFragment,
-                R.id.upcomingFeatureFragment,
-                R.id.welcomeFragment,
-                R.id.editProfileFragment,
-                R.id.practiceSessionFragment,
-                R.id.practiceResultFragment,
-                R.id.practiceReviewFragment,
-                R.id.bookmarksFragment,
-                R.id.adDiagnosticsFragment,
-                R.id.privacyPolicyFragment,
-                R.id.accountDeletionFragment -> {
-                    binding.bottomNavigation.visibility = View.GONE
-                }
-                else -> {
-                    binding.bottomNavigation.visibility = View.VISIBLE
-                }
-            }
+            val mainDestinations = setOf(
+                R.id.homeFragment, R.id.practiceFragment, R.id.testCatalogFragment,
+                R.id.progressFragment, R.id.profileFragment
+            )
+            binding.bottomNavigation.visibility = if (destination.id in mainDestinations) View.VISIBLE else View.GONE
+            ViewCompat.requestApplyInsets(binding.mainRoot)
         }
     }
 

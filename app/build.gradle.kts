@@ -14,8 +14,8 @@ android {
         applicationId = "com.aptirise.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.0.9"
+        versionCode = 13
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,7 +26,6 @@ android {
     }
 
     val keystorePropertiesFile = rootProject.file("release-keystore.properties")
-    val enableLiveAds = project.findProperty("enableLiveAds")?.toString()?.toBoolean() == true
 
     signingConfigs {
         create("release") {
@@ -82,11 +81,11 @@ android {
         release {
             signingConfig = signingConfigs.getByName("release")
 
-            // Defaults to false unless explicitly built with -PenableLiveAds=true
+            // Live ads enabled for release builds
             buildConfigField(
                 "boolean",
                 "ADS_ENABLED",
-                enableLiveAds.toString()
+                "true"
             )
 
             buildConfigField(

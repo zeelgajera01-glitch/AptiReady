@@ -24,6 +24,7 @@ class WelcomeViewModel(
     val error: StateFlow<String?> = _error.asStateFlow()
 
     fun signInWithGoogle(idToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        if (_isLoading.value) return
         _isLoading.value = true
         _error.value = null
 

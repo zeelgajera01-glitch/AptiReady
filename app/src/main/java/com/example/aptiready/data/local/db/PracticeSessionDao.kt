@@ -41,11 +41,33 @@ interface PracticeSessionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSnapshots(snapshots: List<SessionQuestionSnapshotEntity>)
 
+    @Query("UPDATE practice_sessions SET status = 'DISCARDED' WHERE id = :sessionId AND status = 'IN_PROGRESS'")
+    suspend fun discardActiveSession(sessionId: String): Int
+
     @Update
     suspend fun updateSession(session: PracticeSessionEntity)
 
+    @Query("UPDATE session_question_snapshots SET isBookmarked = :bookmarked WHERE sessionId = :sessionId AND position = :position")
+    suspend fun saveBookmarkState(sessionId: String, position: Int, bookmarked: Boolean): Int
+
     @Update
     suspend fun updateSnapshot(snapshot: SessionQuestionSnapshotEntity)
+
+    @Query("""UPDATE session_question_snapshots SET selectedOptionId = :optionId
+        WHERE sessionId = :sessionId AND position = :position AND isSubmitted = 0
+        AND EXISTS (SELECT 1 FROM practice_sessions WHERE id = :sessionId AND status = 'IN_PROGRESS')""")
+    suspend fun saveSelection(sessionId: String, position: Int, optionId: String?): Int
+
+    @Query("""UPDATE session_question_snapshots SET isSubmitted = 1
+        WHERE sessionId = :sessionId AND position = :position AND isSubmitted = 0 AND selectedOptionId IS NOT NULL
+        AND EXISTS (SELECT 1 FROM practice_sessions WHERE id = :sessionId AND status = 'IN_PROGRESS')""")
+    suspend fun submitAnswer(sessionId: String, position: Int): Int
+
+    @Query("""UPDATE practice_sessions SET currentQuestionIndex = :position
+        WHERE id = :sessionId AND status = 'IN_PROGRESS'
+        AND currentQuestionIndex != :position
+        AND EXISTS (SELECT 1 FROM session_question_snapshots WHERE sessionId = :sessionId AND position = :position)""")
+    suspend fun savePosition(sessionId: String, position: Int): Int
 
     @Query("SELECT * FROM practice_sessions WHERE ownerId = :ownerId AND status = 'IN_PROGRESS' ORDER BY createdAt DESC LIMIT 1")
     fun getInProgressSessionFlow(ownerId: String): Flow<PracticeSessionEntity?>

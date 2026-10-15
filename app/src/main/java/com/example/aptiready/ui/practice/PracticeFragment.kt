@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.practice
 
+import com.example.aptiready.ui.common.navigateSafely
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -49,6 +50,11 @@ class PracticeFragment : Fragment() {
 
         setupRecyclerView()
         setupSearchAndFilter()
+        when (arguments?.getString("categoryId")) {
+            "quant" -> binding.chipQuant.isChecked = true
+            "logical" -> binding.chipLogical.isChecked = true
+            "verbal" -> binding.chipVerbal.isChecked = true
+        }
         observeViewModel()
         setupNativeAd()
     }
@@ -58,7 +64,7 @@ class PracticeFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("topicId", topic.id)
             }
-            findNavController().navigate(R.id.action_practice_to_topicDetail, bundle)
+            navigateSafely(R.id.action_practice_to_topicDetail, bundle)
         }
 
         binding.rvTopics.apply {
@@ -99,6 +105,7 @@ class PracticeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.topics.collectLatest { topicList ->
+                    binding.tvTopicLibraryCount.text = "${topicList.size} topics"
                     topicAdapter.submitTopicList(topicList)
                     if (topicList.isEmpty()) {
                         binding.rvTopics.visibility = View.GONE

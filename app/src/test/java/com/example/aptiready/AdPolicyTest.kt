@@ -6,6 +6,16 @@ import org.junit.Test
 import java.util.TimeZone
 
 class AdPolicyTest {
+    @Test fun storageFailureBlocksAutomaticFullscreenWithoutDisablingOtherFormats() {
+        val manager = AdSessionManager(InMemoryAdPreferencesRepository(), FakeTimeProvider())
+        manager.init()
+        val globalState = AdConfig.isAdsEnabled
+        assertTrue(manager.isPolicyUsable)
+        manager.onStorageFailure(IllegalStateException("Storage unavailable"))
+        assertFalse(manager.isPolicyUsable)
+        assertEquals(globalState, AdConfig.isAdsEnabled)
+    }
+
     @Test fun firstSessionEndsAfterRealBackgroundIntervalWithoutAnyAd() {
         val clock = FakeTimeProvider()
         val manager = AdSessionManager(InMemoryAdPreferencesRepository(), clock)

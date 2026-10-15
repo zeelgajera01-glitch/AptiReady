@@ -33,9 +33,15 @@ class PracticeResultViewModel(
         }
     }
 
+    private val creationActions = com.example.aptiready.ui.common.SessionActions(viewModelScope)
+    val creationBusy = creationActions.busy
+    val creationError = creationActions.error
+    fun allowNewCreation() = creationActions.reopen()
+
     fun retryIncorrect(onRetryCreated: (PracticeSession) -> Unit) {
-        viewModelScope.launch {
+        creationActions.submit(terminal = true) {
             val newSession = practiceRepository.createRetrySession(currentOwnerId, sessionId)
+            checkNotNull(newSession) { "No incorrect answers to retry" }
             if (newSession != null) {
                 onRetryCreated(newSession)
             }

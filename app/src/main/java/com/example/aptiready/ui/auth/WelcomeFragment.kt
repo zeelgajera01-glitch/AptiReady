@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.auth
 
+import com.example.aptiready.ui.common.navigateSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,8 @@ class WelcomeFragment : Fragment() {
     private var _binding: FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
 
+    private var signInPending = false
+
     private lateinit var googleSignInClient: GoogleSignInClient
 
     private val viewModel: WelcomeViewModel by viewModels {
@@ -38,6 +41,9 @@ class WelcomeFragment : Fragment() {
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
+        signInPending = false
+        _binding?.btnGoogleSignIn?.isEnabled = true
+        if (_binding == null || !isAdded) return@registerForActivityResult
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
@@ -46,11 +52,13 @@ class WelcomeFragment : Fragment() {
                 viewModel.signInWithGoogle(
                     idToken = idToken,
                     onSuccess = {
+                        if (!isAdded || _binding == null) return@signInWithGoogle
                         if (findNavController().currentDestination?.id == R.id.welcomeFragment) {
-                            findNavController().navigate(R.id.action_welcome_to_home)
+                            navigateSafely(R.id.action_welcome_to_home)
                         }
                     },
                     onError = { errorMsg ->
+                        if (!isAdded || _binding == null) return@signInWithGoogle
                         Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show()
                     }
                 )
@@ -77,9 +85,22 @@ class WelcomeFragment : Fragment() {
         setupGoogleClient()
 
         binding.btnGoogleSignIn.setOnClickListener {
+            if (signInPending || viewModel.isLoading.value) return@setOnClickListener
+            signInPending = true
+            binding.btnGoogleSignIn.isEnabled = false
             googleSignInClient.signOut().addOnCompleteListener {
-                val signInIntent = googleSignInClient.signInIntent
-                googleSignInLauncher.launch(signInIntent)
+                if (!isAdded || _binding == null ||
+                    !viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    signInPending = false
+                    return@addOnCompleteListener
+                }
+                try {
+                    googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                } catch (failure: Exception) {
+                    signInPending = false
+                    binding.btnGoogleSignIn.isEnabled = true
+                    Toast.makeText(requireContext(), "Could not open Google sign-in. Please try again.", Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -101,7 +122,7 @@ class WelcomeFragment : Fragment() {
                 launch {
                     viewModel.isLoading.collectLatest { isLoading ->
                         binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
-                        binding.btnGoogleSignIn.isEnabled = !isLoading
+                        binding.btnGoogleSignIn.isEnabled = !isLoading && !signInPending
                     }
                 }
 
@@ -111,7 +132,7 @@ class WelcomeFragment : Fragment() {
                             is AuthState.SignedInVerified,
                             is AuthState.SignedInUnverified -> {
                                 if (findNavController().currentDestination?.id == R.id.welcomeFragment) {
-                                    findNavController().navigate(R.id.action_welcome_to_home)
+                                    navigateSafely(R.id.action_welcome_to_home)
                                 }
                             }
                             else -> {}

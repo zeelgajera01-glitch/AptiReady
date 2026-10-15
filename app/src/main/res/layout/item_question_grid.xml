@@ -1,24 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card_grid_item"
-    style="?attr/materialCardViewOutlinedStyle"
-    android:layout_width="52dp"
-    android:layout_height="52dp"
-    android:layout_margin="6dp"
-    android:clickable="true"
-    android:focusable="true"
-    app:cardCornerRadius="12dp">
-
-    <TextView
-        android:id="@+id/tv_grid_number"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        tools:text="1" />
-
+<?xml version='1.0' encoding='utf-8'?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/card_grid_item" android:layout_width="match_parent" android:layout_height="52dp" android:layout_margin="4dp" app:cardCornerRadius="16dp" app:cardElevation="0dp" app:strokeColor="@color/atelier_border" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground">
+  <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+    <TextView android:id="@+id/tv_grid_number" android:layout_width="match_parent" android:layout_height="match_parent" style="@style/Text.AptiRise.Section" android:textSize="16sp" android:gravity="center" tools:text="7"/>
+  </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

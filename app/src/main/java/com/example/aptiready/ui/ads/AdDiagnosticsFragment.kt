@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.ads
 
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,12 +47,12 @@ class AdDiagnosticsFragment : Fragment() {
 
         if (!BuildConfig.DEBUG) {
             Toast.makeText(requireContext(), "Diagnostics available in debug builds only.", Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
+            navigateUpSafely()
             return
         }
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.btnGenerateHistoryFixtures.visibility = View.GONE

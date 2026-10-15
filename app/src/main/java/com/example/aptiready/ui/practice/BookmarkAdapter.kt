@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aptiready.data.model.AdPlacement
 import com.example.aptiready.data.model.BookmarkItem
+import com.example.aptiready.data.model.QuestionText
 import com.example.aptiready.databinding.ItemBookmarkBinding
 import com.example.aptiready.databinding.NativeAdViewBinding
 import com.example.aptiready.ui.ads.AdEligibilityPolicy
@@ -93,7 +94,7 @@ class BookmarkAdapter(
 
         fun bind(item: BookmarkItem) {
             binding.tvBookmarkTopic.text = item.topicTitle.uppercase()
-            binding.tvBookmarkQuestionText.text = item.questionText
+            binding.tvBookmarkQuestionText.text = QuestionText.displayText(item.questionText)
 
             val correctOpt = item.options.find { it.id == item.correctOptionId }
             if (correctOpt != null) {

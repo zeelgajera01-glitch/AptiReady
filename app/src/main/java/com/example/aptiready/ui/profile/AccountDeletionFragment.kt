@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.profile
 
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,15 +43,16 @@ class AccountDeletionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.btnCancelDeletion.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.btnConfirmDeletion.setOnClickListener {
             viewModel.deleteAccount {
+                if (!isAdded || _binding == null) return@deleteAccount
                 Toast.makeText(requireContext(), "Account and cloud data deleted successfully.", Toast.LENGTH_LONG).show()
             }
         }

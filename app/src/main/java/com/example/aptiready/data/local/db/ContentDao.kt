@@ -33,6 +33,24 @@ interface ContentDao {
     @Query("SELECT * FROM questions WHERE topicId = :topicId AND difficulty = :difficulty AND published = 1")
     suspend fun getQuestionsForTopicAndDifficulty(topicId: String, difficulty: String): List<QuestionEntity>
 
+    @Query("SELECT id, questionText FROM questions WHERE topicId = :topicId AND published = 1 AND (:difficulty IS NULL OR difficulty = :difficulty)")
+    suspend fun getPracticeCandidates(topicId: String, difficulty: String?): List<PracticeCandidate>
+
     @Query("SELECT COUNT(*) FROM questions WHERE published = 1")
     suspend fun getTotalQuestionCount(): Int
+    @Query("SELECT COUNT(*) FROM questions WHERE version >= :minimumVersion")
+    suspend fun getQuestionCountAtLeastVersion(minimumVersion: Int): Int
+
+    @Query("SELECT * FROM questions WHERE id = :questionId AND published = 1 LIMIT 1")
+    suspend fun getQuestionById(questionId: String): QuestionEntity?
+
+    @Query("SELECT * FROM questions WHERE id IN (:questionIds) AND published = 1")
+    suspend fun getQuestionsByIds(questionIds: List<String>): List<QuestionEntity>
+
+    @Query("SELECT topicId, COUNT(DISTINCT LOWER(TRIM(questionText))) AS questionCount FROM questions WHERE published = 1 GROUP BY topicId")
+    fun observeQuestionCounts(): Flow<List<TopicQuestionCount>>
 }
+
+data class TopicQuestionCount(val topicId: String, val questionCount: Int)
+
+data class PracticeCandidate(val id: String, val questionText: String)

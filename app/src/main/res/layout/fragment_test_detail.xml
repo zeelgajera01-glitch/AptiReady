@@ -1,214 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <!-- Top Bar with Back Button -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/spacing_12dp"
-        android:paddingTop="@dimen/spacing_12dp"
-        android:paddingEnd="@dimen/spacing_12dp"
-        android:paddingBottom="@dimen/spacing_8dp">
-
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/cd_back_button"
-            android:src="@drawable/ic_back"
-            app:tint="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/tv_header_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_8dp"
-            android:layout_weight="1"
-            android:text="@string/test_details_title"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+<?xml version='1.0' encoding='utf-8'?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="?android:attr/colorBackground" android:clipToPadding="false">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="28dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="16dp">
+      <ImageButton android:id="@+id/btn_back" android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_back" app:tint="?attr/colorPrimary" android:contentDescription="Navigate back"/>
+      <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp">
+        <TextView android:text="AptiRise" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section"/>
+        <TextView android:text="TEST SETUP" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+      </LinearLayout>
     </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingStart="@dimen/spacing_20dp"
-        android:paddingTop="@dimen/spacing_8dp"
-        android:paddingEnd="@dimen/spacing_20dp"
-        android:paddingBottom="@dimen/spacing_24dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Test Summary Card -->
-            <com.google.android.material.card.MaterialCardView
-                style="?attr/materialCardViewElevatedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_16dp"
-                app:cardCornerRadius="@dimen/card_corner_radius">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_16dp">
-
-                    <TextView
-                        android:id="@+id/tv_test_full_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        tools:text="Quant Speed &amp; Accuracy Sprint 01" />
-
-                    <TextView
-                        android:id="@+id/tv_test_full_desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_8dp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="14sp"
-                        tools:text="Test your mental calculation speed, percentage shortcuts, and ratio applications under strict 15-minute countdown constraints." />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_16dp"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_detail_duration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="?attr/colorPrimary"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                tools:text="15 Mins" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Duration"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_detail_questions"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="?attr/colorSecondary"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                tools:text="20 Qs" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Total Questions"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_detail_difficulty"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/difficulty_medium"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                tools:text="Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Difficulty"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Rules & Guidelines Card -->
-            <com.google.android.material.card.MaterialCardView
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_20dp"
-                app:cardCornerRadius="@dimen/card_corner_radius">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Instructions &amp; Marking Scheme"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_8dp"
-                        android:lineSpacingExtra="4dp"
-                        android:text="• Each correct answer awards +1 mark.\n• Negative marking of -0.25 applies for wrong answers in stage 2 tests.\n• The test auto-submits when the timer reaches zero.\n• You can review answered and flagged questions before final submission."
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Start Mock Test Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_start_mock_test"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height"
-                android:text="@string/btn_start_mock_test"
-                app:cornerRadius="@dimen/button_corner_radius" />
-
+    <TextView android:text="Test Rules &amp; Structure" android:id="@+id/tv_header_title" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+    <Space android:layout_width="1dp" android:layout_height="12dp" android:importantForAccessibility="no"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/aptirise_hero_gradient" android:padding="24dp" android:layout_marginBottom="16dp">
+      <TextView android:id="@+id/tv_test_full_title" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" tools:text="Full Aptitude Mock" android:textColor="@color/brand_on_gradient"/>
+      <Space android:layout_width="1dp" android:layout_height="12dp" android:importantForAccessibility="no"/>
+      <TextView android:id="@+id/tv_test_full_desc" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textColor="@color/brand_on_gradient_muted"/>
+      <Space android:layout_width="1dp" android:layout_height="24dp" android:importantForAccessibility="no"/>
+    </LinearLayout>
+    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="@color/atelier_soft" app:strokeColor="@color/atelier_border">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1">
+            <TextView android:text="DURATION" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+            <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+            <TextView android:id="@+id/tv_detail_duration" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" tools:text="25 mins"/>
+          </LinearLayout>
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1">
+            <TextView android:text="QUESTIONS" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+            <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+            <TextView android:id="@+id/tv_detail_questions" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" tools:text="20 Qs"/>
+          </LinearLayout>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-</LinearLayout>
+        <Space android:layout_width="1dp" android:layout_height="14dp" android:importantForAccessibility="no"/>
+        <TextView android:id="@+id/tv_detail_difficulty" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="13sp" tools:text="Medium"/>
+      </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <Space android:layout_width="1dp" android:layout_height="14dp" android:importantForAccessibility="no"/>
+    <TextView android:text="Before you begin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section"/>
+    <Space android:layout_width="1dp" android:layout_height="12dp" android:importantForAccessibility="no"/>
+    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" app:strokeColor="@color/atelier_border">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+        <TextView android:id="@+id/tv_marking_scheme" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" tools:text="+1 per correct answer · No negative marking"/>
+        <Space android:layout_width="1dp" android:layout_height="10dp" android:importantForAccessibility="no"/>
+        <TextView android:text="• The countdown continues while you leave the test.&#10;• The test submits automatically when time runs out.&#10;• Answers marked for review will still be graded.&#10;• You can clear an answer before submission." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="14sp" android:lineSpacingExtra="7dp"/>
+      </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no"/>
+    <com.google.android.material.button.MaterialButton android:text="Start Full Mock Test" android:id="@+id/btn_start_mock_test" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Primary" app:cornerRadius="16dp"/>
+  </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.progress
 
+import com.example.aptiready.ui.common.navigateSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +52,7 @@ class ProgressFragment : Fragment() {
         }
 
         binding.btnViewAttemptHistory.setOnClickListener {
-            findNavController().navigate(R.id.action_progress_to_attemptHistory)
+            navigateSafely(R.id.action_progress_to_attemptHistory)
         }
 
         observeViewModel()

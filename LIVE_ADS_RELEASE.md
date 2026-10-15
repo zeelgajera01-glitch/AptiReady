@@ -1,3 +1,5 @@
+Current handoff: see START-HERE.txt and AD-VALIDATION.txt for version 1.1.2 (13). The material below predates this handoff.
+
 # Safe Production Ad Execution Switch (`LIVE_ADS_RELEASE.md`)
 
 This document describes how to safely build AptiRise for production with or without live AdMob ad serving enabled.

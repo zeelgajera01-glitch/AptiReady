@@ -1,5 +1,8 @@
 package com.example.aptiready.ui.practice
 
+import com.example.aptiready.ui.common.observeActionError
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.popBackStackSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.collect
 import com.example.aptiready.ui.ads.ResultExitState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 
 class PracticeResultFragment : Fragment() {
 
@@ -56,12 +60,19 @@ class PracticeResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeActionError(viewModel.creationError)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.creationBusy.collectLatest { busy ->
+                binding.btnRetryIncorrect.isEnabled = !busy
+                binding.btnRetryIncorrect.text = if (busy) "Loading…" else "Retry Incorrect"
+            }
+        }
 
         binding.btnReviewAnswers.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("sessionId", sessionId)
             }
-            findNavController().navigate(R.id.action_practiceResult_to_practiceReview, bundle)
+            navigateSafely(R.id.action_practiceResult_to_practiceReview, bundle)
         }
 
         binding.btnRetryIncorrect.setOnClickListener {
@@ -69,7 +80,7 @@ class PracticeResultFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("sessionId", newSession.id)
                 }
-                findNavController().navigate(R.id.action_practiceResult_to_practiceSession, bundle)
+                navigateSafely(R.id.action_practiceResult_to_practiceSession, bundle)
             }
         }
 
@@ -93,7 +104,7 @@ class PracticeResultFragment : Fragment() {
                     if (state == "READY" && findNavController().currentBackStackEntry === entry &&
                         !parentFragmentManager.isStateSaved) {
                         exitState.consumed()
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                        popBackStackSafely(R.id.homeFragment, false)
                     }
                 }
             }
@@ -102,8 +113,13 @@ class PracticeResultFragment : Fragment() {
             combine(app.appContainer.consentManager.adState, viewModel.session,
                 viewLifecycleOwner.lifecycle.currentStateFlow) { state, record, lifecycle ->
                 state.ready && record?.status == "COMPLETED" && lifecycle.isAtLeast(Lifecycle.State.STARTED)
-            }.collect { eligible ->
-                if (eligible) app.appContainer.adProvider.prepareExitAd(AdPlacement.PRACTICE_EXIT_INTERSTITIAL)
+            }.collectLatest { eligible ->
+                if (eligible) {
+                    while (kotlinx.coroutines.currentCoroutineContext().isActive) {
+                        app.appContainer.adProvider.prepareExitAd(AdPlacement.PRACTICE_EXIT_INTERSTITIAL)
+                        kotlinx.coroutines.delay(60_000L)
+                    }
+                }
             }
         }
 
@@ -139,6 +155,7 @@ class PracticeResultFragment : Fragment() {
                         val accuracyPct = if (submitted > 0) ((correct.toFloat() / submitted.toFloat()) * 100).toInt() else 0
 
                         binding.tvScorePercentage.text = "$scorePct%"
+                        binding.resultScoreRing.progress = scorePct
                         binding.tvAccuracyPercentage.text = if (submitted > 0) "$accuracyPct%" else "—"
 
                         binding.tvCountCorrect.text = correct.toString()
@@ -154,6 +171,11 @@ class PracticeResultFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.allowNewCreation()
     }
 
     override fun onDestroyView() {

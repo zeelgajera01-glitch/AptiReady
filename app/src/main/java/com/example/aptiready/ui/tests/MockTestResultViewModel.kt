@@ -33,10 +33,16 @@ class MockTestResultViewModel(
         }
     }
 
+    private val creationActions = com.example.aptiready.ui.common.SessionActions(viewModelScope)
+    val creationBusy = creationActions.busy
+    val creationError = creationActions.error
+    fun allowNewCreation() = creationActions.reopen()
+
     fun retakeTest(onAttemptCreated: (MockTestAttempt) -> Unit) {
         val testId = _attempt.value?.testId ?: return
-        viewModelScope.launch {
+        creationActions.submit(terminal = true) {
             val result = mockTestRepository.createMockAttempt(currentOwnerId, testId)
+            result.getOrThrow()
             result.onSuccess { newAttempt ->
                 onAttemptCreated(newAttempt)
             }

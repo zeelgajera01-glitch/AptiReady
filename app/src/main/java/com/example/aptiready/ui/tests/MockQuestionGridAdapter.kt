@@ -39,6 +39,11 @@ class MockQuestionGridAdapter(
             val isCurrent = position == currentPosition
 
             val (bgColor, textColor, strokeColor) = when {
+                snapshot.isMarkedForReview -> Triple(
+                    ContextCompat.getColor(context, R.color.atelier_peach_soft),
+                    ContextCompat.getColor(context, R.color.difficulty_medium),
+                    ContextCompat.getColor(context, R.color.difficulty_medium)
+                )
                 snapshot.selectedOptionId != null -> {
                     Triple(
                         ContextCompat.getColor(context, R.color.teal_100),
@@ -79,6 +84,10 @@ class MockQuestionGridAdapter(
                 binding.cardMockGridItem.strokeColor = strokeColor
             }
 
+            binding.cardMockGridItem.contentDescription = "Question ${position + 1}, " +
+                (if (snapshot.selectedOptionId != null) "answered" else "unanswered") +
+                (if (snapshot.isMarkedForReview) ", marked for review" else "") +
+                (if (isCurrent) ", current question" else "")
             binding.cardMockGridItem.setOnClickListener {
                 onPositionClick(position)
             }

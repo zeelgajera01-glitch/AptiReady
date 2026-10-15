@@ -17,13 +17,9 @@ class FullScreenAdCoordinator(
 
     var isFullScreenAdActive: Boolean = false
 
-    private var interstitialAd: InterstitialAd? = null
-    private var loadedPlacement: AdPlacement? = null
-    private var nextRetryMs = 0L
-    private var adLoadedTimeMs: Long = 0L
-    private var isLoadingInterstitial = false
-    private var loadGeneration: Int = 0
-
+    private val slot = AdLoadSlot<InterstitialAd>(sessionManager.timeProvider::elapsedRealtimeMs)
+    private fun key(placement: AdPlacement) = "${AdConfig.getAdUnitIdForPlacement(placement)}:${AdConfig.revision.value}"
+    private var currentKey: String? = null
     private fun isActivitySafe(activity: Activity): Boolean {
         return !activity.isFinishing && !activity.isDestroyed &&
             (activity as? androidx.lifecycle.LifecycleOwner)?.lifecycle?.currentState
@@ -31,73 +27,38 @@ class FullScreenAdCoordinator(
     }
 
     fun preloadInterstitial(context: Context, placement: AdPlacement) {
-        if (isLoadingInterstitial || sessionManager.timeProvider.elapsedRealtimeMs() < nextRetryMs) return
-        if (loadedPlacement != null && loadedPlacement != placement) invalidateAd()
-        if (!AdConfig.isPlacementEnabled(placement) || !canRequestAds()) return
-
-        if (interstitialAd != null) {
-            val now = sessionManager.timeProvider.elapsedRealtimeMs()
-            if (now - adLoadedTimeMs < AdConfig.FrequencyPolicy.AD_EXPIRE_DURATION_MS) {
-                return
-            } else {
-                interstitialAd = null
-            }
-        }
-
-        isLoadingInterstitial = true
-        val currentGen = loadGeneration
-        val configToken = AdConfig.revision.value
-        val adUnitId = AdConfig.getAdUnitIdForPlacement(placement)
-        val adRequest = AdRequest.Builder().build()
-
-        InterstitialAd.load(
-            context,
-            adUnitId,
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    if (currentGen != loadGeneration) return
-                    isLoadingInterstitial = false
-                    if (configToken == AdConfig.revision.value && canRequestAds() && AdConfig.isPlacementEnabled(placement)) {
-                        interstitialAd = ad
-                        loadedPlacement = placement
-                        adLoadedTimeMs = sessionManager.timeProvider.elapsedRealtimeMs()
-                        AdLogger.d("AdCoordinator", "Interstitial ad loaded successfully for $placement")
-                    } else {
-                        interstitialAd = null
-                        AdLogger.d("AdCoordinator", "Loaded interstitial discarded due to invalidation")
+        if (!AdConfig.isPlacementEnabled(placement) || !canRequestAds() || isFullScreenAdActive) return
+        val requestKey = key(placement)
+        currentKey = requestKey
+        val token = slot.begin(requestKey) ?: return
+        val config = AdConfig.revision.value
+        val unitId = AdConfig.getAdUnitIdForPlacement(placement)
+        AdLogger.d("AdCoordinator", "Requesting interstitial: placement=$placement, unitId=$unitId")
+        try {
+            InterstitialAd.load(context.applicationContext, unitId, AdRequest.Builder().build(),
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        if (!canRequestAds() || !AdConfig.isPlacementEnabled(placement) || config != AdConfig.revision.value) {
+                            slot.fail(token, true)
+                            return
+                        }
+                        if (slot.accept(token, ad))
+                            AdLogger.d("AdCoordinator", "Interstitial loaded: response=${ad.responseInfo}")
                     }
-                }
-
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    if (currentGen != loadGeneration) return
-                    nextRetryMs = sessionManager.timeProvider.elapsedRealtimeMs() + 30_000L
-                    isLoadingInterstitial = false
-                    interstitialAd = null
-                    AdLogger.w("AdCoordinator", "Interstitial failed to load: ${error.message}")
-                }
-            }
-        )
-    }
-
-    fun invalidateAd() {
-        interstitialAd = null
-        loadedPlacement = null
-        isLoadingInterstitial = false
-        loadGeneration++
-        AdLogger.d("AdCoordinator", "FullScreenAdCoordinator ads invalidated")
-    }
-
-    fun isAdLoadedAndValid(): Boolean {
-        val ad = interstitialAd ?: return false
-        val now = sessionManager.timeProvider.elapsedRealtimeMs()
-        if (now - adLoadedTimeMs >= AdConfig.FrequencyPolicy.AD_EXPIRE_DURATION_MS) {
-            interstitialAd = null
-            return false
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        slot.fail(token, error.code != AdRequest.ERROR_CODE_INVALID_REQUEST)
+                        AdLogger.w("AdCoordinator", "Interstitial failed: placement=$placement, unitId=$unitId, $error")
+                    }
+                })
+        } catch (failure: Exception) {
+            slot.fail(token, true)
+            AdLogger.w("AdCoordinator", "Interstitial request failed: ${failure.message}")
         }
-        return true
     }
 
+    fun invalidateAd() { slot.clear(); currentKey = null }
+
+    fun isAdLoadedAndValid() = currentKey?.let { slot.cached(it) != null } == true
     fun showExitInterstitialIfEligible(
         activity: Activity,
         placement: AdPlacement,
@@ -111,19 +72,29 @@ class FullScreenAdCoordinator(
             return
         }
 
-        try { sessionManager.checkpoint() } catch (_: Exception) { onComplete(); return }
+        try { sessionManager.checkpoint() } catch (failure: Exception) {
+            sessionManager.onStorageFailure(failure)
+            onComplete()
+            return
+        }
         if (attemptId.isBlank()) { onComplete(); return }
 
         val qualifiedAttemptId = if (attemptId.isNotBlank()) "${placement.name}:$attemptId" else ""
-        val isConsumed = if (qualifiedAttemptId.isNotBlank()) sessionManager.isAttemptConsumed(qualifiedAttemptId) else false
+        val isConsumed = try {
+            qualifiedAttemptId.isNotBlank() && sessionManager.isAttemptConsumed(qualifiedAttemptId)
+        } catch (failure: Exception) {
+            sessionManager.onStorageFailure(failure)
+            onComplete()
+            return
+        }
 
-        val hasAd = loadedPlacement == placement && isAdLoadedAndValid()
+        val hasAd = slot.cached(key(placement)) != null
 
         val policyResult = AdEligibilityPolicy.evaluateExitInterstitial(
             isAdsEnabled = AdConfig.isAdsEnabled,
             isPlacementEnabled = AdConfig.isPlacementEnabled(placement),
             canRequestAds = canRequestAds(),
-            isPolicyLoaded = sessionManager.isLoaded,
+            isPolicyLoaded = sessionManager.isPolicyUsable,
             isFirstSession = sessionManager.isFirstSession,
             sessionForegroundUsageMs = sessionManager.getAccumulatedForegroundUsageMs(),
             timeSinceLastAdMs = sessionManager.getTimeSinceLastAdMs(),
@@ -139,23 +110,23 @@ class FullScreenAdCoordinator(
 
         if (!policyResult.isEligible) {
             if (qualifiedAttemptId.isNotBlank() && policyResult.reason != AdEligibilityReason.ATTEMPT_ALREADY_CONSUMED) {
-                runCatching { sessionManager.markAttemptConsumed(qualifiedAttemptId) }.onFailure { AdConfig.isAdsEnabled = false }
+                runCatching { sessionManager.markAttemptConsumed(qualifiedAttemptId) }.onFailure { sessionManager.onStorageFailure(it) }
             }
             onComplete()
             return
         }
 
-        val ad = interstitialAd
+        val ad = slot.take(key(placement))
         if (ad == null) {
-            if (qualifiedAttemptId.isNotBlank()) runCatching { sessionManager.markAttemptConsumed(qualifiedAttemptId) }.onFailure { AdConfig.isAdsEnabled = false }
+            if (qualifiedAttemptId.isNotBlank()) runCatching { sessionManager.markAttemptConsumed(qualifiedAttemptId) }.onFailure { sessionManager.onStorageFailure(it) }
             onComplete()
             return
         }
 
         isFullScreenAdActive = true
-        interstitialAd = null
+
         if (qualifiedAttemptId.isNotBlank()) {
-            runCatching { sessionManager.markAttemptConsumed(qualifiedAttemptId) }.onFailure { AdConfig.isAdsEnabled = false }
+            runCatching { sessionManager.markAttemptConsumed(qualifiedAttemptId) }.onFailure { sessionManager.onStorageFailure(it) }
         }
 
         var hasIncrementedCount = false
@@ -170,7 +141,7 @@ class FullScreenAdCoordinator(
                     runCatching {
                         sessionManager.recordAdShow() // Persist a cooldown even if the process dies during display.
                         sessionManager.incrementInterstitialCount()
-                    }.onFailure { AdConfig.isAdsEnabled = false }
+                    }.onFailure { sessionManager.onStorageFailure(it) }
                 }
             }
 
@@ -178,7 +149,7 @@ class FullScreenAdCoordinator(
                 if (completed) return
                 AdLogger.d("AdCoordinator", "Interstitial dismissed by user")
                 isFullScreenAdActive = false
-                runCatching { sessionManager.recordAdShow() }.onFailure { AdConfig.isAdsEnabled = false }
+                runCatching { sessionManager.recordAdShow() }.onFailure { sessionManager.onStorageFailure(it) }
                 completeOnce()
             }
 
@@ -186,7 +157,7 @@ class FullScreenAdCoordinator(
                 if (completed) return
                 AdLogger.w("AdCoordinator", "Interstitial show failed: ${error.message}")
                 isFullScreenAdActive = false
-                runCatching { sessionManager.recordAdShow() }.onFailure { AdConfig.isAdsEnabled = false }
+                runCatching { sessionManager.recordAdShow() }.onFailure { sessionManager.onStorageFailure(it) }
                 completeOnce()
             }
         }

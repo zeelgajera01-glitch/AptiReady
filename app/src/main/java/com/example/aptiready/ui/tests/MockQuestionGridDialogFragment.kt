@@ -4,52 +4,55 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.aptiready.data.model.MockQuestionSnapshot
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.aptiready.databinding.DialogMockQuestionGridBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
-class MockQuestionGridDialogFragment(
-    private val snapshots: List<MockQuestionSnapshot>,
-    private val currentPosition: Int,
-    private val onSelectPosition: (Int) -> Unit,
-    private val onSubmitClick: () -> Unit
-) : BottomSheetDialogFragment() {
-
+/** No constructor data or callbacks: Android can restore this dialog after process death. */
+class MockQuestionGridDialogFragment : BottomSheetDialogFragment() {
     private var _binding: DialogMockQuestionGridBinding? = null
-    private val binding get() = _binding!!
+    private var resultSent = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogMockQuestionGridBinding.inflate(inflater, container, false)
-        return binding.root
+        return requireNotNull(_binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.btnCloseMockGrid.setOnClickListener {
-            dismiss()
-        }
-
-        val adapter = MockQuestionGridAdapter(currentPosition) { selectedPos ->
-            onSelectPosition(selectedPos)
-            dismiss()
-        }
-
-        binding.rvMockQuestionGrid.adapter = adapter
-        adapter.submitList(snapshots)
-
-        binding.btnSubmitMockFromGrid.setOnClickListener {
-            dismiss()
-            onSubmitClick()
+        val binding = requireNotNull(_binding)
+        val model = (parentFragment as? MockTestFragment)?.viewModel ?: return
+        binding.btnCloseMockGrid.setOnClickListener { dismiss() }
+        binding.btnSubmitMockFromGrid.setOnClickListener { sendResult(Bundle().apply { putBoolean("finish", true) }) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(model.snapshots, model.currentPosition) { rows, position -> rows to position }
+                    .collect { (rows, position) ->
+                        val adapter = MockQuestionGridAdapter(position) { selected ->
+                            sendResult(Bundle().apply { putInt("position", selected) })
+                        }
+                        binding.rvMockQuestionGrid.adapter = adapter
+                        adapter.submitList(rows)
+                    }
+            }
         }
     }
 
+    private fun sendResult(result: Bundle) {
+        if (resultSent || parentFragmentManager.isStateSaved) return
+        resultSent = true
+        // Dismiss first so a finish confirmation cannot stack above the grid.
+        dismiss()
+        parentFragmentManager.setFragmentResult("MockQuestionGridResult", result)
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.rvMockQuestionGrid?.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

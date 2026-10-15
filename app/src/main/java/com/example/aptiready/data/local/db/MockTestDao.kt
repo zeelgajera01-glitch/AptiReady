@@ -25,11 +25,39 @@ interface MockTestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSnapshots(snapshots: List<MockQuestionSnapshotEntity>)
 
+    @Query("UPDATE mock_test_attempts SET status = 'DISCARDED' WHERE id = :attemptId AND status = 'IN_PROGRESS'")
+    suspend fun discardActiveAttempt(attemptId: String): Int
+
     @Update
     suspend fun updateAttempt(attempt: MockTestAttemptEntity)
 
     @Update
     suspend fun updateSnapshot(snapshot: MockQuestionSnapshotEntity)
+
+    @Query("""UPDATE mock_question_snapshots SET selectedOptionId = :optionId, isVisited = 1
+        WHERE attemptId = :attemptId AND position = :position
+        AND EXISTS (SELECT 1 FROM mock_test_attempts WHERE id = :attemptId AND status = 'IN_PROGRESS')""")
+    suspend fun saveSelection(attemptId: String, position: Int, optionId: String?): Int
+
+    @Query("""UPDATE mock_question_snapshots SET isMarkedForReview = NOT isMarkedForReview, isVisited = 1
+        WHERE attemptId = :attemptId AND position = :position
+        AND EXISTS (SELECT 1 FROM mock_test_attempts WHERE id = :attemptId AND status = 'IN_PROGRESS')""")
+    suspend fun toggleReview(attemptId: String, position: Int): Int
+
+    @Query("""UPDATE mock_question_snapshots SET isVisited = 1
+        WHERE attemptId = :attemptId AND position = :position AND isVisited = 0
+        AND EXISTS (SELECT 1 FROM mock_test_attempts WHERE id = :attemptId AND status = 'IN_PROGRESS')""")
+    suspend fun markVisited(attemptId: String, position: Int): Int
+
+    @Query("""UPDATE mock_test_attempts SET currentQuestionIndex = :position
+        WHERE id = :attemptId AND status = 'IN_PROGRESS' AND currentQuestionIndex != :position
+        AND EXISTS (SELECT 1 FROM mock_question_snapshots WHERE attemptId = :attemptId AND position = :position)""")
+    suspend fun savePosition(attemptId: String, position: Int): Int
+
+    @Query("""UPDATE mock_test_attempts SET remainingSeconds = :remaining, elapsedSeconds = :elapsed,
+        lastSavedTimeMillis = :wallTime, bootTimeMarker = :bootTime
+        WHERE id = :attemptId AND status = 'IN_PROGRESS'""")
+    suspend fun saveTimer(attemptId: String, remaining: Int, elapsed: Int, wallTime: Long, bootTime: Long): Int
 
     @Query("SELECT * FROM mock_test_attempts WHERE ownerId = :ownerId AND status = 'IN_PROGRESS' ORDER BY createdAt DESC LIMIT 1")
     fun getInProgressAttemptFlow(ownerId: String): Flow<MockTestAttemptEntity?>

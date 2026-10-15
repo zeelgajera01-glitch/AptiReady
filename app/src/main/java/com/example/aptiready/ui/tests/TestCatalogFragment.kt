@@ -1,5 +1,6 @@
 package com.example.aptiready.ui.tests
 
+import com.example.aptiready.ui.common.navigateSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -58,7 +59,7 @@ class TestCatalogFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("testId", test.id)
             }
-            findNavController().navigate(R.id.action_testCatalog_to_testDetail, bundle)
+            navigateSafely(R.id.action_testCatalog_to_testDetail, bundle)
         }
 
         binding.rvTests.apply {

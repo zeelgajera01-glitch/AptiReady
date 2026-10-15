@@ -20,6 +20,7 @@ class MobileAdsProvider(
     val rewardedHintController = RewardedHintController(
         { consentManager.canLoad(AdPlacement.OPTIONAL_HINT_REWARDED) }, fullScreenCoordinator)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var rewardedRequested = false
     init {
         scope.launch {
             consentManager.adState.collect { state ->
@@ -27,6 +28,15 @@ class MobileAdsProvider(
                 rewardedHintController.invalidateAd()
                 ready.value = state.ready
                 // Rewarded loading is requested only by a question with real extra content.
+            }
+        }
+        scope.launch {
+            while (isActive) {
+                delay(60_000L)
+                if (sessionManager.isForeground && rewardedRequested &&
+                    consentManager.canLoad(AdPlacement.OPTIONAL_HINT_REWARDED)) {
+                    rewardedHintController.preloadRewardedAd(context.applicationContext)
+                }
             }
         }
     }
@@ -45,6 +55,7 @@ class MobileAdsProvider(
             fullScreenCoordinator.preloadInterstitial(context.applicationContext, placement)
     }
     fun prepareRewardedHint() {
+        rewardedRequested = true
         if (consentManager.canLoad(AdPlacement.OPTIONAL_HINT_REWARDED))
             rewardedHintController.preloadRewardedAd(context.applicationContext)
     }

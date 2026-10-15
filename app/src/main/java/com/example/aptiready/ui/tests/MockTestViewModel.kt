@@ -40,6 +40,9 @@ class MockTestViewModel(
     val isExpired: StateFlow<Boolean> = _isExpired.asStateFlow()
 
     private var timerJob: Job? = null
+    private val actions = com.example.aptiready.ui.common.SessionActions(viewModelScope)
+    val actionError = actions.error
+    val isFinishing = actions.busy
 
     init {
         loadAttempt()
@@ -47,10 +50,17 @@ class MockTestViewModel(
 
     private fun loadAttempt() {
         viewModelScope.launch {
-            val a = mockTestRepository.getAttemptById(attemptId)
+            val a = try {
+                requireNotNull(mockTestRepository.getAttemptById(attemptId))
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                actions.reportError("Could not load this mock test. Please go back and try again.")
+                return@launch
+            }
             _attempt.value = a
             a?.let {
-                _currentPosition.value = it.currentQuestionIndex
+                _currentPosition.value = it.currentQuestionIndex.coerceIn(0, (it.snapshots.size - 1).coerceAtLeast(0))
                 _remainingSeconds.value = it.remainingSeconds
                 if (it.status == "IN_PROGRESS" && it.remainingSeconds > 0) {
                     startTimer()
@@ -77,10 +87,11 @@ class MockTestViewModel(
 
                 val totalDuration = _attempt.value?.durationSeconds ?: 900
                 val elapsed = totalDuration - newRemaining
-                mockTestRepository.saveTimerProgress(attemptId, newRemaining, elapsed)
+                actions.submit(key = "timer") {
+                    mockTestRepository.saveTimerProgress(attemptId, newRemaining, elapsed)
+                }
 
                 if (newRemaining <= 0) {
-                    _isExpired.value = true
                     finalizeAttempt("TIME_EXPIRED") {}
                     break
                 }
@@ -92,7 +103,7 @@ class MockTestViewModel(
         val list = _snapshots.value
         val pos = _currentPosition.value
         if (pos in list.indices) {
-            viewModelScope.launch {
+            actions.submit {
                 mockTestRepository.saveOptionSelection(attemptId, pos, optionId)
             }
         }
@@ -102,7 +113,7 @@ class MockTestViewModel(
         val list = _snapshots.value
         val pos = _currentPosition.value
         if (pos in list.indices) {
-            viewModelScope.launch {
+            actions.submit(key = "review:$pos") {
                 mockTestRepository.toggleMarkForReview(attemptId, pos)
             }
         }
@@ -112,7 +123,7 @@ class MockTestViewModel(
         val list = _snapshots.value
         if (position in list.indices) {
             _currentPosition.value = position
-            viewModelScope.launch {
+            actions.submit {
                 mockTestRepository.markPositionVisited(attemptId, position)
                 mockTestRepository.updateCurrentPosition(attemptId, position)
             }
@@ -121,17 +132,24 @@ class MockTestViewModel(
 
     fun finalizeAttempt(reason: String, onFinalized: (MockTestAttempt) -> Unit) {
         timerJob?.cancel()
-        viewModelScope.launch {
+        actions.submit(terminal = true) {
             val finalized = mockTestRepository.finalizeAttempt(attemptId, reason)
+            checkNotNull(finalized) { "Attempt is unavailable" }
             if (finalized != null) {
+                _attempt.value = finalized
+                _isExpired.value = reason == "TIME_EXPIRED"
                 onFinalized(finalized)
             }
         }
     }
 
+    fun saveAndLeave(onSaved: () -> Unit) {
+        actions.submit(key = "leave") { onSaved() }
+    }
+
     fun discardAttempt(onDiscarded: () -> Unit) {
         timerJob?.cancel()
-        viewModelScope.launch {
+        actions.submit(terminal = true) {
             mockTestRepository.discardAttempt(attemptId)
             onDiscarded()
         }

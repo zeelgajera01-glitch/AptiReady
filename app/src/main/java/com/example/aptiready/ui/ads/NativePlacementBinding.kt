@@ -5,6 +5,8 @@ import com.example.aptiready.data.model.AdPlacement
 import com.google.android.gms.ads.nativead.NativeAd
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 /** View-lifecycle owner of one NativeAd. Adapters only borrow the ad for rendering. */
 class NativePlacementBinding(
@@ -19,12 +21,20 @@ class NativePlacementBinding(
     private var epoch = -1L
     private var eligibleCount = false
     private var closed = false
-    private var lastLifecycleState = Lifecycle.State.INITIALIZED
+    private val retryPulse = MutableStateFlow(0L)
 
     init {
         owner.lifecycle.addObserver(this)
         owner.lifecycleScope.launch {
-            combine(consent.adState, count, owner.lifecycle.currentStateFlow) { state, size, lifecycle ->
+            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (isActive) {
+                    delay(60_000L)
+                    retryPulse.value += 1L
+                }
+            }
+        }
+        owner.lifecycleScope.launch {
+            combine(consent.adState, count, owner.lifecycle.currentStateFlow, retryPulse) { state, size, lifecycle, _ ->
                 Triple(state, size, lifecycle)
             }.collect { (state, size, lifecycle) ->
                 if (closed) return@collect
@@ -35,22 +45,11 @@ class NativePlacementBinding(
                     epoch = state.generation
                 }
 
-                val isReentering = lastLifecycleState < Lifecycle.State.STARTED && lifecycle.isAtLeast(Lifecycle.State.STARTED)
-                lastLifecycleState = lifecycle
-
                 if (eligibleCount && consent.canLoad(placement) && lifecycle.isAtLeast(Lifecycle.State.STARTED)) {
-                    if (isReentering) {
-                        loader.loadFreshNativeAd(placement) { ad ->
-                            if (!closed && eligibleCount && consent.canLoad(placement) &&
-                                epoch == consent.adState.value.generation &&
-                                owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) render(ad)
-                        }
-                    } else {
-                        loader.loadNativeAdOnly(placement) { ad ->
-                            if (!closed && eligibleCount && consent.canLoad(placement) &&
-                                epoch == consent.adState.value.generation &&
-                                owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) render(ad)
-                        }
+                    loader.loadNativeAdOnly(placement) { ad ->
+                        if (!closed && eligibleCount && consent.canLoad(placement) &&
+                            epoch == consent.adState.value.generation &&
+                            owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) render(ad)
                     }
                 }
             }

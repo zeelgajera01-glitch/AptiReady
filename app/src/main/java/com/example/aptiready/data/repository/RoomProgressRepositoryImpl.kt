@@ -1,10 +1,13 @@
 package com.example.aptiready.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import com.example.aptiready.data.local.db.AppDatabase
 import com.example.aptiready.data.local.db.SessionQuestionSnapshotEntity
 import com.example.aptiready.data.model.Difficulty
 import com.example.aptiready.data.model.Topic
 import com.example.aptiready.data.model.UserProgress
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -72,7 +75,7 @@ class RoomProgressRepositoryImpl(
                 logicalMastery = logicalMastery,
                 verbalMastery = verbalMastery
             )
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     private fun calculateStreak(timestamps: List<Long>): Int {
@@ -140,7 +143,8 @@ class RoomProgressRepositoryImpl(
     }
 
     override fun getRecentTopic(): Flow<Topic?> {
-        return contentDao.getTopics().map { list ->
+        return combine(contentDao.getTopics(), contentDao.observeQuestionCounts()) { list, counts ->
+            val countByTopic = counts.associate { it.topicId to it.questionCount }
             list.firstOrNull()?.let { entity ->
                 Topic(
                     id = entity.id,
@@ -149,11 +153,11 @@ class RoomProgressRepositoryImpl(
                     title = entity.title,
                     description = entity.description,
                     difficulty = parseDifficulty(entity.difficulty),
-                    sampleQuestionCount = 60,
+                    sampleQuestionCount = countByTopic[entity.id] ?: 0,
                     formulaPreview = entity.formulaPreview
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     private fun parseDifficulty(diff: String): Difficulty {

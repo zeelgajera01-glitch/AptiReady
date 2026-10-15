@@ -1,5 +1,8 @@
 package com.example.aptiready.ui.tests
 
+import com.example.aptiready.ui.common.showOnce
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +54,7 @@ class TestDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         binding.btnStartMockTest.setOnClickListener {
@@ -61,62 +64,79 @@ class TestDetailFragment : Fragment() {
         observeViewModel()
     }
 
-    private fun handleStartOrResumeClick() {
-        val app = requireActivity().application as AptiRiseApplication
-        val repo = app.appContainer.mockTestRepository
-        val ownerId = viewModel.currentOwnerId
+    private var startPending = false
 
-        lifecycleScope.launch {
-            val activeAttempt = repo.getInProgressAttempt(ownerId)
-            if (activeAttempt != null && activeAttempt.testId != testId) {
-                // Another test is active for this owner
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Active Mock Test in Progress")
-                    .setMessage("You already have an active unfinished test: '${activeAttempt.testTitle}'. Only one active mock test is permitted per account at a time.\n\nWould you like to resume your active test or discard it?")
-                    .setPositiveButton("Resume Active Test") { _, _ ->
-                        val bundle = Bundle().apply {
-                            putString("attemptId", activeAttempt.id)
+    private fun handleStartOrResumeClick() {
+        if (startPending) return
+        startPending = true
+        binding.btnStartMockTest.isEnabled = false
+        val repo = (requireActivity().application as AptiRiseApplication).appContainer.mockTestRepository
+        val ownerId = viewModel.currentOwnerId
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val active = repo.getInProgressAttempt(ownerId)
+                if (active != null && active.testId != testId) {
+                    startPending = false
+                    binding.btnStartMockTest.isEnabled = true
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Active Mock Test in Progress")
+                        .setMessage("Resume '${active.testTitle}' or discard it and start this test?")
+                        .setPositiveButton("Resume Active Test") { _, _ -> openAttempt(active.id) }
+                        .setNegativeButton("Discard & Start New") { _, _ ->
+                            startNewAttempt(ownerId, active.id)
                         }
-                        findNavController().navigate(R.id.action_testDetail_to_mockTest, bundle)
-                    }
-                    .setNegativeButton("Discard & Start New") { _, _ ->
-                        lifecycleScope.launch {
-                            repo.discardAttempt(activeAttempt.id)
-                            startNewAttempt(ownerId)
-                        }
-                    }
-                    .setNeutralButton("Cancel", null)
-                    .show()
-            } else if (activeAttempt != null && activeAttempt.testId == testId) {
-                // Resume same test
-                val bundle = Bundle().apply {
-                    putString("attemptId", activeAttempt.id)
+                        .setNeutralButton("Cancel", null)
+                        .showOnce(this@TestDetailFragment)
+                } else if (active != null) {
+                    openAttempt(active.id)
+                } else {
+                    createAndOpenAttempt(ownerId)
                 }
-                findNavController().navigate(R.id.action_testDetail_to_mockTest, bundle)
-            } else {
-                startNewAttempt(ownerId)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                showStartFailure()
             }
         }
     }
 
-    private fun startNewAttempt(ownerId: String) {
-        val app = requireActivity().application as AptiRiseApplication
-        val repo = app.appContainer.mockTestRepository
-
-        lifecycleScope.launch {
-            binding.btnStartMockTest.isEnabled = false
-            val result = repo.createMockAttempt(ownerId, testId)
-            binding.btnStartMockTest.isEnabled = true
-
-            result.onSuccess { attempt ->
-                val bundle = Bundle().apply {
-                    putString("attemptId", attempt.id)
-                }
-                findNavController().navigate(R.id.action_testDetail_to_mockTest, bundle)
-            }.onFailure { err ->
-                Toast.makeText(requireContext(), err.localizedMessage ?: "Failed to start mock test.", Toast.LENGTH_LONG).show()
+    private fun startNewAttempt(ownerId: String, discardId: String) {
+        if (startPending) return
+        startPending = true
+        binding.btnStartMockTest.isEnabled = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val repo = (requireActivity().application as AptiRiseApplication).appContainer.mockTestRepository
+                repo.discardAttempt(discardId)
+                createAndOpenAttempt(ownerId)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                showStartFailure()
             }
         }
+    }
+
+    private suspend fun createAndOpenAttempt(ownerId: String) {
+        val repo = (requireActivity().application as AptiRiseApplication).appContainer.mockTestRepository
+        val attempt = repo.createMockAttempt(ownerId, testId).getOrThrow()
+        openAttempt(attempt.id)
+    }
+
+    private fun openAttempt(id: String) {
+        navigateSafely(R.id.action_testDetail_to_mockTest, Bundle().apply { putString("attemptId", id) })
+    }
+
+    private fun showStartFailure() {
+        startPending = false
+        _binding?.btnStartMockTest?.isEnabled = true
+        context?.let { Toast.makeText(it, "Could not start this test. Please try again.", Toast.LENGTH_LONG).show() }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startPending = false
+        binding.btnStartMockTest.isEnabled = true
     }
 
     private fun observeViewModel() {
@@ -130,7 +150,8 @@ class TestDetailFragment : Fragment() {
                         binding.tvTestFullDesc.text = match.description
                         binding.tvDetailDuration.text = "${match.durationSeconds / 60} Mins"
                         binding.tvDetailQuestions.text = "${match.questionIds.size} Qs"
-                        binding.tvDetailDifficulty.text = "Medium"
+                        binding.tvDetailDifficulty.text = "Timed aptitude test"
+                        binding.tvMarkingScheme.text = "+${match.marksPerCorrect} per correct answer · No negative marking"
                     }
                 }
             }

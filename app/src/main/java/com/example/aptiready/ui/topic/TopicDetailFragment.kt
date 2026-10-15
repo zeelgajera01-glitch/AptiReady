@@ -1,5 +1,9 @@
 package com.example.aptiready.ui.topic
 
+import com.example.aptiready.ui.common.observeActionError
+import com.example.aptiready.ui.common.showOnce
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,9 +60,11 @@ class TopicDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeActionError(viewModel.creationError)
+
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         setupChips()
@@ -141,7 +147,7 @@ class TopicDetailFragment : Fragment() {
                         viewModel.setDifficulty(null)
                     }
                     .setNeutralButton("Cancel", null)
-                    .show()
+                    .showOnce(this)
             } else if (unseen < requested) {
                 val filterName = viewModel.selectedDifficulty.value?.name ?: "All Difficulties"
                 if (unseen > 0) {
@@ -152,7 +158,7 @@ class TopicDetailFragment : Fragment() {
                             launchPractice(requested)
                         }
                         .setNegativeButton("Cancel", null)
-                        .show()
+                        .showOnce(this)
                 } else {
                     MaterialAlertDialogBuilder(requireContext())
                         .setTitle("All Questions Completed")
@@ -161,7 +167,7 @@ class TopicDetailFragment : Fragment() {
                             launchPractice(requested)
                         }
                         .setNegativeButton("Cancel", null)
-                        .show()
+                        .showOnce(this)
                 }
             } else {
                 launchPractice(requested)
@@ -170,11 +176,13 @@ class TopicDetailFragment : Fragment() {
     }
 
     private fun launchPractice(countToRequest: Int) {
+        binding.btnStartPractice.isEnabled = false
+        binding.btnStartPractice.text = "Preparing Session…"
         viewModel.startPracticeSession(countToRequest) { session ->
             val bundle = Bundle().apply {
                 putString("sessionId", session.id)
             }
-            findNavController().navigate(R.id.action_topicDetail_to_practiceSession, bundle)
+            navigateSafely(R.id.action_topicDetail_to_practiceSession, bundle)
         }
     }
 
@@ -194,24 +202,20 @@ class TopicDetailFragment : Fragment() {
                 }
 
                 launch {
-                    viewModel.availableCount.collectLatest { total ->
-                        val unseen = viewModel.unseenCount.value
-                        val requested = viewModel.selectedLength.value
-                        val diffText = viewModel.selectedDifficulty.value?.name ?: "ALL"
-
-                        if (total > 0) {
-                            binding.btnStartPractice.isEnabled = true
-                            if (unseen >= requested) {
-                                binding.btnStartPractice.text = "Start Practice ($requested Unseen Questions)"
-                            } else if (unseen > 0) {
-                                binding.btnStartPractice.text = "Start Practice ($unseen Unseen, ${requested - unseen} Revision)"
-                            } else {
-                                binding.btnStartPractice.text = "Start Revision ($requested Questions)"
-                            }
-                        } else {
-                            binding.btnStartPractice.text = "No Questions Available ($diffText)"
-                            binding.btnStartPractice.isEnabled = false
+                    combine(viewModel.availableCount, viewModel.unseenCount,
+                        viewModel.selectedLength, viewModel.selectedDifficulty, viewModel.creationBusy
+                    ) { total, unseen, requested, difficulty, busy ->
+                        val label = when {
+                            busy -> "Loading…"
+                            total <= 0 -> "No Questions Available (${difficulty?.name ?: "ALL"})"
+                            unseen >= requested -> "Start Practice ($requested Unseen Questions)"
+                            unseen > 0 -> "Start Practice ($unseen Unseen, ${requested - unseen} Revision)"
+                            else -> "Start Revision ($requested Questions)"
                         }
+                        (total > 0 && !busy) to label
+                    }.collectLatest { (enabled, label) ->
+                        binding.btnStartPractice.isEnabled = enabled
+                        binding.btnStartPractice.text = label
                     }
                 }
             }
@@ -226,6 +230,11 @@ class TopicDetailFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         bannerAdWrapper?.resume()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.allowNewCreation()
     }
 
     override fun onDestroyView() {

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aptiready.R
+import com.example.aptiready.data.model.QuestionText
 import com.example.aptiready.data.model.SessionSnapshot
 import com.example.aptiready.databinding.ItemReviewQuestionBinding
 
@@ -33,26 +34,16 @@ class ReviewAdapter(
 
         fun bind(snapshot: SessionSnapshot) {
             val context = binding.root.context
-            binding.tvReviewQuestionText.text = "${snapshot.position + 1}. ${snapshot.questionText}"
+            binding.tvReviewQuestionText.text = QuestionText.displayText(snapshot.questionText)
 
-            // Status badge
-            when {
-                snapshot.isCorrect() -> {
-                    binding.tvReviewStatusBadge.text = "CORRECT"
-                    binding.tvReviewStatusBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.teal_100))
-                    binding.tvReviewStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.teal_800))
-                }
-                snapshot.isIncorrect() -> {
-                    binding.tvReviewStatusBadge.text = "INCORRECT"
-                    binding.tvReviewStatusBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.indigo_100))
-                    binding.tvReviewStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.indigo_900))
-                }
-                else -> {
-                    binding.tvReviewStatusBadge.text = "SKIPPED"
-                    binding.tvReviewStatusBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.slate_200))
-                    binding.tvReviewStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.slate_800))
-                }
+            val (status, bg, fg) = when {
+                snapshot.isCorrect() -> Triple("CORRECT", R.color.atelier_success_bg, R.color.atelier_success)
+                snapshot.isIncorrect() -> Triple("INCORRECT", R.color.atelier_error_bg, R.color.atelier_on_error_bg)
+                else -> Triple("SKIPPED", R.color.atelier_soft, R.color.atelier_muted)
             }
+            binding.tvReviewStatusBadge.text = status
+            com.example.aptiready.ui.common.AtelierUi.pill(binding.tvReviewStatusBadge, bg, fg)
+            com.example.aptiready.ui.common.AtelierUi.pill(binding.tvUserSelectedAnswer, bg, fg)
 
             // User Selected Answer
             val userOpt = snapshot.options.find { it.id == snapshot.selectedOptionId }
@@ -70,7 +61,7 @@ class ReviewAdapter(
                 binding.tvCorrectAnswerText.text = "Correct Answer: Option ${correctOpt.id.uppercase()} (${correctOpt.text})"
             }
 
-            binding.tvReviewExplanation.text = "Explanation:\n${snapshot.explanation}"
+            binding.tvReviewExplanation.text = snapshot.explanation
 
             // Bookmark icon
             val starTint = if (snapshot.isBookmarked) R.color.primary else R.color.slate_400

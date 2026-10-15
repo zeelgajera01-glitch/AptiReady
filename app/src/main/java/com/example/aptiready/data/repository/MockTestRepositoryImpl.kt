@@ -14,6 +14,8 @@ import com.example.aptiready.data.model.MockTest
 import com.example.aptiready.data.model.MockTestAttempt
 import com.example.aptiready.data.model.QuestionOption
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -36,7 +38,7 @@ class MockTestRepositoryImpl(
     override fun getMockTestsFlow(): Flow<List<MockTest>> {
         return mockTestDao.getMockTestsFlow().map { list ->
             list.map { mapTestToDomain(it) }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun getMockTestById(testId: String): MockTest? = withContext(Dispatchers.IO) {
@@ -49,16 +51,7 @@ class MockTestRepositoryImpl(
 
         val resolvedQuestions = mutableListOf<com.example.aptiready.data.local.db.QuestionEntity>()
         for (qId in test.questionIds) {
-            val q = contentDao.getQuestionsForTopic("percentages").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("ratios").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("averages").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("profit_loss").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("time_work").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("number_series").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("directions").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("syllogisms").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("grammar_vocab").find { it.id == qId }
-                ?: contentDao.getQuestionsForTopic("reading_comp").find { it.id == qId }
+            val q = contentDao.getQuestionById(qId)
 
             if (q == null) {
                 return@withContext Result.failure(IllegalStateException("Referenced question '$qId' is missing from local bank."))
@@ -118,8 +111,10 @@ class MockTestRepositoryImpl(
             )
         }
 
-        mockTestDao.insertAttempt(attemptEntity)
-        mockTestDao.insertSnapshots(snapshotEntities)
+        database.withTransaction {
+            mockTestDao.insertAttempt(attemptEntity)
+            mockTestDao.insertSnapshots(snapshotEntities)
+        }
 
         return@withContext Result.success(mapAttemptToDomain(attemptEntity, snapshotEntities))
     }
@@ -139,7 +134,7 @@ class MockTestRepositoryImpl(
                 val recalculatedEntity = recalculateTimerOnRecovery(entity)
                 mapAttemptToDomain(recalculatedEntity, snapshots)
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun getAttemptById(attemptId: String): MockTestAttempt? = withContext(Dispatchers.IO) {
@@ -152,66 +147,42 @@ class MockTestRepositoryImpl(
     override fun getAttemptSnapshotsFlow(attemptId: String): Flow<List<MockQuestionSnapshot>> {
         return mockTestDao.getSnapshotsForAttemptFlow(attemptId).map { list ->
             list.map { mapSnapshotToDomain(it) }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun saveOptionSelection(attemptId: String, position: Int, selectedOptionId: String?) = withContext(Dispatchers.IO) {
-        val attempt = mockTestDao.getAttemptById(attemptId) ?: return@withContext
-        if (attempt.status == "COMPLETED") return@withContext // Locked
-
-        val snapshots = mockTestDao.getSnapshotsForAttempt(attemptId)
-        val snap = snapshots.find { it.position == position } ?: return@withContext
-
-        val updated = snap.copy(selectedOptionId = selectedOptionId, isVisited = true)
-        mockTestDao.updateSnapshot(updated)
+        mockTestDao.saveSelection(attemptId, position, selectedOptionId)
+        Unit
     }
 
     override suspend fun toggleMarkForReview(attemptId: String, position: Int): Boolean = withContext(Dispatchers.IO) {
-        val snapshots = mockTestDao.getSnapshotsForAttempt(attemptId)
-        val snap = snapshots.find { it.position == position } ?: return@withContext false
-        val newState = !snap.isMarkedForReview
-        mockTestDao.updateSnapshot(snap.copy(isMarkedForReview = newState, isVisited = true))
-        return@withContext newState
+        mockTestDao.toggleReview(attemptId, position)
+        mockTestDao.getSnapshotsForAttempt(attemptId).find { it.position == position }?.isMarkedForReview ?: false
     }
 
     override suspend fun markPositionVisited(attemptId: String, position: Int) = withContext(Dispatchers.IO) {
-        val snapshots = mockTestDao.getSnapshotsForAttempt(attemptId)
-        val snap = snapshots.find { it.position == position } ?: return@withContext
-        if (!snap.isVisited) {
-            mockTestDao.updateSnapshot(snap.copy(isVisited = true))
-        }
+        mockTestDao.markVisited(attemptId, position)
+        Unit
     }
 
     override suspend fun updateCurrentPosition(attemptId: String, position: Int) = withContext(Dispatchers.IO) {
-        val attempt = mockTestDao.getAttemptById(attemptId) ?: return@withContext
-        if (attempt.currentQuestionIndex != position) {
-            mockTestDao.updateAttempt(attempt.copy(currentQuestionIndex = position))
-        }
+        mockTestDao.savePosition(attemptId, position)
+        Unit
     }
 
     override suspend fun saveTimerProgress(attemptId: String, remainingSeconds: Int, elapsedSeconds: Int) = withContext(Dispatchers.IO) {
-        val attempt = mockTestDao.getAttemptById(attemptId) ?: return@withContext
-        if (attempt.status == "COMPLETED") return@withContext
-
-        val now = System.currentTimeMillis()
-        val currentBoot = SystemClock.elapsedRealtime()
-
-        val updated = attempt.copy(
-            remainingSeconds = maxOf(0, remainingSeconds),
-            elapsedSeconds = elapsedSeconds,
-            lastSavedTimeMillis = now,
-            bootTimeMarker = currentBoot
-        )
-        mockTestDao.updateAttempt(updated)
+        mockTestDao.saveTimer(attemptId, maxOf(0, remainingSeconds), elapsedSeconds, System.currentTimeMillis(), SystemClock.elapsedRealtime())
+        Unit
     }
 
     override suspend fun finalizeAttempt(attemptId: String, finishReason: String): MockTestAttempt? = withContext(Dispatchers.IO) {
+        database.withTransaction completion@ {
         val storedAttempt = mockTestDao.getAttemptById(attemptId)
-            ?: return@withContext null
+            ?: return@completion null
 
         val attempt = recalculateTimerOnRecovery(storedAttempt)
         if (attempt.status == "COMPLETED") {
-            return@withContext getAttemptById(attemptId)
+            return@completion getAttemptById(attemptId)
         }
 
         val snapshots = mockTestDao.getSnapshotsForAttempt(attemptId)
@@ -311,12 +282,13 @@ class MockTestRepositoryImpl(
             cloudSyncRepositoryProvider?.invoke()?.triggerSyncNow()
         }
 
-        return@withContext getAttemptById(attemptId)
+        return@completion getAttemptById(attemptId)
+        }
     }
 
     override suspend fun discardAttempt(attemptId: String) = withContext(Dispatchers.IO) {
-        val attempt = mockTestDao.getAttemptById(attemptId) ?: return@withContext
-        mockTestDao.updateAttempt(attempt.copy(status = "DISCARDED"))
+        mockTestDao.discardActiveAttempt(attemptId)
+        Unit
     }
 
     override fun getCompletedAttemptsForOwner(ownerId: String): Flow<List<MockTestAttempt>> {
@@ -325,7 +297,7 @@ class MockTestRepositoryImpl(
                 val snapshots = mockTestDao.getSnapshotsForAttempt(entity.id)
                 mapAttemptToDomain(entity, snapshots)
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun getLastCompletedAttemptForTest(ownerId: String, testId: String): MockTestAttempt? = withContext(Dispatchers.IO) {
@@ -384,7 +356,7 @@ class MockTestRepositoryImpl(
             }
 
             items.sortedByDescending { it.completedAt }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     private fun recalculateTimerOnRecovery(entity: MockTestAttemptEntity): MockTestAttemptEntity {

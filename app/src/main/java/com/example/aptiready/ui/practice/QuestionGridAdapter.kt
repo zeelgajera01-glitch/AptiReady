@@ -40,13 +40,13 @@ class QuestionGridAdapter(
             val (bgColor, textColor) = when {
                 snapshot.isSubmitted -> {
                     if (snapshot.isCorrect()) {
-                        ContextCompat.getColor(context, R.color.teal_100) to ContextCompat.getColor(context, R.color.teal_800)
+                        ContextCompat.getColor(context, R.color.atelier_success_bg) to ContextCompat.getColor(context, R.color.atelier_success)
                     } else {
-                        ContextCompat.getColor(context, R.color.indigo_50) to ContextCompat.getColor(context, R.color.indigo_800)
+                        ContextCompat.getColor(context, R.color.atelier_error_bg) to ContextCompat.getColor(context, R.color.atelier_on_error_bg)
                     }
                 }
                 snapshot.selectedOptionId != null -> {
-                    ContextCompat.getColor(context, R.color.indigo_100) to ContextCompat.getColor(context, R.color.indigo_900)
+                    ContextCompat.getColor(context, R.color.primary_container) to ContextCompat.getColor(context, R.color.on_primary_container)
                 }
                 else -> {
                     ContextCompat.getColor(context, R.color.slate_100) to ContextCompat.getColor(context, R.color.slate_800)
@@ -64,6 +64,12 @@ class QuestionGridAdapter(
                 binding.cardGridItem.strokeColor = ContextCompat.getColor(context, R.color.slate_200)
             }
 
+            binding.cardGridItem.contentDescription = "Question ${position + 1}, " + when {
+                snapshot.isSubmitted && snapshot.isCorrect() -> "correct"
+                snapshot.isSubmitted -> "incorrect"
+                snapshot.selectedOptionId != null -> "selected, not submitted"
+                else -> "unanswered"
+            } + if (isCurrent) ", current question" else ""
             binding.cardGridItem.setOnClickListener {
                 onPositionClick(position)
             }

@@ -1,5 +1,9 @@
 package com.example.aptiready.ui.tests
 
+import com.example.aptiready.ui.common.observeActionError
+import com.example.aptiready.ui.common.showOnce
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.popBackStackSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.aptiready.AptiRiseApplication
 import com.example.aptiready.R
+import com.example.aptiready.data.model.QuestionText
 import com.example.aptiready.data.model.MockQuestionSnapshot
 import com.example.aptiready.databinding.FragmentMockTestBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -24,13 +29,17 @@ import java.util.Locale
 class MockTestFragment : Fragment() {
 
     private var _binding: FragmentMockTestBinding? = null
+    private var submitSheet: com.google.android.material.bottomsheet.BottomSheetDialog? = null
+    private var submitSheetBinding: com.example.aptiready.databinding.SheetMockSubmitBinding? = null
+    private var submissionPending = false
+    private var resultNavigated = false
     private val binding get() = _binding!!
 
     private val attemptId: String by lazy {
         arguments?.getString("attemptId") ?: ""
     }
 
-    private val viewModel: MockTestViewModel by viewModels {
+    internal val viewModel: MockTestViewModel by viewModels {
         val app = requireActivity().application as AptiRiseApplication
         MockTestViewModel.Factory(
             attemptId,
@@ -51,6 +60,17 @@ class MockTestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        childFragmentManager.setFragmentResultListener("MockQuestionGridResult", viewLifecycleOwner) { _, result ->
+            if (result.getBoolean("finish")) handleManualSubmitRequest()
+            else viewModel.navigateToPosition(result.getInt("position", -1))
+        }
+
+        observeActionError(viewModel.actionError)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isFinishing.collectLatest { busy ->
+                if (!busy && viewModel.attempt.value?.status != "COMPLETED") submissionPending = false
+            }
+        }
         setupBackHandling()
         setupClickListeners()
         observeViewModel()
@@ -76,13 +96,13 @@ class MockTestFragment : Fragment() {
             .setTitle("Leave Mock Test?")
             .setMessage("Your timer will continue running in the background. You can resume this test from the Tests tab or Home screen.")
             .setPositiveButton("Save & Leave") { _, _ ->
-                findNavController().popBackStack(R.id.testCatalogFragment, false)
+                viewModel.saveAndLeave { popBackStackSafely(R.id.testCatalogFragment, false) }
             }
             .setNegativeButton("Submit Now") { _, _ ->
                 handleManualSubmitRequest()
             }
             .setNeutralButton("Continue Test", null)
-            .show()
+            .showOnce(this)
     }
 
     private fun setupClickListeners() {
@@ -123,43 +143,59 @@ class MockTestFragment : Fragment() {
         binding.btnMockNavigator.setOnClickListener {
             val snapshots = viewModel.snapshots.value
             val pos = viewModel.currentPosition.value
-            val dialog = MockQuestionGridDialogFragment(
-                snapshots = snapshots,
-                currentPosition = pos,
-                onSelectPosition = { selectedPos ->
-                    viewModel.navigateToPosition(selectedPos)
-                },
-                onSubmitClick = {
-                    handleManualSubmitRequest()
-                }
-            )
-            dialog.show(childFragmentManager, "MockQuestionGrid")
+            if (snapshots.isEmpty() || childFragmentManager.isStateSaved ||
+                childFragmentManager.findFragmentByTag("MockQuestionGrid") != null) return@setOnClickListener
+            MockQuestionGridDialogFragment().showNow(childFragmentManager, "MockQuestionGrid")
         }
     }
 
     private fun handleManualSubmitRequest() {
+        if (submissionPending || resultNavigated || submitSheet?.isShowing == true || viewModel.snapshots.value.isEmpty()) return
+        val sheetBinding = com.example.aptiready.databinding.SheetMockSubmitBinding.inflate(layoutInflater)
+        val sheet = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        submitSheet = sheet
+        submitSheetBinding = sheetBinding
+        sheet.setContentView(sheetBinding.root)
+        sheet.setOnDismissListener {
+            if (submitSheet === sheet) {
+                submitSheet = null
+                submitSheetBinding = null
+            }
+        }
+        sheetBinding.btnKeepWorking.setOnClickListener { sheet.dismiss() }
+        sheetBinding.btnConfirmSubmit.setOnClickListener {
+            if (submissionPending || resultNavigated) return@setOnClickListener
+            submissionPending = true
+            sheetBinding.btnConfirmSubmit.isEnabled = false
+            sheet.dismiss()
+            viewModel.finalizeAttempt("MANUAL_SUBMISSION") { finalizedAttempt ->
+                navigateToResultScreen(finalizedAttempt.id)
+            }
+        }
+        updateSubmitSheet()
+        sheet.show()
+    }
+
+    private fun updateSubmitSheet() {
+        val sheet = submitSheetBinding ?: return
         val snapshots = viewModel.snapshots.value
         val answered = snapshots.count { it.selectedOptionId != null }
-        val unanswered = snapshots.count { it.selectedOptionId == null }
-        val marked = snapshots.count { it.isMarkedForReview }
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Submit Mock Test?")
-            .setMessage("Summary:\n• Answered: $answered\n• Unanswered: $unanswered\n• Marked for Review: $marked\n\nQuestions marked for review with an answer WILL be graded.\n\nAre you sure you want to submit your test now?")
-            .setPositiveButton("Confirm Submission") { _, _ ->
-                viewModel.finalizeAttempt("MANUAL_SUBMISSION") { finalizedAttempt ->
-                    navigateToResultScreen(finalizedAttempt.id)
-                }
-            }
-            .setNegativeButton("Keep Working", null)
-            .show()
+        val total = snapshots.size
+        val seconds = viewModel.remainingSeconds.value.coerceAtLeast(0)
+        sheet.tvSubmitTime.text = String.format(Locale.US, "%02d:%02d", seconds / 60, seconds % 60)
+        sheet.tvSubmitAnswered.text = answered.toString()
+        sheet.tvSubmitUnanswered.text = (total - answered).toString()
+        sheet.tvSubmitReview.text = snapshots.count { it.isMarkedForReview }.toString()
+        sheet.tvSubmitProgress.text = "$answered of $total answered"
+        sheet.submitProgress.progress = if (total > 0) answered * 100 / total else 0
     }
 
     private fun navigateToResultScreen(attemptId: String) {
-        val bundle = Bundle().apply {
-            putString("attemptId", attemptId)
-        }
-        findNavController().navigate(R.id.action_mockTest_to_mockTestResult, bundle)
+        if (_binding == null || resultNavigated || findNavController().currentDestination?.id != R.id.mockTestFragment) return
+        resultNavigated = true
+        submitSheet?.dismiss()
+        val bundle = Bundle().apply { putString("attemptId", attemptId) }
+        navigateSafely(R.id.action_mockTest_to_mockTestResult, bundle)
     }
 
     private fun observeViewModel() {
@@ -168,7 +204,12 @@ class MockTestFragment : Fragment() {
                 launch {
                     viewModel.attempt.collectLatest { attempt ->
                         attempt?.let {
+                            if (it.status == "COMPLETED") {
+                                navigateToResultScreen(it.id)
+                                return@collectLatest
+                            }
                             binding.tvMockTestTitle.text = it.testTitle
+                            binding.tvMockTestSubtitle.text = "+${it.marksPerCorrect} per correct answer · No negative marking"
                         }
                     }
                 }
@@ -177,27 +218,19 @@ class MockTestFragment : Fragment() {
                     viewModel.remainingSeconds.collectLatest { seconds ->
                         val mins = seconds / 60
                         val secs = seconds % 60
-                        binding.tvMockTimer.text = String.format(Locale.US, "%02d:%02d", mins, secs)
+                        binding.tvMockTimer.text = String.format(Locale.US, "%02d:%02d", mins.coerceAtLeast(0), secs.coerceAtLeast(0))
+                        binding.tvMockTimer.setTextColor(ContextCompat.getColor(requireContext(),
+                            if (seconds in 1..60) R.color.atelier_error else R.color.atelier_text))
+                        updateSubmitSheet()
 
-                        if (seconds <= 0 && viewModel.attempt.value?.status == "IN_PROGRESS") {
-                            viewModel.finalizeAttempt("TIME_EXPIRED") { finalized ->
-                                navigateToResultScreen(finalized.id)
-                            }
-                        }
+
                     }
                 }
 
-                launch {
-                    viewModel.isExpired.collectLatest { expired ->
-                        if (expired) {
-                            val id = viewModel.attempt.value?.id ?: attemptId
-                            navigateToResultScreen(id)
-                        }
-                    }
-                }
 
                 launch {
                     viewModel.snapshots.collectLatest { snapshots ->
+                        updateSubmitSheet()
                         val pos = viewModel.currentPosition.value
                         if (pos in snapshots.indices) {
                             displaySnapshot(snapshots[pos], snapshots.size, pos)
@@ -219,10 +252,10 @@ class MockTestFragment : Fragment() {
 
     private fun displaySnapshot(snapshot: MockQuestionSnapshot, totalQuestions: Int, position: Int) {
         val context = requireContext()
-        binding.tvMockQuestionCounter.text = "Question ${position + 1} of $totalQuestions"
+        binding.tvMockQuestionCounter.visibility = View.GONE
         binding.mockProgressBar.progress = (((position + 1).toFloat() / totalQuestions.toFloat()) * 100).toInt()
 
-        binding.tvMockQuestionText.text = snapshot.questionText
+        binding.tvMockQuestionText.text = QuestionText.displayText(snapshot.questionText)
 
         if (snapshot.isMarkedForReview) {
             binding.tvMockReviewStatus.visibility = View.VISIBLE
@@ -244,6 +277,7 @@ class MockTestFragment : Fragment() {
         highlightOptionCard(binding.cardMockOptionC, binding.tvMockBadgeC, binding.tvMockOptionCText, "c", selected)
         highlightOptionCard(binding.cardMockOptionD, binding.tvMockBadgeD, binding.tvMockOptionDText, "d", selected)
 
+        binding.btnNextMock.text = if (position == totalQuestions - 1) "Finish" else "Next"
         binding.btnPrevMock.isEnabled = position > 0
     }
 
@@ -254,35 +288,15 @@ class MockTestFragment : Fragment() {
         optionId: String,
         selectedId: String?
     ) {
-        val isSelected = optionId == selectedId
-
-        card.isSelected = isSelected
-        badge.background = null
-
-        if (isSelected) {
-            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimaryContainer)
-            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorPrimary)
-            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnPrimaryContainer)
-
-            card.setCardBackgroundColor(bg)
-            card.strokeColor = stroke
-            card.strokeWidth = 4
-            badge.setTextColor(textColor)
-            optionTextView.setTextColor(textColor)
-        } else {
-            val bg = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface)
-            val stroke = com.google.android.material.color.MaterialColors.getColor(card, com.google.android.material.R.attr.colorOutline, ContextCompat.getColor(requireContext(), R.color.card_stroke_light))
-            val textColor = com.google.android.material.color.MaterialColors.getColor(optionTextView, com.google.android.material.R.attr.colorOnSurface)
-
-            card.setCardBackgroundColor(bg)
-            card.strokeColor = stroke
-            card.strokeWidth = 1
-            badge.setTextColor(textColor)
-            optionTextView.setTextColor(textColor)
-        }
+        com.example.aptiready.ui.common.AtelierUi.option(
+            card, badge, optionTextView, optionId, optionId == selectedId
+        )
     }
 
     override fun onDestroyView() {
+        submitSheet?.dismiss()
+        submitSheet = null
+        submitSheetBinding = null
         super.onDestroyView()
         _binding = null
     }

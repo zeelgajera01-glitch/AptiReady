@@ -1,5 +1,7 @@
 package com.example.aptiready.ui.tests
 
+import com.example.aptiready.ui.common.navigateSafely
+import com.example.aptiready.ui.common.navigateUpSafely
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,7 +51,7 @@ class AttemptHistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            navigateUpSafely()
         }
 
         setupRecyclerView()
@@ -63,10 +65,10 @@ class AttemptHistoryFragment : Fragment() {
             val bundle = Bundle()
             if (item.type == "PRACTICE") {
                 bundle.putString("sessionId", item.id)
-                findNavController().navigate(R.id.action_attemptHistory_to_practiceResult, bundle)
+                navigateSafely(R.id.action_attemptHistory_to_practiceResult, bundle)
             } else {
                 bundle.putString("attemptId", item.id)
-                findNavController().navigate(R.id.action_attemptHistory_to_mockTestResult, bundle)
+                navigateSafely(R.id.action_attemptHistory_to_mockTestResult, bundle)
             }
         }
 

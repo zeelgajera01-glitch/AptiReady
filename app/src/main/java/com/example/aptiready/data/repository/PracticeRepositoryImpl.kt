@@ -14,6 +14,8 @@ import com.example.aptiready.data.model.PracticeSession
 import com.example.aptiready.data.model.QuestionOption
 import com.example.aptiready.data.model.SessionSnapshot
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -32,26 +34,39 @@ class PracticeRepositoryImpl(
     private val bookmarkDao = database.bookmarkDao()
 
     override suspend fun getAvailableQuestionCount(topicId: String, difficulty: Difficulty?): Int = withContext(Dispatchers.IO) {
-        val questions = if (difficulty == null) {
-            contentDao.getQuestionsForTopic(topicId)
-        } else {
-            contentDao.getQuestionsForTopicAndDifficulty(topicId, difficulty.name.lowercase())
-        }
-        questions.size
+        val questions = contentDao.getPracticeCandidates(topicId, difficulty?.name?.lowercase())
+        PracticeQuestionSelector.uniqueQuestions(questions) { it.questionText }.size
     }
 
     override suspend fun getUnseenQuestionCount(ownerId: String, topicId: String, difficulty: Difficulty?): Int = withContext(Dispatchers.IO) {
-        val availableQuestions = if (difficulty == null) {
-            contentDao.getQuestionsForTopic(topicId)
-        } else {
-            contentDao.getQuestionsForTopicAndDifficulty(topicId, difficulty.name.lowercase())
-        }
+        val availableQuestions = contentDao.getPracticeCandidates(topicId, difficulty?.name?.lowercase())
 
         val seenIds = sessionDao.getSeenQuestionIdsForTopic(ownerId, topicId).toSet()
         val reservedIds = sessionDao.getActiveReservedQuestionIdsForTopic(ownerId, topicId).toSet()
 
-        val unseen = availableQuestions.filter { it.id !in seenIds && it.id !in reservedIds }
-        unseen.size
+        PracticeQuestionSelector.unseenCount(
+            availableQuestions, seenIds, reservedIds,
+            idOf = { it.id }, textOf = { it.questionText }
+        )
+    }
+
+    override suspend fun getTopicQuestionCounts(
+        ownerId: String,
+        topicId: String,
+        difficulty: Difficulty?
+    ): TopicQuestionCounts = withContext(Dispatchers.IO) {
+        val availableQuestions = contentDao.getPracticeCandidates(topicId, difficulty?.name?.lowercase())
+        val availableCount = PracticeQuestionSelector.uniqueQuestions(availableQuestions) { it.questionText }.size
+
+        val seenIds = sessionDao.getSeenQuestionIdsForTopic(ownerId, topicId).toSet()
+        val reservedIds = sessionDao.getActiveReservedQuestionIdsForTopic(ownerId, topicId).toSet()
+
+        val unseen = PracticeQuestionSelector.unseenCount(
+            availableQuestions, seenIds, reservedIds,
+            idOf = { it.id }, textOf = { it.questionText }
+        )
+
+        TopicQuestionCounts(available = availableCount, unseen = unseen)
     }
 
     override suspend fun createPracticeSession(
@@ -60,83 +75,86 @@ class PracticeRepositoryImpl(
         difficulty: Difficulty?,
         requestedCount: Int
     ): PracticeSession = withContext(Dispatchers.IO) {
-        val topic = contentDao.getTopicById(topicId)
-        val topicTitle = topic?.title ?: "Practice Topic"
-        val categoryName = topic?.categoryName ?: "General Aptitude"
+        database.withTransaction {
+            val topic = contentDao.getTopicById(topicId)
+            val topicTitle = topic?.title ?: "Practice Topic"
+            val categoryName = topic?.categoryName ?: "General Aptitude"
+    
+            val availableQuestions = contentDao.getPracticeCandidates(topicId, difficulty?.name?.lowercase())
 
-        val availableQuestions = if (difficulty == null) {
-            contentDao.getQuestionsForTopic(topicId)
-        } else {
-            contentDao.getQuestionsForTopicAndDifficulty(topicId, difficulty.name.lowercase())
-        }
-
-        val seenIds = sessionDao.getSeenQuestionIdsForTopic(ownerId, topicId).toSet()
-        val reservedIds = sessionDao.getActiveReservedQuestionIdsForTopic(ownerId, topicId).toSet()
-
-        val unseenQuestions = availableQuestions.filter { it.id !in seenIds && it.id !in reservedIds }.shuffled()
-        val seenQuestions = availableQuestions.filter { it.id in seenIds || it.id in reservedIds }.shuffled()
-
-        val selectedQuestions = mutableListOf<QuestionEntity>()
-
-        val unseenToTake = unseenQuestions.take(requestedCount)
-        selectedQuestions.addAll(unseenToTake)
-
-        if (selectedQuestions.size < requestedCount) {
-            val needed = requestedCount - selectedQuestions.size
-            val selectedIds = selectedQuestions.map { q -> q.id }.toSet()
-            val availableSeen = seenQuestions.filter { it.id !in selectedIds }
-            selectedQuestions.addAll(availableSeen.take(needed))
-        }
-
-        val sessionId = "session_${UUID.randomUUID()}"
-        val now = System.currentTimeMillis()
-
-        val sessionEntity = PracticeSessionEntity(
-            id = sessionId,
-            ownerId = ownerId,
-            topicId = topicId,
-            topicTitle = topicTitle,
-            categoryName = categoryName,
-            difficultyFilter = difficulty?.name?.lowercase() ?: "all",
-            requestedQuestionCount = selectedQuestions.size,
-            status = "IN_PROGRESS",
-            currentQuestionIndex = 0,
-            score = 0,
-            accuracyPercentage = 0f,
-            createdAt = now,
-            completedAt = null
-        )
-
-        val snapshotEntities = selectedQuestions.mapIndexed { index, q ->
-            val isBookmarked = bookmarkDao.isBookmarked(ownerId, q.id)
-            SessionQuestionSnapshotEntity(
-                id = "${sessionId}_$index",
-                sessionId = sessionId,
-                questionId = q.id,
-                position = index,
-                questionText = q.questionText,
-                optionsJson = q.optionsJson,
-                correctOptionId = q.correctOptionId,
-                explanation = q.explanation,
-                hint = q.hint,
-                extraHint = q.extraHint,
-                isExtraHintUnlocked = false,
-                selectedOptionId = null,
-                isSubmitted = false,
-                isBookmarked = isBookmarked
+            val seenIds = sessionDao.getSeenQuestionIdsForTopic(ownerId, topicId).toSet()
+            val reservedIds = sessionDao.getActiveReservedQuestionIdsForTopic(ownerId, topicId).toSet()
+    
+            val selectedCandidates = PracticeQuestionSelector.select(
+                questions = availableQuestions,
+                seenIds = seenIds,
+                reservedIds = reservedIds,
+                requestedCount = requestedCount,
+                idOf = { it.id },
+                textOf = { it.questionText }
             )
+
+            val selectedIds = selectedCandidates.map { it.id }
+            val questionsMap = contentDao.getQuestionsByIds(selectedIds).associateBy { it.id }
+            val selectedQuestions = selectedIds.mapNotNull { questionsMap[it] }
+    
+            require(selectedQuestions.isNotEmpty()) { "No questions available. Please try again after loading finishes." }
+
+            val sessionId = "session_${UUID.randomUUID()}"
+            val now = System.currentTimeMillis()
+    
+            val sessionEntity = PracticeSessionEntity(
+                id = sessionId,
+                ownerId = ownerId,
+                topicId = topicId,
+                topicTitle = topicTitle,
+                categoryName = categoryName,
+                difficultyFilter = difficulty?.name?.lowercase() ?: "all",
+                requestedQuestionCount = selectedQuestions.size,
+                status = "IN_PROGRESS",
+                currentQuestionIndex = 0,
+                score = 0,
+                accuracyPercentage = 0f,
+                createdAt = now,
+                completedAt = null
+            )
+    
+            val questionIds = selectedQuestions.map { it.id }
+            val bookmarkedQuestionIds = bookmarkDao.getBookmarkedQuestionIds(ownerId, questionIds).toSet()
+
+            val snapshotEntities = selectedQuestions.mapIndexed { index, q ->
+                val isBookmarked = bookmarkedQuestionIds.contains(q.id)
+                SessionQuestionSnapshotEntity(
+                    id = "${sessionId}_$index",
+                    sessionId = sessionId,
+                    questionId = q.id,
+                    position = index,
+                    questionText = q.questionText,
+                    optionsJson = q.optionsJson,
+                    correctOptionId = q.correctOptionId,
+                    explanation = q.explanation,
+                    hint = q.hint,
+                    extraHint = q.extraHint,
+                    isExtraHintUnlocked = false,
+                    selectedOptionId = null,
+                    isSubmitted = false,
+                    isBookmarked = isBookmarked
+                )
+            }
+    
+            sessionDao.insertSession(sessionEntity)
+            sessionDao.insertSnapshots(snapshotEntities)
+    
+            mapSessionToDomain(sessionEntity, snapshotEntities)
         }
-
-        sessionDao.insertSession(sessionEntity)
-        sessionDao.insertSnapshots(snapshotEntities)
-
-        return@withContext mapSessionToDomain(sessionEntity, snapshotEntities)
     }
 
     override suspend fun createRetrySession(ownerId: String, originalSessionId: String): PracticeSession? = withContext(Dispatchers.IO) {
         val originalSession = sessionDao.getSessionById(originalSessionId) ?: return@withContext null
         val originalSnapshots = sessionDao.getSnapshotsForSession(originalSessionId)
-        val incorrectSnapshots = originalSnapshots.filter { it.isSubmitted && it.selectedOptionId != null && it.selectedOptionId != it.correctOptionId }
+        val incorrectSnapshots = PracticeQuestionSelector.uniqueQuestions(
+            originalSnapshots.filter { it.isSubmitted && it.selectedOptionId != null && it.selectedOptionId != it.correctOptionId }
+        ) { it.questionText }
 
         if (incorrectSnapshots.isEmpty()) return@withContext null
 
@@ -179,8 +197,10 @@ class PracticeRepositoryImpl(
             )
         }
 
-        sessionDao.insertSession(newSessionEntity)
-        sessionDao.insertSnapshots(newSnapshots)
+        database.withTransaction {
+            sessionDao.insertSession(newSessionEntity)
+            sessionDao.insertSnapshots(newSnapshots)
+        }
 
         return@withContext mapSessionToDomain(newSessionEntity, newSnapshots)
     }
@@ -198,7 +218,7 @@ class PracticeRepositoryImpl(
                 val snapshots = sessionDao.getSnapshotsForSession(sessionEntity.id)
                 mapSessionToDomain(sessionEntity, snapshots)
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun getSessionById(sessionId: String): PracticeSession? = withContext(Dispatchers.IO) {
@@ -210,33 +230,22 @@ class PracticeRepositoryImpl(
     override fun getSessionSnapshotsFlow(sessionId: String): Flow<List<SessionSnapshot>> {
         return sessionDao.getSnapshotsForSessionFlow(sessionId).map { list ->
             list.map { mapSnapshotToDomain(it) }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun saveAnswerSelection(sessionId: String, position: Int, selectedOptionId: String?) = withContext(Dispatchers.IO) {
-        val snapshots = sessionDao.getSnapshotsForSession(sessionId)
-        val snapshot = snapshots.find { it.position == position } ?: return@withContext
-        if (snapshot.isSubmitted) return@withContext
-
-        val updated = snapshot.copy(selectedOptionId = selectedOptionId)
-        sessionDao.updateSnapshot(updated)
+        sessionDao.saveSelection(sessionId, position, selectedOptionId)
+        Unit
     }
 
     override suspend fun submitQuestionAnswer(sessionId: String, position: Int) = withContext(Dispatchers.IO) {
-        val snapshots = sessionDao.getSnapshotsForSession(sessionId)
-        val snapshot = snapshots.find { it.position == position } ?: return@withContext
-        if (snapshot.isSubmitted) return@withContext
-
-        val updated = snapshot.copy(isSubmitted = true)
-        sessionDao.updateSnapshot(updated)
+        sessionDao.submitAnswer(sessionId, position)
+        Unit
     }
 
     override suspend fun updateCurrentPosition(sessionId: String, position: Int) = withContext(Dispatchers.IO) {
-        val session = sessionDao.getSessionById(sessionId) ?: return@withContext
-        if (session.currentQuestionIndex != position) {
-            val updated = session.copy(currentQuestionIndex = position)
-            sessionDao.updateSession(updated)
-        }
+        sessionDao.savePosition(sessionId, position)
+        Unit
     }
 
     override suspend fun unlockExtraHint(
@@ -255,9 +264,10 @@ class PracticeRepositoryImpl(
     }
 
     override suspend fun finalizeSession(sessionId: String, ownerId: String): PracticeSession? = withContext(Dispatchers.IO) {
-        val session = sessionDao.getSessionById(sessionId) ?: return@withContext null
+        database.withTransaction completion@ {
+        val session = sessionDao.getSessionById(sessionId) ?: return@completion null
         if (session.status == "COMPLETED") {
-            return@withContext getSessionById(sessionId)
+            return@completion getSessionById(sessionId)
         }
 
         val snapshots = sessionDao.getSnapshotsForSession(sessionId)
@@ -341,13 +351,13 @@ class PracticeRepositoryImpl(
             cloudSyncRepositoryProvider?.invoke()?.triggerSyncNow()
         }
 
-        return@withContext getSessionById(sessionId)
+        return@completion getSessionById(sessionId)
+        }
     }
 
     override suspend fun discardSession(sessionId: String) = withContext(Dispatchers.IO) {
-        val session = sessionDao.getSessionById(sessionId) ?: return@withContext
-        val updated = session.copy(status = "DISCARDED")
-        sessionDao.updateSession(updated)
+        sessionDao.discardActiveSession(sessionId)
+        Unit
     }
 
     override fun getCompletedSessionsForOwner(ownerId: String): Flow<List<PracticeSession>> {
@@ -356,10 +366,11 @@ class PracticeRepositoryImpl(
                 val snapshots = sessionDao.getSnapshotsForSession(sessionEntity.id)
                 mapSessionToDomain(sessionEntity, snapshots)
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun toggleBookmark(ownerId: String, snapshot: SessionSnapshot, topicTitle: String): Boolean = withContext(Dispatchers.IO) {
+        database.withTransaction {
         val isCurrentlyBookmarked = bookmarkDao.isBookmarked(ownerId, snapshot.questionId)
         val newBookmarkState = !isCurrentlyBookmarked
 
@@ -395,7 +406,7 @@ class PracticeRepositoryImpl(
         val snapshots = sessionDao.getSnapshotsForSession(snapshot.sessionId)
         val match = snapshots.find { it.position == snapshot.position }
         if (match != null) {
-            sessionDao.updateSnapshot(match.copy(isBookmarked = newBookmarkState))
+            sessionDao.saveBookmarkState(snapshot.sessionId, snapshot.position, newBookmarkState)
         }
 
         val action = if (newBookmarkState) "UPSERT" else "DELETE"
@@ -420,7 +431,8 @@ class PracticeRepositoryImpl(
 
         cloudSyncRepositoryProvider?.invoke()?.enqueueBookmarkForSync(ownerId, snapshot.questionId, action, payloadObj.toString())
 
-        return@withContext newBookmarkState
+        newBookmarkState
+        }
     }
 
     override fun getBookmarksForOwner(ownerId: String): Flow<List<BookmarkItem>> {
@@ -442,7 +454,7 @@ class PracticeRepositoryImpl(
                     createdAt = entity.createdAt
                 )
             }
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     override suspend fun removeBookmark(ownerId: String, questionId: String) = withContext(Dispatchers.IO) {
