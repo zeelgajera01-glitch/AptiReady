@@ -5,7 +5,7 @@
   <string name="default_web_client_id">4544407399-rp3h25eqb8tfpp3s205lob9ipv93r939.apps.googleusercontent.com</string>
   <string name="demo_mode_badge">DEMO MODE</string>
   <string name="sample_data_note">Sample Data Preview</string>
-  <string name="sample_data_disclaimer">This preview uses sample offline data. Real progress sync will be connected in Stage 2.</string>
+  <string name="sample_data_disclaimer">This preview uses sample offline data. Your practice history and bookmarks are stored on this device.</string>
   <string name="nav_home">Home</string>
   <string name="nav_practice">Practice</string>
   <string name="nav_tests">Tests</string>
@@ -60,8 +60,8 @@
   <string name="theme_system">System Default</string>
   <string name="theme_light">Light Theme</string>
   <string name="theme_dark">Dark Theme</string>
-  <string name="account_connection_title">Account &amp; Cloud Sync</string>
-  <string name="account_connection_desc">Account registration, Google Sign-In, and Cloud Firestore backup will be activated in Stage 2.</string>
+  <string name="account_connection_title">Your account</string>
+  <string name="account_connection_desc">Sign in with Google to manage your profile. Learning progress and bookmarks are stored on this device.</string>
   <string name="app_info_title">App Information</string>
   <string name="version_format">AptiRise v1.0.0 (Stage 1 Architecture)</string>
   <string name="upcoming_title">Practice Engine Coming Soon</string>
@@ -71,4 +71,17 @@
   <string name="cd_search_icon">Search icon</string>
   <string name="cd_category_icon">Category icon</string>
   <string name="cd_app_logo">AptiRise Logo</string>
+  <string name="drawer_open">Open navigation drawer</string>
+  <string name="drawer_bookmarks">Bookmarks</string>
+  <string name="drawer_history">Attempt history</string>
+  <string name="drawer_account">Account and settings</string>
+  <string name="drawer_profile_settings">Profile and settings</string>
+  <string name="drawer_edit_profile">Edit profile</string>
+  <string name="drawer_privacy_policy">Privacy policy</string>
+  <string name="drawer_delete_account">Delete account</string>
+  <string name="drawer_sign_out">Sign out</string>
+  <string name="drawer_sign_out_message">Sign out of your account on this device?</string>
+  <string name="content_preparing">Preparing your questions…</string>
+  <string name="content_prepare_error">Could not prepare your questions. Check available storage and try again.</string>
+  <string name="content_retry">Try again</string>
 </resources>

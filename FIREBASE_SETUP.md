@@ -12,10 +12,10 @@ In Stage 2, the app includes **explicit local fallback mode**. If `google-servic
 1. Go to the [Firebase Console](https://console.firebase.google.com/).
 2. Click **Create Project** and name it `AptiRise-Production` (or select an existing project).
 3. Confirm your final Application ID:
-   - Development Application ID: `com.example.aptiready`
+   - Development Application ID: `com.aptirise.app`
    - Production Application ID placeholder: `com.example.aptirise`
 4. Click **Add App** -> **Android**.
-5. Enter the matching package name (e.g. `com.example.aptiready`).
+5. Enter the matching package name (e.g. `com.aptirise.app`).
 6. Register SHA-1 fingerprint (required if using Google One Tap or App Check later).
 
 ---

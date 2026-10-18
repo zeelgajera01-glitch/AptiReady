@@ -1,39 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-
-    <application
-        android:name=".AptiRiseApplication"
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/logo"
-        android:label="@string/app_name"
-        android:roundIcon="@drawable/logo"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.AptiReady">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AptiReady.Starting"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- App ID supplied by the selected Gradle build type. -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${admobAppId}" />
-    </application>
-
+<?xml version='1.0' encoding='utf-8'?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <application android:name=".AptiRiseApplication" android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@drawable/logo" android:label="@string/app_name" android:roundIcon="@drawable/logo" android:supportsRtl="true" android:theme="@style/Theme.AptiReady">
+    <activity android:name=".SplashActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@style/Theme.AptiReady.Starting" android:windowSoftInputMode="adjustResize" tools:ignore="DiscouragedApi,LockedOrientationActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity android:name=".MainActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.WelcomeActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.LoginActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.RegisterActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.VerifyEmailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.ForgotPasswordActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.EditProfileActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.PracticeActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.TopicDetailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.PracticeSessionActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.PracticeResultActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.PracticeReviewActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.BookmarksActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.TestCatalogActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.TestDetailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.MockTestActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.MockTestResultActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.AttemptHistoryActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.ProgressActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.ProfileActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.AccountDeletionActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.PrivacyPolicyActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity android:name=".ui.navigation.UpcomingFeatureActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+    <activity-alias android:name="com.example.aptiready.SplashActivity" android:targetActivity=".SplashActivity" android:exported="true" />
+    <activity-alias android:name="com.example.aptiready.MainActivity" android:targetActivity=".MainActivity" android:exported="true" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.WelcomeActivity" android:targetActivity=".ui.navigation.WelcomeActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.LoginActivity" android:targetActivity=".ui.navigation.LoginActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.RegisterActivity" android:targetActivity=".ui.navigation.RegisterActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.VerifyEmailActivity" android:targetActivity=".ui.navigation.VerifyEmailActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.ForgotPasswordActivity" android:targetActivity=".ui.navigation.ForgotPasswordActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.EditProfileActivity" android:targetActivity=".ui.navigation.EditProfileActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.PracticeActivity" android:targetActivity=".ui.navigation.PracticeActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.TopicDetailActivity" android:targetActivity=".ui.navigation.TopicDetailActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.PracticeSessionActivity" android:targetActivity=".ui.navigation.PracticeSessionActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.PracticeResultActivity" android:targetActivity=".ui.navigation.PracticeResultActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.PracticeReviewActivity" android:targetActivity=".ui.navigation.PracticeReviewActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.BookmarksActivity" android:targetActivity=".ui.navigation.BookmarksActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.TestCatalogActivity" android:targetActivity=".ui.navigation.TestCatalogActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.TestDetailActivity" android:targetActivity=".ui.navigation.TestDetailActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.MockTestActivity" android:targetActivity=".ui.navigation.MockTestActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.MockTestResultActivity" android:targetActivity=".ui.navigation.MockTestResultActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.AttemptHistoryActivity" android:targetActivity=".ui.navigation.AttemptHistoryActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.ProgressActivity" android:targetActivity=".ui.navigation.ProgressActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.ProfileActivity" android:targetActivity=".ui.navigation.ProfileActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.AccountDeletionActivity" android:targetActivity=".ui.navigation.AccountDeletionActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.PrivacyPolicyActivity" android:targetActivity=".ui.navigation.PrivacyPolicyActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.UpcomingFeatureActivity" android:targetActivity=".ui.navigation.UpcomingFeatureActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.AdDiagnosticsActivity" android:targetActivity=".ui.navigation.ProfileActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.AdDiagnosticsActivity" android:targetActivity=".ui.navigation.ProfileActivity" android:exported="false" />
+  </application>
 </manifest>

@@ -2,84 +2,83 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="?android:attr/colorBackground" android:clipToPadding="false">
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="28dp">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="16dp">
-      <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="0dp" android:background="@null" android:src="@drawable/logo" android:contentDescription="@string/cd_app_logo"/>
+      <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="0dp" android:background="@null" android:src="@drawable/logo" android:contentDescription="@string/cd_app_logo" />
       <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp">
-        <TextView android:text="AptiRise" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section"/>
-        <TextView android:text="PRACTICE RESULTS" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+        <TextView android:text="AptiRise" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" />
+        <TextView android:text="PRACTICE RESULTS" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" />
       </LinearLayout>
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/aptirise_hero_gradient" android:padding="24dp" android:layout_marginBottom="20dp">
-      <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-      <ImageView android:layout_width="72dp" android:layout_height="72dp" android:padding="16dp" android:background="@null" android:src="@drawable/ic_sparkles" app:tint="@color/brand_mint" android:layout_gravity="center"/>
-      <Space android:layout_width="1dp" android:layout_height="14dp" android:importantForAccessibility="no"/>
-      <TextView android:text="SESSION COMPLETE" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center" android:textColor="@color/brand_on_gradient_muted"/>
-      <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-      <TextView android:text="Great focus!" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:gravity="center" android:textColor="@color/brand_on_gradient"/>
-      <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-      <TextView android:id="@+id/tv_result_topic_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center" tools:text="Percentages · 10 questions" android:textColor="@color/brand_on_gradient_muted"/>
-      <Space android:layout_width="1dp" android:layout_height="24dp" android:importantForAccessibility="no"/>
+      <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+      <ImageView android:layout_width="72dp" android:layout_height="72dp" android:padding="16dp" android:background="@null" android:src="@drawable/ic_sparkles" app:tint="@color/brand_mint" android:layout_gravity="center" />
+      <Space android:layout_width="1dp" android:layout_height="14dp" android:importantForAccessibility="no" />
+      <TextView android:text="SESSION COMPLETE" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center" android:textColor="@color/brand_on_gradient_muted" />
+      <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+      <TextView android:text="Great focus!" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:gravity="center" android:textColor="@color/brand_on_gradient" />
+      <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+      <TextView android:id="@+id/tv_result_topic_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center" tools:text="Percentages · 10 questions" android:textColor="@color/brand_on_gradient_muted" />
+      <Space android:layout_width="1dp" android:layout_height="24dp" android:importantForAccessibility="no" />
     </LinearLayout>
     <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" app:strokeColor="@color/atelier_border">
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
-        <TextView android:text="Your Learning Snapshot" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section"/>
-        <Space android:layout_width="1dp" android:layout_height="14dp" android:importantForAccessibility="no"/>
+        <TextView android:text="Your Learning Snapshot" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" />
+        <Space android:layout_width="1dp" android:layout_height="14dp" android:importantForAccessibility="no" />
         <FrameLayout android:layout_width="match_parent" android:layout_height="200dp">
-          <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/result_score_ring" android:layout_width="200dp" android:layout_height="200dp" android:layout_gravity="center" android:indeterminate="false" android:max="100" android:progress="0" app:indicatorSize="184dp" app:indicatorInset="8dp" app:trackThickness="12dp" app:trackCornerRadius="6dp" app:indicatorColor="?attr/colorPrimary" app:trackColor="@color/atelier_track" android:importantForAccessibility="no"/>
+          <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/result_score_ring" android:layout_width="200dp" android:layout_height="200dp" android:layout_gravity="center" android:indeterminate="false" android:max="100" android:progress="0" app:indicatorSize="184dp" app:indicatorInset="8dp" app:trackThickness="12dp" app:trackCornerRadius="6dp" app:indicatorColor="?attr/colorPrimary" app:trackColor="@color/atelier_track" android:importantForAccessibility="no" />
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center">
-            <TextView android:id="@+id/tv_score_percentage" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textSize="38sp" android:textColor="?attr/colorPrimary" tools:text="70%"/>
-            <Space android:layout_width="1dp" android:layout_height="4dp" android:importantForAccessibility="no"/>
-            <TextView android:text="SESSION SCORE" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+            <TextView android:id="@+id/tv_score_percentage" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textSize="38sp" android:textColor="?attr/colorPrimary" tools:text="70%" />
+            <Space android:layout_width="1dp" android:layout_height="4dp" android:importantForAccessibility="no" />
+            <TextView android:text="SESSION SCORE" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center" />
           </LinearLayout>
         </FrameLayout>
-        <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+        <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-          <TextView android:text="Accuracy · correct / attempted" android:layout_width="0dp" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="12sp" android:layout_weight="1"/>
-          <TextView android:id="@+id/tv_accuracy_percentage" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:textColor="?attr/colorPrimary" tools:text="78%"/>
+          <TextView android:text="Accuracy · correct / attempted" android:layout_width="0dp" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="12sp" android:layout_weight="1" />
+          <TextView android:id="@+id/tv_accuracy_percentage" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:textColor="?attr/colorPrimary" tools:text="78%" />
         </LinearLayout>
       </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
       <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_weight="1" app:strokeColor="@color/atelier_border">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
-          <TextView android:id="@+id/tv_count_correct" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="?attr/colorPrimary" tools:text="7"/>
-          <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
-          <TextView android:text="CORRECT" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+          <TextView android:id="@+id/tv_count_correct" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="?attr/colorPrimary" tools:text="7" />
+          <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no" />
+          <TextView android:text="CORRECT" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center" />
         </LinearLayout>
       </com.google.android.material.card.MaterialCardView>
       <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_weight="1" app:strokeColor="@color/atelier_border">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
-          <TextView android:id="@+id/tv_count_incorrect" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="@color/atelier_error" tools:text="7"/>
-          <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
-          <TextView android:text="INCORRECT" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+          <TextView android:id="@+id/tv_count_incorrect" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="@color/atelier_error" tools:text="7" />
+          <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no" />
+          <TextView android:text="INCORRECT" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center" />
         </LinearLayout>
       </com.google.android.material.card.MaterialCardView>
       <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="?attr/colorSurface" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_weight="1" app:strokeColor="@color/atelier_border">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
-          <TextView android:id="@+id/tv_count_skipped" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="?attr/colorOnSurfaceVariant" tools:text="7"/>
-          <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
-          <TextView android:text="SKIPPED" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center"/>
+          <TextView android:id="@+id/tv_count_skipped" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Number" android:gravity="center" android:textColor="?attr/colorOnSurfaceVariant" tools:text="7" />
+          <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no" />
+          <TextView android:text="SKIPPED" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:gravity="center" />
         </LinearLayout>
       </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
     <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="@color/atelier_soft" app:strokeColor="@color/atelier_border">
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-          <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@null" android:src="@drawable/ic_timer" app:tint="?attr/colorPrimary"/>
+          <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@null" android:src="@drawable/ic_timer" app:tint="?attr/colorPrimary" />
           <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1">
-            <TextView android:text="Keep building momentum" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:textSize="17sp"/>
-            <Space android:layout_width="1dp" android:layout_height="4dp" android:importantForAccessibility="no"/>
-            <TextView android:text="Review the explanation, then retry mistakes." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="14sp"/>
+            <TextView android:text="Keep building momentum" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:textSize="17sp" />
+            <Space android:layout_width="1dp" android:layout_height="4dp" android:importantForAccessibility="no" />
+            <TextView android:text="Review the explanation, then retry mistakes." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textSize="14sp" />
           </LinearLayout>
         </LinearLayout>
       </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-    <include android:id="@+id/result_native_ad" layout="@layout/native_ad_view" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:visibility="gone"/>
-    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no"/>
-    <com.google.android.material.button.MaterialButton android:text="Review Answers &amp; Explanations" android:id="@+id/btn_review_answers" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Primary" app:cornerRadius="16dp"/>
-    <Space android:layout_width="1dp" android:layout_height="10dp" android:importantForAccessibility="no"/>
-    <com.google.android.material.button.MaterialButton android:text="Retry Incorrect Questions" android:id="@+id/btn_retry_incorrect" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Peach" app:cornerRadius="16dp"/>
-    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-    <com.google.android.material.button.MaterialButton android:text="Return to Home" android:id="@+id/btn_return_home" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Text" app:cornerRadius="16dp"/>
+    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no" />
+    <com.google.android.material.button.MaterialButton android:text="Review Answers &amp; Explanations" android:id="@+id/btn_review_answers" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Primary" app:cornerRadius="16dp" />
+    <Space android:layout_width="1dp" android:layout_height="10dp" android:importantForAccessibility="no" />
+    <com.google.android.material.button.MaterialButton android:text="Retry Incorrect Questions" android:id="@+id/btn_retry_incorrect" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Peach" app:cornerRadius="16dp" />
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+    <com.google.android.material.button.MaterialButton android:text="Return to Home" android:id="@+id/btn_return_home" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp" style="@style/Widget.AptiRise.Button.Text" app:cornerRadius="16dp" />
   </LinearLayout>
 </androidx.core.widget.NestedScrollView>

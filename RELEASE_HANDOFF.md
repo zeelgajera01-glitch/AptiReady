@@ -9,7 +9,7 @@ The app is **READY FOR LOCAL TESTING AND PUBLISHER REVIEW**, with external publi
 
 ## Environment & Configuration Status
 
-- **Application Package / Namespace:** `com.example.aptiready`
+- **Application Package / Namespace:** `com.aptirise.app`
 - **Ad Mode:** Strict **Google Test Ads** mode active in debug (`isAdsEnabled = BuildConfig.DEBUG`). Release builds remain strictly disabled.
 - **Database Engine:** Room v3 (`aptirise_database.db` with migrations up to `MIGRATION_5_6`).
 - **Code Optimization & Shrinking:** R8 / ProGuard enabled (`isMinifyEnabled = true`, `isShrinkResources = true`).
@@ -22,7 +22,7 @@ The app is **READY FOR LOCAL TESTING AND PUBLISHER REVIEW**, with external publi
 The following tasks must be completed by the publisher account owner prior to Google Play submission:
 
 1. **Package Name & Firebase Registration:**
-   - Package name `com.example.aptiready` uses a temporary `com.example` domain. Changing to a custom production package name requires re-registering the app in Firebase Console and updating `google-services.json`.
+   - The namespace and application ID are `com.aptirise.app`. The existing `google-services.json` already includes the matching Firebase Android client; use that client for signing certificate registration.
 2. **Production Keystore Signing:**
    - Sign `app-release-unsigned.apk` with the publisher's authorized production upload keystore (`apksigner sign --ks release.keystore ...`).
 3. **Live Firebase Backend Deployment:**

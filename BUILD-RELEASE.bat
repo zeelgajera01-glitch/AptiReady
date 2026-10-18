@@ -12,5 +12,5 @@ if errorlevel 1 (
 echo.
 echo APK: app\build\outputs\apk\release\app-release.apk
 echo Play bundle: app\build\outputs\bundle\release\app-release.aab
-echo Release uses your production ad units.
+echo Release stores practice history and bookmarks on the device.
 pause

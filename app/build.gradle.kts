@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.aptiready"
+    namespace = "com.aptirise.app"
     compileSdk = 36
 
     defaultConfig {
@@ -28,98 +28,45 @@ android {
     val keystorePropertiesFile = rootProject.file("release-keystore.properties")
 
     signingConfigs {
-        create("release") {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
 
-            require(keystorePropertiesFile.exists()) {
-                "ERROR: release-keystore.properties not found at: ${keystorePropertiesFile.absolutePath}"
+                val keystoreProperties = Properties()
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+                val storeFilePath = keystoreProperties.getProperty("storeFile")
+                val storePasswordValue = keystoreProperties.getProperty("storePassword")
+                val keyAliasValue = keystoreProperties.getProperty("keyAlias")
+                val keyPasswordValue = keystoreProperties.getProperty("keyPassword")
+
+                require(!storeFilePath.isNullOrBlank()) {
+                    "ERROR: storeFile is missing in release-keystore.properties"
+                }
+
+                require(!storePasswordValue.isNullOrBlank()) {
+                    "ERROR: storePassword is missing in release-keystore.properties"
+                }
+
+                require(!keyAliasValue.isNullOrBlank()) {
+                    "ERROR: keyAlias is missing in release-keystore.properties"
+                }
+
+                require(!keyPasswordValue.isNullOrBlank()) {
+                    "ERROR: keyPassword is missing in release-keystore.properties"
+                }
+
+                storeFile = rootProject.file(storeFilePath)
+                storePassword = storePasswordValue
+                keyAlias = keyAliasValue
+                keyPassword = keyPasswordValue
             }
-
-            val keystoreProperties = Properties()
-            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-
-            val storeFilePath = keystoreProperties.getProperty("storeFile")
-            val storePasswordValue = keystoreProperties.getProperty("storePassword")
-            val keyAliasValue = keystoreProperties.getProperty("keyAlias")
-            val keyPasswordValue = keystoreProperties.getProperty("keyPassword")
-
-            require(!storeFilePath.isNullOrBlank()) {
-                "ERROR: storeFile is missing in release-keystore.properties"
-            }
-
-            require(!storePasswordValue.isNullOrBlank()) {
-                "ERROR: storePassword is missing in release-keystore.properties"
-            }
-
-            require(!keyAliasValue.isNullOrBlank()) {
-                "ERROR: keyAlias is missing in release-keystore.properties"
-            }
-
-            require(!keyPasswordValue.isNullOrBlank()) {
-                "ERROR: keyPassword is missing in release-keystore.properties"
-            }
-
-            storeFile = rootProject.file(storeFilePath)
-            storePassword = storePasswordValue
-            keyAlias = keyAliasValue
-            keyPassword = keyPasswordValue
         }
     }
 
     buildTypes {
-        debug {
-            buildConfigField("boolean", "ADS_ENABLED", "true")
-            buildConfigField("String", "ADMOB_APP_ID", "\"ca-app-pub-4263244815223132~5490032720\"")
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
-            buildConfigField("String", "INTERSTITIAL_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
-            buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
-
-            manifestPlaceholders["admobAppId"] =
-                "ca-app-pub-4263244815223132~5490032720"
-        }
 
         release {
-            signingConfig = signingConfigs.getByName("release")
-
-            // Live ads enabled for release builds
-            buildConfigField(
-                "boolean",
-                "ADS_ENABLED",
-                "true"
-            )
-
-            buildConfigField(
-                "String",
-                "ADMOB_APP_ID",
-                "\"ca-app-pub-4263244815223132~5490032720\""
-            )
-
-            buildConfigField(
-                "String",
-                "NATIVE_AD_UNIT_ID",
-                "\"ca-app-pub-4263244815223132/9976072648\""
-            )
-
-            buildConfigField(
-                "String",
-                "BANNER_AD_UNIT_ID",
-                "\"ca-app-pub-4263244815223132/1518998127\""
-            )
-
-            buildConfigField(
-                "String",
-                "INTERSTITIAL_AD_UNIT_ID",
-                "\"ca-app-pub-4263244815223132/4167458178\""
-            )
-
-            buildConfigField(
-                "String",
-                "REWARDED_AD_UNIT_ID",
-                "\"ca-app-pub-4263244815223132/3765887514\""
-            )
-
-            manifestPlaceholders["admobAppId"] =
-                "ca-app-pub-4263244815223132~5490032720"
+            signingConfigs.findByName("release")?.let { signingConfig = it }
 
             isMinifyEnabled = true
             isShrinkResources = true
@@ -146,7 +93,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
-    implementation(libs.facebook.shimmer)
 
     // Jetpack Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -159,31 +105,22 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.process)
 
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)
 
     // Firebase (BoM)
     implementation(platform(libs.firebase.bom))
-    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-config")
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.functions)
     implementation(libs.google.play.services.auth)
 
-    // WorkManager
-    implementation(libs.androidx.work.runtime.ktx)
-
     // Room Database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-    // Google Mobile Ads & UMP
-    implementation(libs.google.mobile.ads)
-    implementation(libs.google.ump)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

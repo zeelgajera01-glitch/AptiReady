@@ -5,7 +5,7 @@ Current handoff: see START-HERE.txt and AD-VALIDATION.txt for version 1.1.2 (13)
 ## 1. Environment & Build Configuration
 
 - **Application Name:** AptiRise
-- **Application Package / Namespace:** `com.example.aptiready`
+- **Application Package / Namespace:** `com.aptirise.app`
 - **Gradle AGP Version:** `9.3.2`
 - **Kotlin Version:** `2.1.10`
 - **Compile SDK:** 35 | **Target SDK:** 35 | **Min SDK:** 24

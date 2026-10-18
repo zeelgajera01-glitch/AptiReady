@@ -50,3 +50,17 @@ Official references:
 - Non-blocking compiler warnings concern existing Google SDK APIs marked deprecated. The build succeeded with the installed SDK versions.
 
 - PASS: signed release APK independently verified with Android apksigner (v2 signature, one signer).
+
+## New device evidence — 15 October 2026, 08:54–08:55 IST
+
+User supplied a fresh logcat from the installed APK. TEST_CATALOG_NATIVE requested the production native unit ca-app-pub-4263244815223132/9976072648 at 08:54:57.081 and received code 3 / No fill at 08:54:57.567. TOPIC_LIST_NATIVE requested the same production unit at 08:55:12.230 and received the same error at 08:55:12.596. Both failures were in com.google.android.gms.ads with Response ID null, Adapter Responses empty and mediation_group_name AdMob (default).
+
+These requests show the installed APK reached the native request/load-failure callback. They do not establish why AdMob supplied no ad, whether an account restriction exists, or whether other ad formats work. The user reports demo ads working when launched from Android Studio; debug uses demo units whereas the release APK uses the production units. No further code changes were made based on this log because it provides no evidence of an APK-specific loading/rendering defect. The next investigation is current AdMob serving/app-unit status and request diagnostics for these production units.
+
+## AdMob screenshots supplied after the new logcat
+
+Observed in the supplied screenshots: AptiRise app status Ready; account Home says approved and ad serving enabled; Policy centre Issues says No current issues; Disapproved apps says No disapproved apps. The Home report for Last 7 days shows 560 requests, 141 impressions and 57.14% match rate, and the AptiRise app row shows 141 impressions. The app overview Today so far shows zero requests and impressions. The screenshots do not show the failing native unit's current detailed settings or an explanation for the specific no-fill responses. Reporting is not real-time: Google documents that most metrics are typically delayed by approximately four hours (https://support.google.com/admob/answer/13291097?hl=en). Therefore the today-zero figure does not contradict the newly captured device requests. The grey payment steps are described on-screen as future steps after reaching relevant earnings/verification milestones; no overdue verification or payment-related ad-serving hold is shown in these images.
+
+## Native unit settings confirmed by supplied screenshot
+
+AptiRise_Native is Native advanced, ID ca-app-pub-4263244815223132/9976072648, media type Image | Video, eCPM floor Google optimised (All prices). This matches the production unit in source and the fresh device log. No restrictive manually specified floor or media-type mismatch is visible. Combined with Ready/approved account status, no visible policy issues and repeated code-3 failures, these screenshots do not establish a remaining source-code fix or the exact server-side reason. A publisher-support investigation is appropriate; do not describe an account restriction as confirmed.
