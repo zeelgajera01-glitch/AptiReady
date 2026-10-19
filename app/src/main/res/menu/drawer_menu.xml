@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <group android:checkableBehavior="single">
+    <item android:id="@id/homeFragment" android:title="@string/nav_home" android:icon="@drawable/ic_home" />
+    <item android:id="@id/practiceFragment" android:title="@string/nav_practice" android:icon="@drawable/ic_practice" />
+    <item android:id="@id/testCatalogFragment" android:title="@string/nav_tests" android:icon="@drawable/ic_tests" />
+    <item android:id="@id/progressFragment" android:title="@string/nav_progress" android:icon="@drawable/ic_progress" />
+    <item android:id="@id/bookmarksFragment" android:title="@string/drawer_bookmarks" android:icon="@drawable/ic_atelier_bookmark" />
+    <item android:id="@+id/drawer_privacy_policy" android:title="@string/drawer_privacy_policy" android:icon="@drawable/ic_info" android:checkable="false" />
+  </group>
+  <item android:id="@+id/drawer_appearance" android:title="@string/appearance" android:icon="@drawable/ic_progress" />
+</menu>
