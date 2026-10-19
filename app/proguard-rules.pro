@@ -18,5 +18,5 @@
 }
 
 
-# Firebase Auth & Cloud Firestore
+# Firebase Remote Config
 -keep class com.google.firebase.** { *; }

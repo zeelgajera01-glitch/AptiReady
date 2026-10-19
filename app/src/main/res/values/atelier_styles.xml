@@ -8,8 +8,8 @@
     <item name="android:includeFontPadding">false</item>
   </style>
   <style name="Text.AptiRise.Title" parent="Text.AptiRise.Body">
-    <item name="android:fontFamily">sans-serif-medium</item>
-    <item name="android:textSize">30sp</item>
+    <item name="android:fontFamily">serif</item>
+    <item name="android:textSize">36sp</item>
     <item name="android:textColor">?attr/colorOnSurface</item>
     <item name="android:lineSpacingExtra">2dp</item>
     <item name="android:letterSpacing">-0.02</item>
@@ -19,7 +19,8 @@
     <item name="android:letterSpacing">-0.01</item>
   </style>
   <style name="Text.AptiRise.Question" parent="Text.AptiRise.Body">
-    <item name="android:textSize">20sp</item>
+    <item name="android:fontFamily">serif</item>
+    <item name="android:textSize">24sp</item>
     <item name="android:textColor">?attr/colorOnSurface</item>
     <item name="android:lineSpacingExtra">6dp</item>
   </style>
@@ -120,9 +121,6 @@
   <style name="ThemeOverlay.AptiRise.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
     <item name="colorSurface">@color/atelier_surface</item>
     <item name="colorPrimary">@color/primary</item>
-  </style>
-  <style name="Widget.AptiRise.NavigationIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-    <item name="android:color">@color/brand_nav_indicator</item>
   </style>
   <style name="Widget.AptiRise.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
     <item name="boxBackgroundColor">?attr/colorSurface</item>

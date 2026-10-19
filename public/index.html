@@ -8,7 +8,6 @@
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/12.19.0/firebase-app-compat.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.19.0/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/12.19.0/firebase-database-compat.js"></script>
     <script defer src="/__/firebase/12.19.0/firebase-firestore-compat.js"></script>
     <script defer src="/__/firebase/12.19.0/firebase-functions-compat.js"></script>
@@ -53,7 +52,6 @@
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         // // The Firebase SDK is initialized and available here!
         //
-        // firebase.auth().onAuthStateChanged(user => { });
         // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
         // firebase.firestore().doc('/foo/bar').get().then(() => { });
         // firebase.functions().httpsCallable('yourFunction')().then(() => { });
@@ -68,7 +66,6 @@
         try {
           let app = firebase.app();
           let features = [
-            'auth',
             'database',
             'firestore',
             'functions',

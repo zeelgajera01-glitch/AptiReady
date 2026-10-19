@@ -1,39 +1,32 @@
 <?xml version='1.0' encoding='utf-8'?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="?android:attr/colorBackground" android:paddingStart="20dp" android:paddingEnd="20dp">
-  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="16dp">
-    <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="0dp" android:background="@null" android:src="@drawable/logo" android:contentDescription="@string/cd_app_logo"/>
-    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp">
-      <TextView android:text="AptiRise" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section"/>
-      <TextView android:text="PRACTICE" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
-    </LinearLayout>
-  </LinearLayout>
-  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/aptirise_hero_gradient" android:padding="24dp" android:layout_marginBottom="12dp">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@android:color/transparent" android:padding="4dp" android:layout_marginBottom="12dp" android:paddingTop="12dp" android:paddingBottom="20dp">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-      <TextView android:text="Practice Library" android:layout_width="0dp" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:layout_weight="1" android:textColor="@color/brand_on_gradient"/>
-      <TextView android:text="Topics" android:id="@+id/tv_topic_library_count" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:padding="8dp" android:background="@drawable/atelier_peach_badge" android:textColor="@color/atelier_on_peach"/>
+      <TextView android:text="Find your next&#10;breakthrough." android:layout_width="0dp" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:layout_weight="1" android:textColor="?attr/colorOnSurface" android:textSize="36sp" />
+      <TextView android:text="Topics" android:id="@+id/tv_topic_library_count" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" android:padding="8dp" android:background="@drawable/atelier_peach_badge" android:textColor="@color/atelier_on_peach" />
     </LinearLayout>
-    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-    <TextView android:text="Explore Quantitative, Logical and Verbal domains." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textColor="@color/brand_on_gradient_muted"/>
-    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no"/>
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+    <TextView android:text="Explore Quantitative, Logical and Verbal domains." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textColor="?attr/colorOnSurfaceVariant" />
+    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no" />
   </LinearLayout>
   <com.google.android.material.textfield.TextInputLayout android:id="@+id/input_layout_search" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Search topics or formulas" style="@style/Widget.AptiRise.Search" app:startIconDrawable="@drawable/ic_search">
-    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_search_query" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:inputType="text" android:maxLines="1" android:singleLine="true" android:textSize="16sp" android:textColor="?attr/colorOnSurface" android:background="@null" android:imeOptions="actionSearch" android:hint="Search topics or formulas" android:textColorHint="?attr/colorOnSurfaceVariant"/>
+    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_search_query" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:inputType="text" android:maxLines="1" android:singleLine="true" android:textSize="16sp" android:textColor="?attr/colorOnSurface" android:background="@null" android:imeOptions="actionSearch" android:hint="Search topics or formulas" android:textColorHint="?attr/colorOnSurfaceVariant" />
   </com.google.android.material.textfield.TextInputLayout>
-  <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
+  <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
   <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none" android:fillViewport="false" android:clipToPadding="false">
     <com.google.android.material.chip.ChipGroup android:id="@+id/chip_group_categories" android:layout_width="wrap_content" android:layout_height="wrap_content" app:singleSelection="true" app:selectionRequired="true" app:singleLine="true" app:chipSpacingHorizontal="6dp">
-      <com.google.android.material.chip.Chip android:id="@+id/chip_all" android:text="All" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="true"/>
-      <com.google.android.material.chip.Chip android:id="@+id/chip_quant" android:text="Quantitative" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="false"/>
-      <com.google.android.material.chip.Chip android:id="@+id/chip_logical" android:text="Logical" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="false"/>
-      <com.google.android.material.chip.Chip android:id="@+id/chip_verbal" android:text="Verbal" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="false"/>
+      <com.google.android.material.chip.Chip android:id="@+id/chip_all" android:text="All" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="true" />
+      <com.google.android.material.chip.Chip android:id="@+id/chip_quant" android:text="Quantitative" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="false" />
+      <com.google.android.material.chip.Chip android:id="@+id/chip_logical" android:text="Logical" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="false" />
+      <com.google.android.material.chip.Chip android:id="@+id/chip_verbal" android:text="Verbal" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AptiRise.Chip" android:checked="false" />
     </com.google.android.material.chip.ChipGroup>
   </HorizontalScrollView>
-  <Space android:layout_width="1dp" android:layout_height="12dp" android:importantForAccessibility="no"/>
-  <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_topics" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingBottom="24dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+  <Space android:layout_width="1dp" android:layout_height="12dp" android:importantForAccessibility="no" />
+  <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_topics" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingBottom="24dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/layout_empty_search" android:gravity="center" android:padding="24dp" android:visibility="gone">
-    <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_book" app:tint="?attr/colorPrimary"/>
-    <TextView android:text="No matching topics" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:gravity="center"/>
-    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-    <TextView android:text="Try another keyword or category." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center"/>
+    <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_book" app:tint="?attr/colorPrimary" />
+    <TextView android:text="No matching topics" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:gravity="center" />
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+    <TextView android:text="Try another keyword or category." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center" />
   </LinearLayout>
 </LinearLayout>

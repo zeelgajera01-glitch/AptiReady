@@ -6,7 +6,7 @@
         android:layout_width="match_parent" android:layout_height="match_parent" android:background="?android:attr/colorBackground">
         <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar"
             android:layout_width="0dp" android:layout_height="wrap_content" android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_menu" app:navigationContentDescription="@string/drawer_open"
+            app:navigationIcon="@drawable/ic_menu" app:navigationIconTint="?attr/colorOnSurface" app:navigationContentDescription="@string/drawer_open"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
         <androidx.fragment.app.FragmentContainerView android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment" android:layout_width="0dp" android:layout_height="0dp"

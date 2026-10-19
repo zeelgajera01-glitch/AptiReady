@@ -1,35 +1,35 @@
 <?xml version='1.0' encoding='utf-8'?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="?android:attr/colorBackground" android:paddingStart="20dp" android:paddingEnd="20dp">
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="16dp">
-    <ImageButton android:id="@+id/btn_back" android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_back" app:tint="?attr/colorPrimary" android:contentDescription="Navigate back"/>
+    <ImageButton android:id="@+id/btn_back" android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_back" app:tint="?attr/colorPrimary" android:contentDescription="Navigate back" android:visibility="gone" />
     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp">
-      <TextView android:text="AptiRise" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section"/>
-      <TextView android:text="SAVED FOR LATER" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
+      <TextView android:text="AptiRise" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" />
+      <TextView android:text="SAVED FOR LATER" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" />
     </LinearLayout>
   </LinearLayout>
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/aptirise_hero_gradient" android:padding="24dp" android:layout_marginBottom="12dp">
-    <TextView android:text="Your bookmarks" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:textColor="@color/brand_on_gradient"/>
-    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-    <TextView android:text="Keep challenging questions and explanations ready for revision." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textColor="@color/brand_on_gradient_muted"/>
-    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no"/>
+    <TextView android:text="Your bookmarks" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Title" android:textColor="@color/brand_on_gradient" />
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+    <TextView android:text="Keep challenging questions and explanations ready for revision." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:textColor="@color/brand_on_gradient_muted" />
+    <Space android:layout_width="1dp" android:layout_height="18dp" android:importantForAccessibility="no" />
   </LinearLayout>
   <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:strokeWidth="1dp" app:cardBackgroundColor="@color/atelier_soft" app:strokeColor="@color/atelier_border">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
-      <TextView android:text="SAVED QUESTIONS" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow"/>
-      <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
-      <TextView android:text="0 saved" android:id="@+id/tv_bookmark_count" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:textColor="?attr/colorPrimary"/>
+      <TextView android:text="SAVED QUESTIONS" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Eyebrow" />
+      <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no" />
+      <TextView android:text="0 saved" android:id="@+id/tv_bookmark_count" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:textColor="?attr/colorPrimary" />
     </LinearLayout>
   </com.google.android.material.card.MaterialCardView>
-  <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no"/>
+  <Space android:layout_width="1dp" android:layout_height="6dp" android:importantForAccessibility="no" />
   <com.google.android.material.textfield.TextInputLayout android:id="@+id/input_layout_bookmark_search" android:layout_width="match_parent" android:layout_height="wrap_content" app:startIconDrawable="@drawable/ic_search" style="@style/Widget.AptiRise.Search">
-    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_bookmark_search" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:inputType="text" android:maxLines="1" android:singleLine="true" android:hint="Search saved questions or explanations" android:textSize="16sp" android:textColor="?attr/colorOnSurface" android:background="@null" android:imeOptions="actionSearch" android:textColorHint="?attr/colorOnSurfaceVariant"/>
+    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_bookmark_search" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:inputType="text" android:maxLines="1" android:singleLine="true" android:hint="Search saved questions or explanations" android:textSize="16sp" android:textColor="?attr/colorOnSurface" android:background="@null" android:imeOptions="actionSearch" android:textColorHint="?attr/colorOnSurfaceVariant" />
   </com.google.android.material.textfield.TextInputLayout>
-  <Space android:layout_width="1dp" android:layout_height="16dp"/>
-  <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_bookmarks" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingBottom="24dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+  <Space android:layout_width="1dp" android:layout_height="16dp" />
+  <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_bookmarks" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingBottom="24dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/layout_empty_bookmarks" android:gravity="center" android:padding="24dp" android:visibility="gone">
-    <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_book" app:tint="?attr/colorPrimary"/>
-    <TextView android:text="Save your first question" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:gravity="center" android:id="@+id/tv_bookmark_empty_title"/>
-    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no"/>
-    <TextView android:text="Tap the bookmark icon during practice or answer review to save a question." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center" android:id="@+id/tv_bookmark_empty_description"/>
+    <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="12dp" android:background="@drawable/atelier_circle" android:src="@drawable/ic_book" app:tint="?attr/colorPrimary" />
+    <TextView android:text="Save your first question" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Section" android:gravity="center" android:id="@+id/tv_bookmark_empty_title" />
+    <Space android:layout_width="1dp" android:layout_height="8dp" android:importantForAccessibility="no" />
+    <TextView android:text="Tap the bookmark icon during practice or answer review to save a question." android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Text.AptiRise.Body" android:gravity="center" android:id="@+id/tv_bookmark_empty_description" />
   </LinearLayout>
 </LinearLayout>

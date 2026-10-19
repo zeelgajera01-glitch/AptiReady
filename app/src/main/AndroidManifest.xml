@@ -10,12 +10,6 @@
       </intent-filter>
     </activity>
     <activity android:name=".MainActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.WelcomeActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.LoginActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.RegisterActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.VerifyEmailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.ForgotPasswordActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.EditProfileActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.PracticeActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.TopicDetailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.PracticeSessionActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
@@ -26,20 +20,16 @@
     <activity android:name=".ui.navigation.TestDetailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.MockTestActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.MockTestResultActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.AttemptHistoryActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.ProgressActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.ProfileActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.AccountDeletionActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-    <activity android:name=".ui.navigation.PrivacyPolicyActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity android:name=".ui.navigation.UpcomingFeatureActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
     <activity-alias android:name="com.example.aptiready.SplashActivity" android:targetActivity=".SplashActivity" android:exported="true" />
     <activity-alias android:name="com.example.aptiready.MainActivity" android:targetActivity=".MainActivity" android:exported="true" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.WelcomeActivity" android:targetActivity=".ui.navigation.WelcomeActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.LoginActivity" android:targetActivity=".ui.navigation.LoginActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.RegisterActivity" android:targetActivity=".ui.navigation.RegisterActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.VerifyEmailActivity" android:targetActivity=".ui.navigation.VerifyEmailActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.ForgotPasswordActivity" android:targetActivity=".ui.navigation.ForgotPasswordActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.EditProfileActivity" android:targetActivity=".ui.navigation.EditProfileActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.WelcomeActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.LoginActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.RegisterActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.VerifyEmailActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.ForgotPasswordActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.EditProfileActivity" android:targetActivity=".MainActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.PracticeActivity" android:targetActivity=".ui.navigation.PracticeActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.TopicDetailActivity" android:targetActivity=".ui.navigation.TopicDetailActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.PracticeSessionActivity" android:targetActivity=".ui.navigation.PracticeSessionActivity" android:exported="false" />
@@ -50,13 +40,24 @@
     <activity-alias android:name="com.example.aptiready.ui.navigation.TestDetailActivity" android:targetActivity=".ui.navigation.TestDetailActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.MockTestActivity" android:targetActivity=".ui.navigation.MockTestActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.MockTestResultActivity" android:targetActivity=".ui.navigation.MockTestResultActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.AttemptHistoryActivity" android:targetActivity=".ui.navigation.AttemptHistoryActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.AttemptHistoryActivity" android:targetActivity=".MainActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.ProgressActivity" android:targetActivity=".ui.navigation.ProgressActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.ProfileActivity" android:targetActivity=".ui.navigation.ProfileActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.AccountDeletionActivity" android:targetActivity=".ui.navigation.AccountDeletionActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.PrivacyPolicyActivity" android:targetActivity=".ui.navigation.PrivacyPolicyActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.ProfileActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.AccountDeletionActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.PrivacyPolicyActivity" android:targetActivity=".MainActivity" android:exported="false" />
     <activity-alias android:name="com.example.aptiready.ui.navigation.UpcomingFeatureActivity" android:targetActivity=".ui.navigation.UpcomingFeatureActivity" android:exported="false" />
-    <activity-alias android:name="com.aptirise.app.ui.navigation.AdDiagnosticsActivity" android:targetActivity=".ui.navigation.ProfileActivity" android:exported="false" />
-    <activity-alias android:name="com.example.aptiready.ui.navigation.AdDiagnosticsActivity" android:targetActivity=".ui.navigation.ProfileActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.AdDiagnosticsActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.example.aptiready.ui.navigation.AdDiagnosticsActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.WelcomeActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.LoginActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.RegisterActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.VerifyEmailActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.ForgotPasswordActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.EditProfileActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.ProfileActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.AccountDeletionActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity android:name=".OnboardingActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.AttemptHistoryActivity" android:targetActivity=".MainActivity" android:exported="false" />
+    <activity-alias android:name="com.aptirise.app.ui.navigation.PrivacyPolicyActivity" android:targetActivity=".MainActivity" android:exported="false" />
   </application>
 </manifest>

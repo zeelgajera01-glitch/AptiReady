@@ -38,7 +38,7 @@
   </style>
   <style name="Theme.AptiReady" parent="Base.Theme.AptiReady"/>
   <style name="Theme.AptiReady.Starting" parent="Theme.SplashScreen">
-    <item name="windowSplashScreenBackground">@color/atelier_background</item>
+    <item name="windowSplashScreenBackground">@color/splash_background</item>
     <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
     <item name="postSplashScreenTheme">@style/Theme.AptiReady</item>
   </style>

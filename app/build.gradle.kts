@@ -14,8 +14,8 @@ android {
         applicationId = "com.aptirise.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 13
-        versionName = "1.1.2"
+        versionCode = 14
+        versionName = "1.1.3_test"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -112,10 +112,6 @@ dependencies {
     // Firebase (BoM)
     implementation(platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-config")
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.functions)
-    implementation(libs.google.play.services.auth)
 
     // Room Database
     implementation(libs.androidx.room.runtime)
